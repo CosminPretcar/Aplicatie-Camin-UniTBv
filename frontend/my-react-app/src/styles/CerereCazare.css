@@ -1,0 +1,58 @@
+.container {
+    padding: 20px;
+    margin-left: 280px; /* Lasă loc pentru sidebar */
+    max-width: calc(100% - 280px); /* Evită suprapunerea conținutului */
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  } 
+
+  h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.form-container {
+    display: flex;
+    /* flex-direction: column; */
+    gap: 15px;
+    width: 100%;
+  }
+
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 10px;
+    min-width: 200px;
+  }
+
+  .colegi-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .colegi-table th, .colegi-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .colegi-table th {
+    background-color: #f2f2f2;
+  }
