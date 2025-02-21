@@ -11,6 +11,8 @@ function CerereCazare() {
   const [selectedCamin, setSelectedCamin] = useState("");
   const [selectedCamera, setSelectedCamera] = useState("");
   const [selectedColegi, setSelectedColegi] = useState([]);
+  const [selectedEtaj, setSelectedEtaj] = useState("");
+  const etajeUnice = [...new Set(camere.map(camera => camera.etaj))];
 
   useEffect(() => {
     axios.get("http://localhost:4000/camine").then((response) => {
@@ -43,31 +45,39 @@ function CerereCazare() {
   };
 
   const handleSubmit = () => {
-    alert(`Cerință trimisă:
-      Camin: ${selectedCamin}
-      Camera: ${selectedCamera}
-      Coleg: ${selectedColegi.join(", ")}
-    `);
+    const cameraSelectata = camere.find((camera) => camera.id === parseInt(selectedCamera, 10));
+
+    if (!selectedCamera) {
+      alert("Selectați o cameră!");
+      return;
+    }
+
+    alert(`Cererea de cazare:
+      Cămin ID: ${selectedCamin}
+      Etaj: ${cameraSelectata.etaj}
+      Camera ID: ${cameraSelectata.id}
+      Coleg(i): ${selectedColegi.join(", ")}`);
+
     axios.post("http://localhost:4000/cereri", {
-      caminId: selectedCamin,
-      cameraId: selectedCamera,
-      colegi: selectedColegi,
-    }, {withCredentials:true})
+        caminId: selectedCamin,
+        etaj: cameraSelectata.etaj,
+        cameraId: cameraSelectata.id,
+        colegi: selectedColegi,
+    }, { withCredentials: true })
     .then(response => {
-      alert(response.data.message);
+        alert(response.data.message);
     })
     .catch(error => {
-      console.error("Eroare la trimiterea cererii: ", error);
-      alert("Eroare la trimiterea cererii!");
+        console.error("Eroare la trimiterea cererii: ", error);
+        alert("Eroare la trimiterea cererii!");
     });
-  };
+};
 
   return (
     <div>
       <NavBar />
-      <div className="container">
+      <div className="containerFormular">
         <h1>Formular Cerere Cazare</h1>
-
         <div className="form-container">
           <div className="form-row">
             <div className="form-group">
@@ -84,48 +94,64 @@ function CerereCazare() {
           </div>
 
           <div className="form-group">
-            <label>Camera:</label>
-            <select value={selectedCamera} onChange={(e) => setSelectedCamera(e.target.value)}>
-              <option value="">Selectează o cameră</option>
-              {camere.map((camera) => (
-                <option key={camera.id} value={camera.id}>
-                  Camera {camera.numar_camera} - Etaj {camera.etaj} - {camera.numar_paturi} paturi
+            <label>Etaj:</label>
+            <select value={selectedEtaj} onChange={(e) => setSelectedEtaj(e.target.value)}>
+              <option value="">Selectează un etaj</option>
+              {etajeUnice.map((etaj) => (
+                <option key={etaj} value={etaj}>
+                  Etaj {etaj}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label>Coleg(i) de cameră:</label>
-            <table className="colegi-table">
-              <thead>
-                <tr>
-                  <th>Selectează</th>
-                  <th>Nume</th>
-                  <th>Prenume</th>
-                </tr>
-              </thead>
-              <tbody>
-                {utilizatori.map((user) => (
-                  <tr key={user.id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedColegi.includes(user.id)}
-                        onChange={() => handleColegSelect(user.id)}
-                      />
-                    </td>
-                    <td>{user.nume}</td>
-                    <td>{user.prenume}</td>
-                  </tr>
+            <label>Camera:</label>
+            <select value={selectedCamera} onChange={(e) => setSelectedCamera(e.target.value)}>
+              <option value="">Selectează o cameră</option>
+              {camere
+                .filter((camera) => selectedEtaj === "" || camera.etaj.toString() === selectedEtaj)
+                .map((camera) => (
+                  <option key={camera.id} value={camera.id}>
+                    Camera {camera.numar_camera} - {camera.numar_paturi} paturi
+                  </option>
                 ))}
-              </tbody>
-            </table>
+            </select>
           </div>
-
-          <button onClick={handleSubmit}>Trimite cererea</button>
+          </div>
+          <div className="tabel">
+            <div className="form-group">
+              <label>Coleg(i) de cameră:</label>
+              <table className="colegi-table">
+                <thead>
+                  <tr>
+                    <th>Selectează</th>
+                    <th>Nume</th>
+                    <th>Prenume</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {utilizatori.map((user) => (
+                    <tr key={user.id}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedColegi.includes(user.id)}
+                          onChange={() => handleColegSelect(user.id)}
+                        />
+                      </td>
+                      <td>{user.nume}</td>
+                      <td>{user.prenume}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="butonFormular">
+              <button  onClick={handleSubmit}>Trimite cererea</button>
+            </div>
+          </div>
         </div>
-      </div>
      </div> 
   );
 }

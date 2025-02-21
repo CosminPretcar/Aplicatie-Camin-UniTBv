@@ -21,7 +21,7 @@ const isAdmin= (req,res, next) => {
 };
 
 app.use(cors({
-  origin: "http://localhost:3000", // Schimbă "*" cu frontend-ul tău
+  origin: "http://localhost:3000", 
   credentials: true
 }));
 
@@ -103,6 +103,61 @@ app.get("/camere/:caminId", async (req, res) => {
   }
 });
 
+app.get("/utilizatori", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
+  }
+  try {
+    const userId= req.user.id;
+    const result = await db.query("SELECT id, nume, prenume FROM users WHERE id !=$1", [userId]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send("Eroare de server");
+  }
+});
+
+app.post("/cereri", async (req, res) => {
+  if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
+  }
+
+  console.log("Cerere primită pe server:", req.body);
+
+  try {
+      const { caminId, etaj, cameraId, colegi } = req.body;
+      const userId = req.user.id;
+
+      if (!cameraId || !etaj || !caminId) {
+          console.error("Eroare: Lipsesc date!", { caminId, etaj, cameraId });
+          return res.status(400).json({ message: "Caminul, etajul și camera sunt necesare!" });
+      }
+
+      const cameraResult = await db.query(
+          "SELECT id FROM camere WHERE id = $1 AND camin_id = $2",
+          [cameraId, caminId]
+      );
+
+      if (cameraResult.rows.length === 0) {
+          return res.status(400).json({ message: "Camera selectată nu există în acest cămin!" });
+      }
+
+      const colegiString = colegi.join(",");
+
+      console.log("Valori inserate în baza de date:", { userId, caminId, etaj, cameraId, colegiString });
+
+      await db.query(
+          "INSERT INTO cereri_cazare (user_id, camin_id, etaj, camera_id, colegi) VALUES ($1, $2, $3, $4, $5)",
+          [userId, caminId, etaj, cameraId, colegiString]
+      );
+
+      res.json({ message: "Cererea a fost înregistrată cu succes!" });
+  } catch (error) {
+      console.error("Error inserting cerere:", error);
+      res.status(500).json({ message: "Eroare de server" });
+  }
+});
+
 passport.use(new Strategy(async function verify(username, password, cb) {
   console.log(username);
   try {
@@ -144,43 +199,6 @@ passport.deserializeUser(async (id, cb) => {
     cb(null, result.rows[0]);
   } catch (error) {
     cb(error);
-  }
-});
-
-app.get("/utilizatori", async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
-  }
-  try {
-    const userId= req.user.id;
-    const result = await db.query("SELECT id, nume, prenume FROM users WHERE id !=$1", [userId]);
-    res.json(result.rows);
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).send("Eroare de server");
-  }
-});
-
-app.post("/cereri", async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
-  }
-
-  try {
-    const { caminId, cameraId, colegi } = req.body;
-    const userId = req.user.id;
-    
-    const colegiString = colegi.join(","); // Salvăm ca string
-
-    await db.query(
-      "INSERT INTO cereri_cazare (user_id, camin_id, camera_id, colegi) VALUES ($1, $2, $3, $4)",
-      [userId, caminId, cameraId, colegiString]
-    );
-
-    res.json({ message: "Cererea a fost înregistrată cu succes!" });
-  } catch (error) {
-    console.error("Error inserting cerere:", error);
-    res.status(500).json({ message: "Eroare de server" });
   }
 });
 

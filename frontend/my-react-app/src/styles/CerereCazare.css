@@ -1,15 +1,16 @@
-.container {
+.containerFormular {
     padding: 20px;
-    margin-left: 280px; /* Lasă loc pentru sidebar */
-    max-width: calc(100% - 280px); /* Evită suprapunerea conținutului */
+    margin-left: 280px; 
+    max-width: calc(100% - 280px); 
     font-family: Arial, sans-serif;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #e3e3e3;
+    background-image: url("https://www.transparenttextures.com/patterns/60-lines.png");
   } 
 
   h1 {
@@ -21,7 +22,6 @@
 
 .form-container {
     display: flex;
-    /* flex-direction: column; */
     gap: 15px;
     width: 100%;
   }
@@ -55,4 +55,17 @@
   
   .colegi-table th {
     background-color: #f2f2f2;
+  }
+
+  .colegi-table tr {
+    background-color: #f2f2f2;
+  }
+  .tabel {
+    width: 100%;
+    display: table;
+  }
+
+  .butonFormular {
+    display: flex;
+    justify-content: flex-end; /* Mută conținutul spre dreapta */
   }
