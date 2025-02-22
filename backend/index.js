@@ -109,7 +109,16 @@ app.get("/utilizatori", async (req, res) => {
   }
   try {
     const userId= req.user.id;
-    const result = await db.query("SELECT id, nume, prenume FROM users WHERE id !=$1", [userId]);
+    const searchQuery = req.query.q || "";
+
+    const userResult = await db.query("SELECT sex FROM users WHERE id = $1", [userId]);
+    const userSex = userResult.rows[0].sex;
+
+    const result = await db.query(
+      "SELECT id, nume, prenume, facultate, specializare FROM users WHERE id != $1 AND sex = $2 AND (nume ILIKE $3 OR prenume ILIKE $3)",
+      [userId, userSex, `${searchQuery}%`]
+    );
+
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching users:", error);

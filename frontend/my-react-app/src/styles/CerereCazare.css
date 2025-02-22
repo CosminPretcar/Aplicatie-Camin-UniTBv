@@ -36,7 +36,7 @@
   .form-group {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex:1;
     margin: 10px;
     min-width: 200px;
   }
@@ -68,4 +68,10 @@
   .butonFormular {
     display: flex;
     justify-content: flex-end; /* Mută conținutul spre dreapta */
+    margin-right: 10px;
+  }
+
+  .searchCazare {
+    display: flex;
+    flex-direction: row;
   }
