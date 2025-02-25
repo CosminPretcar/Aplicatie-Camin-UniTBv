@@ -7,6 +7,7 @@ import CerereCazareStudent from "./student/CerereCazareStudent";
 import ProtectedRoute from "./ProtectedRoute";
 import HomeAdministrator from "./administator/HomeAdministrator";
 import CereriCazareAdmin from "./administator/CereriCazareAdmin";
+import PrezentareCamine from "./PrezentareCamine";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<HomeStudent />} />
         <Route path="/cerere-cazare" element={<CerereCazareStudent />} />
+        <Route path="/prezentare-camine" element={<PrezentareCamine />}/>
         <Route path="/admin/dashboard" element={
           <ProtectedRoute user={user} isAdminRequired={true}>
             <HomeAdministrator />

@@ -45,13 +45,24 @@ function CerereCazare() {
   }, [searchTerm]);
 
   const handleColegSelect = (userId) => {
+    const cameraSelectata = camere.find((camera) => camera.id === parseInt(selectedCamera,10));
+    if(!cameraSelectata) return;
+
+    const maxPaturi=cameraSelectata.numar_paturi;
+    const numarPersoane = selectedColegi.length + 1;
+
     setSelectedColegi((prevSelected) => {
       if (prevSelected.includes(userId)) {
-        return prevSelected.filter((id) => id !== userId); // Deselectează
+        return prevSelected.filter((id) => id !== userId); 
+      } else if(numarPersoane < maxPaturi) {
+        setTimeout(() => setSearchTerm(""), 150);
+        return [...prevSelected, userId]; 
       } else {
-        return [...prevSelected, userId]; // Selectează
+        alert(`Nu poți selecta mai mulți colegi decât numărul de paturi disponibile (${maxPaturi}).`);
+        return prevSelected;
       }
     });
+    
   };
 
   const handleSubmit = () => {
@@ -142,34 +153,40 @@ function CerereCazare() {
                 <table className="colegi-table">
                   <thead>
                     <tr>
-                      <th>Selectează</th>
+                      <th></th>
                       <th>Nume</th>
                       <th>Prenume</th>
                       <th>Facultate</th>
                       <th>Specializare</th>
+                      <th>Grupa</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {utilizatori.map((user) => (
-                      <tr key={user.id}>
+                    {[...utilizatori]
+                    .sort((a, b) => (selectedColegi.includes(a.id) ? -1 : 1))
+                    .map((user) => (
+                      <tr key={user.id} className={selectedColegi.includes(user.id) ? "randSelectatCerere" : ""}>
                         <td>
-                          <input
-                            type="checkbox"
-                            checked={selectedColegi.includes(user.id)}
-                            onChange={() => handleColegSelect(user.id)}
-                          />
+                         <button 
+                            onClick={() => handleColegSelect(user.id)} 
+                            className={selectedColegi.includes(user.id) ? "btn-remove" : "btn-add"}>
+                            {selectedColegi.includes(user.id) ? "✖ Elimină" : "✔ Adaugă"}
+                          </button>
                         </td>
                         <td>{user.nume}</td>
                         <td>{user.prenume}</td>
                         <td>{user.facultate}</td>
                         <td>{user.specializare}</td>
+                        <td></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               <div className="butonFormular">
-                <button  onClick={handleSubmit}>Trimite cererea</button>
+                <button className="submit-btn" onClick={handleSubmit}>
+                  Trimite cererea
+                </button>
               </div>
             </div>
         </div>

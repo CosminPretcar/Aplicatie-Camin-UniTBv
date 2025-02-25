@@ -138,12 +138,11 @@ app.post("/cereri", async (req, res) => {
       const userId = req.user.id;
 
       if (!cameraId || !etaj || !caminId) {
-          console.error("Eroare: Lipsesc date!", { caminId, etaj, cameraId });
           return res.status(400).json({ message: "Caminul, etajul și camera sunt necesare!" });
       }
 
       const cameraResult = await db.query(
-          "SELECT id FROM camere WHERE id = $1 AND camin_id = $2",
+          "SELECT numar_paturi FROM camere WHERE id = $1 AND camin_id = $2",
           [cameraId, caminId]
       );
 
@@ -151,9 +150,16 @@ app.post("/cereri", async (req, res) => {
           return res.status(400).json({ message: "Camera selectată nu există în acest cămin!" });
       }
 
+      const numarPaturi = cameraResult.rows[0].numar_paturi;
+      const numarSolicitanti = colegi.length + 1; // +1 pentru utilizatorul curent
+
+      if (numarSolicitanti > numarPaturi) {
+          return res.status(400).json({ message: `Numărul maxim de persoane pentru această cameră este ${numarPaturi}.` });
+      }
+
       const colegiString = colegi.join(",");
 
-      console.log("Valori inserate în baza de date:", { userId, caminId, etaj, cameraId, colegiString });
+      // console.log("Valori inserate în baza de date:", { userId, caminId, etaj, cameraId, colegiString });
 
       await db.query(
           "INSERT INTO cereri_cazare (user_id, camin_id, etaj, camera_id, colegi) VALUES ($1, $2, $3, $4, $5)",

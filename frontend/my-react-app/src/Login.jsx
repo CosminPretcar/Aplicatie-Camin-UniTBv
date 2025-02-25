@@ -20,8 +20,6 @@ function Login({setUser}) {
         {withCredentials: true}
       );
       
-      console.log("Răspuns login:", response);
-
       if (response.status === 200) {
         const {nume,prenume, esteAdmin} = response.data;
         if (response.status === 200) {
@@ -72,8 +70,18 @@ function Login({setUser}) {
         <button className="butonLogin" type="submit">Submit</button>
       </form>
       </div>
+      <div style={{marginTop: "100px"}}>
+        <p>
+          Prezentare pentru studentii noi{" "}
+            <span 
+              style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }} 
+                onClick={() => navigate("/prezentare-camine")}
+                  >
+                    aici!
+            </span>
+          </p>
+      </div>
       
-      <p>Prezentare camine pentru noii studenti!</p>
     </div>
   );
 }
