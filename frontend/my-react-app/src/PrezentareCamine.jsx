@@ -4,6 +4,15 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./styles/PrezentareCamine.css";
 
 function PrezentareCamine() {
+  const reviews = [
+    { name: "Andrei Popescu", text: "Am stat în Complexul Colina timp de 3 ani și experiența a fost una excelentă! Camerele sunt bine întreținute, iar comunitatea este foarte prietenoasă." },
+    { name: "Maria Ionescu", text: "Complexul Memorandului a fost o alegere bună pentru mine datorită accesului ușor la mijloacele de transport. Grupurile sanitare comune sunt un mic dezavantaj, dar condițiile generale sunt acceptabile." },
+  ]
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  
   return (
     <div className="container mt-4">
       <h1 className="text-center mb-4">Prezentarea Căminelor Studențești în cadrul UniTBv</h1>
@@ -28,7 +37,7 @@ function PrezentareCamine() {
           Alegerea unui cămin potrivit este un pas important pentru orice student. Este esențial să ții cont de aspecte precum condițiile de locuire, tipul camerei, regulile impuse și, bineînțeles, costurile implicate. Fiecare cămin are propriile sale particularități, iar informațiile corecte și actualizate te pot ajuta să faci cea mai bună alegere pentru tine.
           </p>
           <div className="alert alert-info text-center" role="alert">
-            📌 **Știați că?** Multe cămine organizează evenimente și proiecte educaționale, oferind un mediu dinamic și stimulant pentru studenți!
+            📌**Știați că?** Multe cămine organizează evenimente și proiecte educaționale, oferind un mediu dinamic și stimulant pentru studenți!
           </div>
         </div>
       </div>
@@ -84,34 +93,267 @@ function PrezentareCamine() {
         </div>
       </div>
 
-
-
-
-
-      {/* Secțiune: Tipuri de cămine */}
+      {/* Secțiune: Tipuri de camere*/}
       <div className="card mb-3">
         <div className="card-body">
-          <h5 className="card-title"><i className="bi bi-building"></i> Tipuri de Cămine</h5>
-          <ul className="list-group">
-            <li className="list-group-item">Cămine administrate de universitate</li>
-            <li className="list-group-item">Cămine private</li>
-            <li className="list-group-item">Camere single, duble sau multiple</li>
-          </ul>
-        </div>
-      </div>
+          <h5 className="card-title text-center"><i className="bi bi-door-closed"></i> Prezentare Camere de Cămin</h5>
 
-      {/* Secțiune: Facilități */}
-      <div className="card mb-3">
-        <div className="card-body">
-          <h5 className="card-title"><i className="bi bi-tools"></i> Facilități</h5>
-          <p>Căminele oferă diverse facilități, inclusiv:</p>
-          <div className="row">
-            <div className="col-md-4"><i className="bi bi-wifi"></i> Internet</div>
-            <div className="col-md-4"><i className="bi bi-basket"></i> Bucătărie comună</div>
-            <div className="col-md-4"><i className="bi bi-shield-lock"></i> Securitate 24/7</div>
+            <div className="row">
+              {/* Card pentru camerele din Complexul Colina */}
+              <div className="col-md-6">
+                <div className="card">
+                  <div className="card-body">
+                  <h5 className="card-title text-center">Camere în Complexul Colina</h5>
+
+                  <h6><i className="bi bi-house-door-fill"></i> Tipologie și Configurație</h6>
+                  <p>
+                    În <span>Complexul Colina</span>, camerele sunt dotate cu 
+                    <span> 4 paturi</span>. Aceste camere sunt complet echipate cu 
+                    <span> 4 dulapuri (dimensiuni)</span>, <span> două paturi supraetajate (dimensiuni)</span>,
+                    <span> două birouri(dimensiuni)</span>, 
+                    <span> un blat de lucru (dimensiuni)</span>, <span>două etajere</span> și 
+                    <span> un dulap mobil cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu.
+                  </p>
+                  <p>
+                    Grupurile sanitare sunt <span>organizate în module</span>, fiecare deservind <span>două camere</span>. 
+                    Fiecare modul dispune de <span>o toaletă</span>, <span>un duș</span> și 
+                    <span> o chiuvetă cu oglindă</span>, asigurând un grad mai ridicat de intimitate și confort pentru studenți.
+                    O excepție de la această organizare o reprezintă <span>Căminul 16</span>, unde fiecare cameră dispune de <span>baie proprie</span>.
+                    De asemenea, pe etaj sunt disponibile 
+                    <span> două mașini de spălat haine</span>, oferind studenților facilități esențiale pentru igienă și întreținerea rufelor.
+                  </p>
+                  <p>În **Căminul 16**, fiecare cameră dispune de **baie proprie**, în timp ce în restul căminelor grupul sanitar este comun pentru două camere.</p>
+                  {/* <p>Pe fiecare etaj este disponibila o sala de lectura!</p> */}
+
+                  <h6><i className="bi bi-tools"></i> Facilități în cameră</h6>
+                  <ul>
+                    <li>Fiecare student beneficiază de un spațiu individual de depozitare și studiu</li> 
+                    <li>Acces la un dulap propriu, un birou sau un loc la blat de dimensiuni echivalente</li>
+                    <li>Jumătate dintr-o etajeră și un raft din dulapul mobil, asigurând astfel un echilibru între organizare și confort.</li>
+                    <li>4 prize duble si una simpla</li>
+                    <li>Conexiune ethernet si Wi-Fi disponibile</li>
+                    <li>Două lustre</li>
+                  </ul>
+
+                  <h6><i className="bi bi-wallet"></i>Obiecte necesare de achiziționat alături de colegi</h6>
+                  <ul>
+                    <li>Frigider</li>
+                    <li>Cuptor cu microunde</li>
+                    <li>Matura si mop pentru a mentine curatenia in camera</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Card pentru camerele din Complexul Memorandului */}
+            <div className="col-md-6">
+              <div className="card">
+                <div className="card-body">
+                <h5 className="card-title text-center">Camere în Complexul Memorandului</h5>
+
+                <h6><i className="bi bi-house-door-fill"></i> Tipologie și Configurație</h6>
+                <p>
+                  În <span>Complexul Memorandului</span>, camerele sunt dotate cu 
+                  <span> 3 sau 4 paturi</span>, cele cu <span>3 paturi</span>  având dimensiuni ușor reduse. 
+                  Camerele cu <span>4 paturi</span> sunt complet echipate cu <span>4 dulapuri (dimensiuni)</span>, 
+                  <span> două paturi supraetajate (dimensiuni)</span>, <span>două birouri(dimensiuni)</span>, 
+                  <span> un blat de lucru (dimensiuni)</span>, <span>două etajere</span> și 
+                  <span> un dulap mobil cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu. 
+                  În camerele cu <span>3 paturi</span>, din cauza numărului redus de locatari, 
+                  <span> unele dintre aceste elemente pot lipsi</span> sau pot avea dimensiuni diferite pentru a optimiza spațiul disponibil. 
+                </p>
+                <p>
+                  Grupurile sanitare sunt <span>comune pe etaj</span>, iar etajele pot fi 
+                  <span> mixte sau unisex</span>, în funcție de organizarea căminului. 
+                  Fiecare etaj dispune de <span>4 dușuri</span>, situate într-o cameră separată, 
+                  <span> 5 chiuvete cu oglindă</span> într-o altă încăpere, precum și 
+                  <span> 4 toalete</span> într-un spațiu distinct. De asemenea, pe etaj sunt disponibile 
+                  <span> două mașini de spălat haine</span>, oferind studenților facilități esențiale pentru igienă și confort.
+                </p>
+                <p>Pe fiecare etaj este disponibila o sala de lectura!</p>
+
+                <h6><i className="bi bi-tools"></i> Facilități în cameră</h6>
+                  <ul>
+                    <li>Fiecare student beneficiază de un spațiu individual de depozitare și studiu</li> 
+                    <li>Acces la un dulap propriu, un birou sau un loc la blat de dimensiuni echivalente</li>
+                    <li>Jumătate dintr-o etajeră și un raft din dulapul mobil, asigurând astfel un echilibru între organizare și confort.</li>
+                    <li>4 prize duble si una simpla</li>
+                    <li>Conexiune ethernet si Wi-Fi disponibile</li>
+                    <li>Două lustre</li>
+                  </ul>
+
+                  <h6><i className="bi bi-wallet"></i>Obiecte necesare de achiziționat alături de colegi</h6>
+                  <ul>
+                    <li>Frigider</li>
+                    <li>Cuptor cu microunde</li>
+                    <li>Matura si mop pentru a mentine curatenia in camera</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div className="card mb-3">
+        <div className="card-body">
+          <h5 className="card-title text-center"><i className="bi bi-shield-check"></i> Igiena în Cămine</h5>
+
+          <div className="row">
+            {/* Primul rând de carduri */}
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-house-door-fill"></i> Curățenia în camere</h6>
+                    <ul>
+                      <li>Fiecare student este responsabil de curățenia propriei camere.</li>
+                      <li>Se recomandă aerisirea zilnică și menținerea unui spațiu ordonat.</li>
+                      <li>Gunoiul trebuie colectat regulat.</li>
+                    </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-water"></i> Întreținerea grupurilor sanitare</h6>
+                  <ul>
+                    <li>Curățenia băilor comune este asigurată periodic de personal.</li>
+                    <li>Studenții trebuie să respecte regulile pentru menținerea igienei.</li>
+                    <li>În <span>Căminul 16</span>, fiecare cameră dispune de baie proprie.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
+            {/* Al doilea rând de carduri */}
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-wash"></i> Spălarea hainelor</h6>
+                  <ul>
+                    <li>Mașini de spălat disponibile pe fiecare etaj.</li>
+                    <li>Utilizare conform programului stabilit.</li>
+                    <li>Se recomandă folosirea detergenților potriviți.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-person-fill"></i> Norme de igienă personală</h6>
+                  <ul>
+                    <li>Spălarea frecventă a mâinilor și utilizarea dezinfectanților.</li>
+                    <li>Păstrarea produselor de igienă în spații curate.</li>
+                    <li>Evitarea împărțirii obiectelor personale</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Al treilea rând de carduri */}
+          <div className="card mb-3">
+            <div className="card-body">
+              <h6><i className="bi bi-exclamation-triangle"></i> Măsuri speciale</h6>
+              <ul>
+                <li>Verificări periodice pentru menținerea igienei.</li>
+                <li>Studenții pot sesiza administrația căminului în caz de probleme.</li>
+              </ul>
+            </div>
+          </div>
+          <div className="alert alert-success text-center" role="alert">
+            ✅ Respectarea normelor de igienă asigură un mediu plăcut și sănătos pentru toți studenții!
+          </div>
+          {/* Alerta cu roșu pentru clarificare */}
+          <div className="alert alert-danger text-center mt-3" role="alert">
+            ⚠️ **Acestea sunt doar recomandări!** Deși universitatea implementează măsuri pentru igienă, <strong>responsabilitatea menținerii curățeniei revine fiecărui student.</strong> 
+            Un mediu sănătos depinde de respectarea regulilor de către toți locatarii!
+          </div>
+        </div>
+      </div>
+
+      <div className="card mb-3">
+        <div className="card-body">
+          <h5 className="card-title text-center"><i className="bi bi-book"></i> Regulamentul Căminului</h5>
+
+          <div className="row">
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-clock"></i> Program și liniște</h6>
+                    <ul>
+                      <li>Program de liniște: <span>22:00 - 07:00</span>. În acest interval, zgomotele puternice sunt interzise.</li>
+                      <li>Vizitele sunt permise doar în intervalele aprobate de administrație.</li>
+                      <li>Studenții trebuie să respecte programul căminului și să nu perturbe colegii.</li>
+                    </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-tools"></i> Utilizarea spațiilor comune</h6>
+                  <ul>
+                    <li>Folosirea bucătăriilor și a sălilor de lectură trebuie făcută cu grijă.</li>
+                    <li>Studenții trebuie să curețe după ei și să nu blocheze accesul altor colegi.</li>
+                    <li>Orice defecțiuni trebuie raportate administrației pentru reparații.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-exclamation-triangle"></i> Reguli privind siguranța</h6>
+                  <ul>
+                    <li>Este interzisă folosirea aparatelor electrocasnice neautorizate.</li>
+                    <li>Accesul persoanelor străine în cămin este permis doar cu aprobarea administrației.</li>
+                    <li>Fumatul și consumul de alcool în cămin sunt strict interzise.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="card mb-3">
+                <div className="card-body">
+                  <h6><i className="bi bi-exclamation-octagon"></i> Sancțiuni pentru nerespectarea regulamentului</h6>
+                  <ul>
+                    <li>Avertismente scrise pentru abateri minore.</li>
+                    <li>Excluderea temporară sau definitivă din cămin pentru încălcări grave.</li>
+                    <li>Despăgubiri pentru daunele aduse mobilierului sau echipamentelor.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Alerte pentru conștientizare */}
+          <div className="alert alert-warning text-center" role="alert">
+            ⚠️ **Respectarea regulamentului asigură un mediu sigur și plăcut pentru toți locatarii!**
+          </div>
+          <div className="alert alert-info text-center mt-3" role="alert">
+            ℹ️ **Recomandăm citirea integrală a regulamentului pentru a evita eventuale neînțelegeri.**  
+            <p>📜 **Accesează regulamentul complet aici:** </p>
+            <a href="https://www.unitbv.ro/documente/despre-unitbv/regulamente-hotarari/regulamentele-universitatii/studenti/Regulament_camine_22.01.2025.pdf" target="_blank" rel="noopener noreferrer">
+              Regulamentul Oficial al Căminelor UniTBv
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+
 
       {/* Secțiune: Avantaje și Dezavantaje */}
       <div className="row">
@@ -120,9 +362,13 @@ function PrezentareCamine() {
             <div className="card-body">
               <h5 className="card-title"><i className="bi bi-hand-thumbs-up"></i> Avantaje</h5>
               <ul>
-                <li>Costuri reduse</li>
-                <li>Aproape de universitate</li>
-                <li>Comunitate de studenți</li>
+                <li><i className="bi bi-cash-stack"></i> Costuri reduse
+                  {/* <ul><li><p>Cazarea la cămin este mult mai ieftină decât închirierea unui apartament.</p></li></ul> */}
+                </li>
+                <li><i className="bi bi-person-walking"></i> Proximitatea față de facultate</li>
+                <li><i className="bi bi-people-fill"></i> Viață socială activă</li>
+                <li> Acces la facilități comune</li>
+                <li><i className="bi bi-book-half"></i> Mediu motivant pentru studiu</li>
               </ul>
             </div>
           </div>
@@ -133,30 +379,37 @@ function PrezentareCamine() {
               <h5 className="card-title"><i className="bi bi-hand-thumbs-down"></i> Dezavantaje</h5>
               <ul>
                 <li>Zgomot și lipsă de intimitate</li>
-                <li>Reguli stricte</li>
+                <li><i className="bi bi-book"> </i> Reguli stricte</li>
                 <li>Condiții diferite în funcție de cămin</li>
+                <li>Spațiu limitat</li>
+                <li>Posibile conflicte cu colegii de cameră</li>
               </ul>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Secțiune: Proces de aplicare */}
+      {/* Secțiune: Recenzii */}
       <div className="card mb-3">
         <div className="card-body">
-          <h5 className="card-title"><i className="bi bi-pencil-square"></i> Proces de Aplicare</h5>
-          <p>Înscrierea pentru un loc în cămin implică următorii pași:</p>
-          <ol className="list-group list-group-numbered">
-            <li className="list-group-item">Depunerea cererii online</li>
-            <li className="list-group-item">Selecția pe baza criteriilor stabilite</li>
-            <li className="list-group-item">Confirmarea locului și plata taxei</li>
-          </ol>
+          <h5 className="card-title text-center"><i className="bi bi-chat-left-text-fill"></i> Recenzii ale foștilor studenți</h5>
+          <div className="list-group mb-3">
+            {reviews.map((review, index) => (
+              <div key={index} className="list-group-item">
+                <h6><i className="bi bi-person-circle"></i> {review.name}</h6>
+                <p>{review.text}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Secțiune: Concluzie */}
-      <div className="alert alert-primary text-center" role="alert">
-        Alegerea unui cămin este o decizie importantă! Informează-te bine și alege opțiunea potrivită pentru tine!
+      {/* Butoane pentru navigare */}
+      <div className="d-flex justify-content-between mb-4">
+        <a href="/" className="btn btn-primary">
+          <i className="bi bi-house-door"></i> Pagina Principală
+        </a>
+        <button onClick={scrollToTop} className="btn btn-secondary">
+          <i className="bi bi-arrow-up-circle"></i> Înapoi Sus
+        </button>
       </div>
     </div>
   );

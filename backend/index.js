@@ -6,12 +6,20 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
 import dotenv from "dotenv";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT;
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+})
 
 const isAdmin= (req,res, next) => {
   if(req.isAuthenticated() && req.user.esteAdmin) {
@@ -142,7 +150,7 @@ app.post("/cereri", async (req, res) => {
       }
 
       const cameraResult = await db.query(
-          "SELECT numar_paturi FROM camere WHERE id = $1 AND camin_id = $2",
+          "SELECT numar_paturi, numar_camera FROM camere WHERE id = $1 AND camin_id = $2",
           [cameraId, caminId]
       );
 
@@ -150,6 +158,7 @@ app.post("/cereri", async (req, res) => {
           return res.status(400).json({ message: "Camera selectată nu există în acest cămin!" });
       }
 
+      const numarCamera = cameraResult.rows[0].numar_camera;
       const numarPaturi = cameraResult.rows[0].numar_paturi;
       const numarSolicitanti = colegi.length + 1; // +1 pentru utilizatorul curent
 
@@ -159,12 +168,31 @@ app.post("/cereri", async (req, res) => {
 
       const colegiString = colegi.join(",");
 
-      // console.log("Valori inserate în baza de date:", { userId, caminId, etaj, cameraId, colegiString });
-
       await db.query(
           "INSERT INTO cereri_cazare (user_id, camin_id, etaj, camera_id, colegi) VALUES ($1, $2, $3, $4, $5)",
           [userId, caminId, etaj, cameraId, colegiString]
       );
+
+      const userResult = await db.query("SELECT email, nume, prenume FROM users WHERE id = $1", [userId]);
+      const userEmail = userResult.rows[0].email;
+      const userNume = userResult.rows[0].nume;
+      const userPrenume = userResult.rows[0].prenume;
+
+      // 🔹 Trimitem email-ul de confirmare
+      const mailOptions = {
+        from: `"Cazare Campus" <noreply@cazare.ro>`, 
+        to: userEmail, 
+        subject: "Confirmare Cerere de Cazare",
+        text: `Salut, ${userPrenume} ${userNume}! Cererea ta de cazare în căminul ${caminId}, etajul ${etaj}, camera ${numarCamera} a fost înregistrată.`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("Eroare la trimiterea emailului:", error);
+        } else {
+            console.log("Email trimis:", info.response);
+        }
+      });
 
       res.json({ message: "Cererea a fost înregistrată cu succes!" });
   } catch (error) {
