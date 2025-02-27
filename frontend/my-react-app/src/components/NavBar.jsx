@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../components/NavBar.jsx";
@@ -6,8 +6,22 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function NavBar() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/me", { withCredentials: true });
+        if(response.data.isAuthenticated) {
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user: ", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleLogout = async() => {
     try {
@@ -19,7 +33,7 @@ function NavBar() {
   }
 
   return (
-    <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark position-fixed" 
+    <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" 
     style={{
       width: "280px",
       height: "100vh",
@@ -50,10 +64,10 @@ function NavBar() {
             Cerere Cazare
           </a>
         </li>
-        {/* <li>
+        <li>
           <a href="#" className="nav-link text-white">
             <i className="bi bi-table me-2"></i>
-            Butonul2
+            Program masini de spalat
           </a>
         </li>
         <li>
@@ -67,7 +81,7 @@ function NavBar() {
             <i className="bi bi-people me-2"></i>
             Butonul4
           </a>
-        </li> */}
+        </li>
         <li>
           <a onClick={handleLogout} className="nav-link text-white" style={{ cursor: "pointer" }}>
           <i className="bi bi-box-arrow-in-right"></i>
@@ -77,30 +91,22 @@ function NavBar() {
         
       </ul>
       <hr />
-      {/* <div className="dropdown">
+      <div className="profile-button">
         <a 
-          href="#" 
-          className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-          aria-expanded={dropdownOpen}
+          onClick={() => navigate(`/profilstudent/${user?.nume}`)} 
+          className="d-flex align-items-center text-white text-decoration-none"
+          style={{ cursor: "pointer" }}
         >
           <img 
-            src="https://github.com/mdo.png" 
+            src="/assets/poza_def.jpg"
             alt="" 
             width="32" 
             height="32" 
             className="rounded-circle me-2"
           />
-          <strong>mdo</strong>
+          <strong>{user ? `${user.nume} ${user.prenume}` : "Loading..."}</strong>
         </a>
-        <ul className={`dropdown-menu dropdown-menu-dark text-small shadow ${dropdownOpen ? "show" : ""}`}>
-          <li><a className="dropdown-item" href="#">New project...</a></li>
-          <li><a className="dropdown-item" href="#">Settings</a></li>
-          <li><a className="dropdown-item" href="#">Profile</a></li>
-          <li><hr className="dropdown-divider" /></li>
-          <li><a className="dropdown-item" href="#">Sign out</a></li>
-        </ul>
-      </div> */}
+      </div>
     </div>
   );
 }

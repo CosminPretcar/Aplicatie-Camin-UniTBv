@@ -6,6 +6,7 @@ import "../styles/HomeStudent.css";
 
 function HomeStudent() {
   const [user, setUser] = useState({ nume: "utilizator", prenume: "" });
+  const [ora, setOra] = useState(new Date());
   useEffect(() => {
     axios.get("http://localhost:4000/me", { withCredentials: true })
       .then(response => {
@@ -16,17 +17,38 @@ function HomeStudent() {
       .catch(error => console.error("Error fetching user:", error));
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOra(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="d-flex">
       {/* Sidebar */}
       <NavBar />
 
       {/* Conținutul principal */}
-      <div className="content d-flex justify-content-center align-items-center" style={{ marginLeft: "280px", height: "100vh", width: "100%" }}>
-        <div>
-          <h1>Bine ai revenit, {user.prenume} {user.nume}!</h1>
+      <div className="container-fluid" style={{ marginLeft: "280px", height: "100vh" }}>
+        {/* Card de bun venit + Ora exactă */}
+        <div className="row mt-4">
+          {/* Ora exactă în stânga */}
+          <div className="col-md-3 d-flex align-items-center">
+            <div className="card bg-dark text-white p-3 w-100 shadow">
+              <h5 className="text-center">🕒 {ora.toLocaleTimeString()}</h5>
+            </div>
+          </div>
+
+          {/* Card de bun venit */}
+          <div className="col-md-9">
+            <div className="card shadow p-4 text-center">
+              <h2>Bine ai revenit, {user.prenume} {user.nume}!</h2>
+            </div>
+          </div>
         </div>
       </div>
+      
     </div>
   );
 }

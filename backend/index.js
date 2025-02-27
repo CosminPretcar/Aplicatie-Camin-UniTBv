@@ -63,12 +63,37 @@ const db = new pg.Client({
 db.connect();
 
 app.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
+  passport.authenticate("local", async (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ message: info.message });
 
-    req.logIn(user, (err) => {
+    req.logIn(user, async (err) => {
       if (err) return next(err);
+
+      try {
+        const userResult = await db.query("SELECT email FROM users WHERE id = $1", [user.id]);
+        const userEmail = userResult.rows[0].email;
+
+        const mailOptions = {
+          from: `"Sistem Cazare" <noreply@cazare.ro>`,
+          to: userEmail,
+          subject: "Autentificare reușită",
+          text: `Salut, ${user.nume} ${user.prenume}!\n\nTe-ai autentificat cu succes în platforma de cazare.\n\nDacă nu ai fost tu, te rugăm să schimbi parola imediat!`
+        };
+
+        // Trimitem email-ul
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Eroare la trimiterea emailului:", error);
+          } else {
+            console.log("Email de autentificare trimis:", info.response);
+          }
+        });
+
+      } catch (error) {
+        console.log("Eroare la extragerea emailului:", error);
+      }
+
       return res.json({ 
         message: "Login successful", 
         nume: user.nume, 
