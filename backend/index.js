@@ -7,6 +7,8 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
+import multer from "multer";
+import path from "path"
 
 dotenv.config();
 
@@ -27,6 +29,18 @@ const isAdmin= (req,res, next) => {
   }
   return res.status(403).json({message: "Acces interzis - doar administratorii au acces!"});
 };
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Folderul unde se salvează imaginile
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, `profile-${req.user.id}${ext}`); // Salvăm poza cu ID-ul utilizatorului
+  }
+});
+
+const upload = multer({ storage });
 
 app.use(cors({
   origin: "http://localhost:3000", 
@@ -70,29 +84,29 @@ app.post("/login", (req, res, next) => {
     req.logIn(user, async (err) => {
       if (err) return next(err);
 
-      try {
-        const userResult = await db.query("SELECT email FROM users WHERE id = $1", [user.id]);
-        const userEmail = userResult.rows[0].email;
+      // try {
+      //   const userResult = await db.query("SELECT email FROM users WHERE id = $1", [user.id]);
+      //   const userEmail = userResult.rows[0].email;
 
-        const mailOptions = {
-          from: `"Sistem Cazare" <noreply@cazare.ro>`,
-          to: userEmail,
-          subject: "Autentificare reușită",
-          text: `Salut, ${user.nume} ${user.prenume}!\n\nTe-ai autentificat cu succes în platforma de cazare.\n\nDacă nu ai fost tu, te rugăm să schimbi parola imediat!`
-        };
+      //   const mailOptions = {
+      //     from: `"Sistem Cazare" <noreply@cazare.ro>`,
+      //     to: userEmail,
+      //     subject: "Autentificare reușită",
+      //     text: `Salut, ${user.nume} ${user.prenume}!\n\nTe-ai autentificat cu succes în platforma de cazare.\n\nDacă nu ai fost tu, te rugăm să schimbi parola imediat!`
+      //   };
 
-        // Trimitem email-ul
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.error("Eroare la trimiterea emailului:", error);
-          } else {
-            console.log("Email de autentificare trimis:", info.response);
-          }
-        });
+      //   // Trimitem email-ul
+      //   transporter.sendMail(mailOptions, (error, info) => {
+      //     if (error) {
+      //       console.error("Eroare la trimiterea emailului:", error);
+      //     } else {
+      //       console.log("Email de autentificare trimis:", info.response);
+      //     }
+      //   });
 
-      } catch (error) {
-        console.log("Eroare la extragerea emailului:", error);
-      }
+      // } catch (error) {
+      //   console.log("Eroare la extragerea emailului:", error);
+      // }
 
       return res.json({ 
         message: "Login successful", 
@@ -106,7 +120,15 @@ app.post("/login", (req, res, next) => {
 
 app.get("/me", (req, res) => {
   if (req.isAuthenticated()) {
-    return res.json({ isAuthenticated: true, nume: req.user.nume, prenume: req.user.prenume });
+    return res.json({ 
+      isAuthenticated: true, 
+      nume: req.user.nume, 
+      prenume: req.user.prenume, 
+      email: req.user.email, 
+      facultate: req.user.facultate, 
+      specializare: req.user.specializare, 
+      poza_profil: req.user.poza_profil // 🟢 Corectat!
+    });
   } else {
     return res.json({ isAuthenticated: false });
   }
@@ -260,10 +282,17 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser(async (id, cb) => {
   try {
-    const result = await db.query("SELECT id, nume, prenume, esteadmin FROM users WHERE id = $1", [id]);
+    const result = await db.query(
+      "SELECT id, nume, prenume, email, facultate, specializare, poza_profil, esteadmin FROM users WHERE id = $1",
+      [id]
+    );
+
     if (result.rows.length === 0) {
       return cb(null, false);
     }
+
+    // console.log("🟢 Utilizator deserializat:", result.rows[0]); // Debugging
+
     cb(null, result.rows[0]);
   } catch (error) {
     cb(error);
@@ -276,6 +305,25 @@ app.post("/logout", (req, res, next) => {
     res.json({ message: "Logout successful" });
   });
 });
+
+app.post("/upload-profile-pic", upload.single("pozaProfil"), async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ success: false, message: "Neautorizat" });
+  }
+
+  const imageUrl = `/uploads/${req.file.filename}`;
+
+  try {
+    await db.query("UPDATE users SET poza_profil = $1 WHERE id = $2", [imageUrl, req.user.id]);
+    res.json({ success: true, imageUrl });
+  } catch (error) {
+    console.error("Eroare la salvarea imaginii:", error);
+    res.status(500).json({ success: false, message: "Eroare de server" });
+  }
+});
+
+// Servim fișierele statice din folderul uploads
+app.use("/uploads", express.static("uploads"));
 
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`);

@@ -98,8 +98,8 @@ function NavBar() {
           style={{ cursor: "pointer" }}
         >
           <img 
-            src="/assets/poza_def.jpg"
-            alt="" 
+            src={user?.poza_profil ? `http://localhost:4000${user.poza_profil}` : "/assets/poza_def.jpg"}
+            alt="Profil" 
             width="32" 
             height="32" 
             className="rounded-circle me-2"
