@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../components/NavBar";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/CerereCazare.css";
 
 function CerereCazare() {
@@ -9,13 +8,12 @@ function CerereCazare() {
   const [camere, setCamere] = useState([]);
   const [utilizatori, setUtilizatori] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedColegi, setSelectedColegi] = useState([]);
 
-  const [optiuni, setOptiuni] = useState([
-    { camin: "", etaj: "", camera: "" },
-    { camin: "", etaj: "", camera: "" },
-    { camin: "", etaj: "", camera: "" }
-  ]);
+  const [selectedCamin, setSelectedCamin] = useState("");
+  const [selectedCamera, setSelectedCamera] = useState("");
+  const [selectedColegi, setSelectedColegi] = useState([]);
+  const [selectedEtaj, setSelectedEtaj] = useState("");
+  const etajeUnice = [...new Set(camere.map(camera => camera.etaj))];
 
   useEffect(() => {
     axios.get("http://localhost:4000/camine").then((response) => {
@@ -24,12 +22,12 @@ function CerereCazare() {
   }, []);
 
   useEffect(() => {
-    if (optiuni.some((opt) => opt.camin)) {
-      axios.get(`http://localhost:4000/camere/${optiuni[0].camin}`).then((response) => {
+    if (selectedCamin) {
+      axios.get(`http://localhost:4000/camere/${selectedCamin}`).then((response) => {
         setCamere(response.data);
       });
     }
-  }, [optiuni]);
+  }, [selectedCamin]);
 
   useEffect(() => {
     const fetchUtilizatori = async () => {
@@ -42,32 +40,50 @@ function CerereCazare() {
         console.error("Eroare la preluarea utilizatorilor:", error);
       }
     };
+  
     fetchUtilizatori();
   }, [searchTerm]);
 
-  const handleOptiuneChange = (index, field, value) => {
-    setOptiuni((prevOptiuni) => {
-      const updatedOptiuni = [...prevOptiuni];
-      updatedOptiuni[index][field] = value;
-      return updatedOptiuni;
-    });
-  };
-
   const handleColegSelect = (userId) => {
-    setSelectedColegi((prevSelected) => 
-      prevSelected.includes(userId) ? prevSelected.filter((id) => id !== userId) : [...prevSelected, userId]
-    );
+    const cameraSelectata = camere.find((camera) => camera.id === parseInt(selectedCamera,10));
+    if(!cameraSelectata) return;
+
+    const maxPaturi=cameraSelectata.numar_paturi;
+    const numarPersoane = selectedColegi.length + 1;
+
+    setSelectedColegi((prevSelected) => {
+      if (prevSelected.includes(userId)) {
+        return prevSelected.filter((id) => id !== userId); 
+      } else if(numarPersoane < maxPaturi) {
+        setTimeout(() => setSearchTerm(""), 150);
+        return [...prevSelected, userId]; 
+      } else {
+        alert(`Nu poți selecta mai mulți colegi decât numărul de paturi disponibile (${maxPaturi}).`);
+        return prevSelected;
+      }
+    });
+    
   };
 
   const handleSubmit = () => {
-    if (optiuni.every(opt => opt.camin === "" || opt.camera === "")) {
-      alert("Selectați cel puțin o cameră!");
+    const cameraSelectata = camere.find((camera) => camera.id === parseInt(selectedCamera, 10));
+
+    if (!selectedCamera) {
+      alert("Selectați o cameră!");
       return;
     }
 
+    alert(`Cererea de cazare:
+      Cămin ID: ${selectedCamin}
+      Etaj: ${cameraSelectata.etaj}
+      Camera ID: ${cameraSelectata.id}
+      Coleg(i): ${selectedColegi.join(", ")}`);
+
     axios.post("http://localhost:4000/cereri", {
-      optiuniCazare: optiuni,
-      colegi: selectedColegi
+        caminId: selectedCamin,
+        etaj: cameraSelectata.etaj,
+        cameraId: cameraSelectata.id,
+        colegi: selectedColegi,
     }, { withCredentials: true })
     .then(response => {
         alert(response.data.message);
@@ -76,126 +92,105 @@ function CerereCazare() {
         console.error("Eroare la trimiterea cererii: ", error);
         alert("Eroare la trimiterea cererii!");
     });
-  };
+};
 
   return (
-    <div>
+    <div> 
       <NavBar />
-      <div className="container mt-3 bg-light rounded shadow">
-        <h1 className="text-center">Formular Cerere Cazare</h1>
-
-        <div className="row mt-4">
-          {optiuni.map((opt, index) => (
-            <div key={index} className="col-md-4">
-              <div className="card text-white bg-dark">
-                <div className="card-header">Optiunea {index + 1}</div>
-                <div className="card-body">
-                  
-                  <div className="form-group">
-                    <label className="form-label text-light">Cămin:</label>
-                    <select 
-                      className="form-select"
-                      value={opt.camin} 
-                      onChange={(e) => handleOptiuneChange(index, "camin", e.target.value)}
-                    >
-                      <option value="">Selectează un cămin</option>
-                      {camine.map((camin) => (
-                        <option key={camin.id} value={camin.id}>{camin.nume_camin}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group mt-2">
-                    <label className="form-label text-light">Etaj:</label>
-                    <select 
-                      className="form-select"
-                      value={opt.etaj} 
-                      onChange={(e) => handleOptiuneChange(index, "etaj", e.target.value)}
-                    >
-                      <option value="">Selectează un etaj</option>
-                      {[...new Set(camere.map(camera => camera.etaj))].map((etaj) => (
-                        <option key={etaj} value={etaj}>Etaj {etaj}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group mt-2">
-                    <label className="form-label text-light">Camera:</label>
-                    <select 
-                      className="form-select"
-                      value={opt.camera} 
-                      onChange={(e) => handleOptiuneChange(index, "camera", e.target.value)}
-                    >
-                      <option value="">Selectează o cameră</option>
-                      {camere
-                        .filter((camera) => opt.etaj === "" || camera.etaj.toString() === opt.etaj)
-                        .map((camera) => (
-                          <option key={camera.id} value={camera.id}>
-                            Camera {camera.numar_camera} - {camera.numar_paturi} paturi
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                </div>
+        <div className="containerFormular">
+          <h1>Formular Cerere Cazare</h1>
+          <div className="form-container">
+            <div className="form-row">
+              <div className="form-group">
+                <label>Camin:</label>
+                <select value={selectedCamin} onChange={(e) => setSelectedCamin(e.target.value)}>
+                  <option value="">Selectează un cămin</option>
+                  {camine.map((camin) => (
+                    <option key={camin.id} value={camin.id}>
+                      {camin.nume_camin}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-          ))}
+
+            <div className="form-group">
+              <label>Etaj:</label>
+              <select value={selectedEtaj} onChange={(e) => setSelectedEtaj(e.target.value)}>
+                <option value="">Selectează un etaj</option>
+                {etajeUnice.map((etaj) => (
+                  <option key={etaj} value={etaj}>
+                    Etaj {etaj}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Camera:</label>
+              <select value={selectedCamera} onChange={(e) => setSelectedCamera(e.target.value)}>
+                <option value="">Selectează o cameră</option>
+                {camere
+                  .filter((camera) => selectedEtaj === "" || camera.etaj.toString() === selectedEtaj)
+                  .map((camera) => (
+                    <option key={camera.id} value={camera.id}>
+                      Camera {camera.numar_camera} - {camera.numar_paturi} paturi
+                    </option>
+                  ))}
+              </select>
+            </div>
+          </div>
+            <div className="tabel">
+              <div className="form-group">
+                <label>Coleg(i) de cameră:</label>
+                <input
+                  type="text"
+                  placeholder="Caută colegi..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-bar"
+                />
+                <table className="colegi-table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Nume</th>
+                      <th>Prenume</th>
+                      <th>Facultate</th>
+                      <th>Specializare</th>
+                      <th>Grupa</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...utilizatori]
+                    .sort((a, b) => (selectedColegi.includes(a.id) ? -1 : 1))
+                    .map((user) => (
+                      <tr key={user.id} className={selectedColegi.includes(user.id) ? "randSelectatCerere" : ""}>
+                        <td>
+                         <button 
+                            onClick={() => handleColegSelect(user.id)} 
+                            className={selectedColegi.includes(user.id) ? "btn-remove" : "btn-add"}>
+                            {selectedColegi.includes(user.id) ? "✖ Elimină" : "✔ Adaugă"}
+                          </button>
+                        </td>
+                        <td>{user.nume}</td>
+                        <td>{user.prenume}</td>
+                        <td>{user.facultate}</td>
+                        <td>{user.specializare}</td>
+                        <td></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="butonFormular">
+                <button className="submit-btn" onClick={handleSubmit}>
+                  Trimite cererea
+                </button>
+              </div>
+            </div>
         </div>
-
-        <div className="form-group mt-4">
-          <label>Coleg(i) de cameră:</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Caută colegi..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <table className="table mt-3">
-            <thead className="table-light">
-              <tr>
-                <th></th>
-                <th>Nume</th>
-                <th>Prenume</th>
-                <th>Facultate</th>
-                <th>Specializare</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...utilizatori]
-              .sort((a, b) => {
-                const aSelected = selectedColegi.includes(a.id);
-                const bSelected = selectedColegi.includes(b.id);
-                return bSelected - aSelected; // Mută pe cei selectați în față
-                })
-                .map((user) => (
-                <tr key={user.id} className={selectedColegi.includes(user.id) ? "table-success" : ""}>
-
-                  <td>
-                    <button
-                      className={`btn ${selectedColegi.includes(user.id) ? "btn-danger" : "btn-success"}`}
-                      onClick={() => handleColegSelect(user.id)}
-                    >
-                      {selectedColegi.includes(user.id) ? "✖ Elimină" : "✔ Adaugă"}
-                    </button>
-                  </td>
-                  <td>{user.nume}</td>
-                  <td>{user.prenume}</td>
-                  <td>{user.facultate}</td>
-                  <td>{user.specializare}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="d-flex justify-content-end">
-          <button className="btn btn-primary" onClick={handleSubmit}>Trimite cererea</button>
-        </div>
-
-      </div>
-    </div>
+    </div> 
   );
 }
 
