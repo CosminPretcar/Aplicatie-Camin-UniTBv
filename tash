@@ -1,0 +1,41 @@
+[33mcommit 13ed2a85bfcafe10fe015f7919205dc8c121da0a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: CosminPretcar <cosmin.pretcar@gmail.com>
+Date:   Mon Mar 3 14:38:43 2025 +0200
+
+    Am adaugat upload-ul imaginii de profil pentru fiecare cont
+
+[33mcommit 453acc86e5f7e7c5a60acd63cdf50c2d0a36a110[m
+Author: CosminPretcar <cosmin.pretcar@gmail.com>
+Date:   Thu Feb 27 19:09:41 2025 +0200
+
+    Mici update-uri ale aplicatiei, urmeaza sa implementez upload-ul imaginii de profil, creez acest commit pentru a salva progresul pana in acest moment
+
+[33mcommit a1773dc3770eb350999074d0b831e87bd438d5e9[m
+Author: CosminPretcar <cosmin.pretcar@gmail.com>
+Date:   Thu Feb 27 00:04:13 2025 +0200
+
+    Am finalizat pagina de prezentare a caminelor si am adaugat trimiterea de mail cand se realizeaza o cerere de cazare
+
+[33mcommit 4c4eb8302150bf255934b60345a43b74b4d0c8ff[m
+Author: CosminPretcar <cosmin.pretcar@gmail.com>
+Date:   Tue Feb 25 17:50:35 2025 +0200
+
+    Am mai lucrat putin la pagina de cerere cazare si am creat si pagina de prezentare a caminelor
+
+[33mcommit b66d78ea1c0499c8811e49bb8e7fd99e65123bc7[m
+Author: CosminPretcar <cosmin.pretcar@gmail.com>
+Date:   Sun Feb 23 00:12:08 2025 +0200
+
+    Am adaugat noi utilizatori in baza de date, alaturi de coloanele sex,facultate,specializare, am adaugat un search bar pentru a gasi utilizatori mai usor si alte mici modificari
+
+[33mcommit 86f8cfa6a26c4a5e919885f548110141636cee87[m
+Author: CosminPretcar <cosmin.pretcar@gmail.com>
+Date:   Sat Feb 22 00:00:31 2025 +0200
+
+    Am lucrat la pagina de depunere cerere cazare studenti, adaugand noi features + plus o stilizare cu CSS a paginii de login si a paginii de depunere a cererii de cazare
+
+[33mcommit 244d6c6f9311bd36ccb2eaab17d43bb5cd133e57[m
+Author: CosminPretcar <cosmin.pretcar@gmail.com>
+Date:   Wed Feb 19 18:21:28 2025 +0200
+
+    Prima versiune a aplicației

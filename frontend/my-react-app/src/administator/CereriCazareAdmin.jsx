@@ -1,10 +1,10 @@
 import React from "react";
+import NavBarAdmin from "../components/NavBarAdmin";
 
 function CereriCazareAdministrator() {
   return (
     <div>
-      <h1>Bine ai venit, Administrator!</h1>
-      <p>Aceasta este pagina de administrare a cererilor de cazare.</p>
+      <NavBarAdmin />
     </div>
   );
 }

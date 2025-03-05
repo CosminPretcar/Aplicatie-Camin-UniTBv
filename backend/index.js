@@ -56,8 +56,8 @@ app.use(
     resave: false,  
     saveUninitialized: true, 
     cookie: {
-      // secure: false, 
-      // httpOnly: true, 
+      secure: false, 
+      httpOnly: true, 
       maxAge: 1000 * 60 * 60 * 24, 
     }
   })
@@ -75,6 +75,23 @@ const db = new pg.Client({
 });
 
 db.connect();
+
+app.get("/me", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.json({ 
+      isAuthenticated: true, 
+      nume: req.user.nume, 
+      prenume: req.user.prenume, 
+      email: req.user.email, 
+      facultate: req.user.facultate, 
+      specializare: req.user.specializare, 
+      poza_profil: req.user.poza_profil,
+      esteAdmin: req.user.administrator
+    });
+  } else {
+    return res.json({ isAuthenticated: false });
+  }
+});
 
 app.post("/login", (req, res, next) => {
   passport.authenticate("local", async (err, user, info) => {
@@ -112,27 +129,13 @@ app.post("/login", (req, res, next) => {
         message: "Login successful", 
         nume: user.nume, 
         prenume: user.prenume, 
-        esteAdmin: user.esteAdmin
+        esteAdmin: user.administrator
       });
     });
   })(req, res, next);
 });
 
-app.get("/me", (req, res) => {
-  if (req.isAuthenticated()) {
-    return res.json({ 
-      isAuthenticated: true, 
-      nume: req.user.nume, 
-      prenume: req.user.prenume, 
-      email: req.user.email, 
-      facultate: req.user.facultate, 
-      specializare: req.user.specializare, 
-      poza_profil: req.user.poza_profil // 🟢 Corectat!
-    });
-  } else {
-    return res.json({ isAuthenticated: false });
-  }
-});
+
 
 app.get("/camine", async (req, res) => {
   try {
@@ -226,20 +229,20 @@ app.post("/cereri", async (req, res) => {
       const userPrenume = userResult.rows[0].prenume;
 
       // 🔹 Trimitem email-ul de confirmare
-      const mailOptions = {
-        from: `"Cazare Campus" <noreply@cazare.ro>`, 
-        to: userEmail, 
-        subject: "Confirmare Cerere de Cazare",
-        text: `Salut, ${userPrenume} ${userNume}! Cererea ta de cazare în căminul ${caminId}, etajul ${etaj}, camera ${numarCamera} a fost înregistrată.`,
-      };
+      // const mailOptions = {
+      //   from: `"Cazare Campus" <noreply@cazare.ro>`, 
+      //   to: userEmail, 
+      //   subject: "Confirmare Cerere de Cazare",
+      //   text: `Salut, ${userPrenume} ${userNume}! Cererea ta de cazare în căminul ${caminId}, etajul ${etaj}, camera ${numarCamera} a fost înregistrată.`,
+      // };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error("Eroare la trimiterea emailului:", error);
-        } else {
-            console.log("Email trimis:", info.response);
-        }
-      });
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //   if (error) {
+      //       console.error("Eroare la trimiterea emailului:", error);
+      //   } else {
+      //       console.log("Email trimis:", info.response);
+      //   }
+      // });
 
       res.json({ message: "Cererea a fost înregistrată cu succes!" });
   } catch (error) {
@@ -283,7 +286,7 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser(async (id, cb) => {
   try {
     const result = await db.query(
-      "SELECT id, nume, prenume, email, facultate, specializare, poza_profil, esteadmin FROM users WHERE id = $1",
+      "SELECT id, nume, prenume, email, facultate, specializare, poza_profil, administrator FROM users WHERE id = $1",
       [id]
     );
 
@@ -291,7 +294,8 @@ passport.deserializeUser(async (id, cb) => {
       return cb(null, false);
     }
 
-    // console.log("🟢 Utilizator deserializat:", result.rows[0]); // Debugging
+    console.log("🟢 Utilizator deserializat:", result.rows[0]); // Debugging
+    
 
     cb(null, result.rows[0]);
   } catch (error) {

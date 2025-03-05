@@ -24,7 +24,8 @@ function Login({setUser}) {
         const {nume,prenume, esteAdmin} = response.data;
         if (response.status === 200) {
           alert("Login successful!");
-          setUsername({nume,prenume,esteAdmin})
+          setUser({ nume, prenume, esteAdmin})
+          console.log("User după login:", { nume, prenume, esteAdmin });
           if (esteAdmin) {
             navigate("/admin/dashboard")
           } else {

@@ -4,7 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login";
 import HomeStudent from "./student/HomeStudent";
 import CerereCazareStudent from "./student/CerereCazareStudent";
-import ProtectedRoute from "./ProtectedRoute";
+import ProtectedRoute from "./utils/ProtectedRoute";
+import ContextProvider from "./utils/ContextProvider";
 import HomeAdministrator from "./administator/HomeAdministrator";
 import CereriCazareAdmin from "./administator/CereriCazareAdmin";
 import PrezentareCamine from "./PrezentareCamine";
@@ -14,35 +15,39 @@ import ProfilStudent from "./student/ProfilStudent";
 function App() {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    axios.get("http://localhost:4000/me", { withCredentials: true })
-      .then(response => { 
-        if (response.data.isAuthenticated) {
-          setUser({
-            nume: response.data.nume,
-            prenume: response.data.prenume,
-            esteAdmin: response.data.esteAdmin,
-          });
-        } else {
-          setUser(null);
-        }
-      })
-      .catch(error => console.error("Eroare la verificarea sesiunii:", error));
-  }, []);
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/home" element={<HomeStudent />} />
-        <Route path="/cerere-cazare" element={<CerereCazareStudent />} />
-        <Route path="/prezentare-camine" element={<PrezentareCamine />}/>
-        <Route path="/profilstudent/:nume" element={<ProfilStudent />}/>
-        <Route path="/admin/dashboard" element={
-          <ProtectedRoute user={user} isAdminRequired={true}>
+        {/* Rute care nu trebuiesc protejate, orice user poate avea acces la ele */}
+          <Route path="/" element={<Login setUser={setUser} />} />
+          <Route path="/prezentare-camine" element={<PrezentareCamine />}/>
+        {/* Rute ce trebuiesc accesate doar de studenti */}
+          <Route path="/home" element={
+            <ProtectedRoute roles={["user"]}>
+              <HomeStudent />
+            </ProtectedRoute>
+          } />
+          <Route path="/cerere-cazare" element={
+            <ProtectedRoute roles={["user"]}>
+              <CerereCazareStudent />
+            </ProtectedRoute>
+          } />
+          <Route path="/profilstudent/:nume" element={
+            <ProtectedRoute roles={["user"]}>
+              <ProfilStudent />
+            </ProtectedRoute>
+          } />
+        {/* Rute ce trebuiesc accesate doar de administratorii de camin */}
+          <Route path="/admin/dashboard" element={
+          <ProtectedRoute roles={['admin']}>
             <HomeAdministrator />
           </ProtectedRoute>
-        } />
+          } />
+          <Route path="/admin/cereri-cazare" element={
+          <ProtectedRoute roles={['admin']}>
+            <CereriCazareAdmin />
+          </ProtectedRoute>
+          } />
       </Routes>
     </Router>
   );
