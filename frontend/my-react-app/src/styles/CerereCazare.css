@@ -48,13 +48,15 @@
   }
   
   .colegi-table th, .colegi-table td {
-    border: 1px solid #ddd;
+    border: 1px solid black;
     padding: 8px;
     text-align: left;
   }
   
   .colegi-table th {
     background-color: #f2f2f2;
+    font-weight: bold;
+    border-bottom: 2px solid black;
   }
 
   .colegi-table tr {
@@ -150,3 +152,68 @@
     box-shadow: 0px 0px 5px rgba(0, 91, 187, 0.5);
   }
   
+  /* Container cu 3 coloane pentru selecțiile de opțiuni */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 coloane */
+  gap: 30px; /* Spațiere mai mare între coloane */
+  margin-bottom: 30px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Stilizare pentru fiecare bloc de selecție */
+.form-option {
+  background: #ffffff;
+  border: 2px solid black; /* Bordură albastră */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Titlu "Opțiune 1, 2, 3" */
+.form-option h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: black;
+}
+
+/* Stilizare pentru grupurile de selecție */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Stil pentru tabel */
+.tabel {
+  margin-top: 20px;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid black; /* Bordură neagră */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+}
+
+/* Buton de trimitere */
+.submit-btn {
+  margin-top: 20px;
+  padding: 12px 18px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  display: block;
+  margin: 0 auto;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}

@@ -12,37 +12,36 @@ function Login({setUser}) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:4000/login",
-        {username, password}, 
-        {withCredentials: true}
-      );
-      
-      if (response.status === 200) {
-        const {nume,prenume, esteAdmin} = response.data;
-        if (response.status === 200) {
-          alert("Login successful!");
-          setUser({ nume, prenume, esteAdmin})
-          console.log("User după login:", { nume, prenume, esteAdmin });
-          if (esteAdmin) {
-            navigate("/admin/dashboard")
-          } else {
-          navigate("/home");
-          }
-        }
-      }
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-        console.log('Error response:', error.response);
 
-      } else {
-        alert("An error occurred, please try again.");
-      }
-    }
-  };
+    axios.post("http://localhost:4000/login",
+        { username, password }, 
+        { withCredentials: true }
+    )
+    .then(response => {
+        if (response.status === 200) {
+            const { nume, prenume, esteAdmin } = response.data;
+            alert("Login successful!");
+            setUser({ nume, prenume, esteAdmin });
+            console.log("User după login:", { nume, prenume, esteAdmin });
+
+            if (esteAdmin) {
+                navigate("/admin/dashboard");
+            } else {
+                navigate("/home");
+            }
+        }
+    })
+    .catch(error => {
+        if (error.response) {
+            alert(error.response.data.message);
+            console.log('Error response:', error.response);
+        } else {
+            alert("An error occurred, please try again.");
+        }
+    });
+};
 
   return (
     

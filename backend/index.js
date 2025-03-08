@@ -186,70 +186,46 @@ app.get("/utilizatori", async (req, res) => {
 
 app.post("/cereri", async (req, res) => {
   if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
+    return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
   }
 
-  console.log("Cerere primită pe server:", req.body);
+  console.log("🔹 Cerere primită pe server:", req.body);
 
   try {
-      const { caminId, etaj, cameraId, colegi } = req.body;
-      const userId = req.user.id;
+    const { cereri, colegi } = req.body;
 
-      if (!cameraId || !etaj || !caminId) {
-          return res.status(400).json({ message: "Caminul, etajul și camera sunt necesare!" });
-      }
+    // Verificăm dacă există cereri valide
+    if (!cereri || cereri.length === 0) {
+      return res.status(400).json({ message: "Trebuie să selectați cel puțin o cameră!" });
+    }
 
-      const cameraResult = await db.query(
-          "SELECT numar_paturi, numar_camera FROM camere WHERE id = $1 AND camin_id = $2",
-          [cameraId, caminId]
-      );
+    // Extragem valorile pentru fiecare opțiune
+    const optiune1 = cereri[0] || { caminId: null, cameraId: null };
+    const optiune2 = cereri[1] || { caminId: null, cameraId: null };
+    const optiune3 = cereri[2] || { caminId: null, cameraId: null };
 
-      if (cameraResult.rows.length === 0) {
-          return res.status(400).json({ message: "Camera selectată nu există în acest cămin!" });
-      }
+    // Inserăm cererea în baza de date
+    await db.query(
+      `INSERT INTO cerere_cazare (user_id, colegi, optiune1_camin, optiune1_camera, optiune2_camin, optiune2_camera, optiune3_camin, optiune3_camera) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        req.user.id,
+        colegi.join(","), // Transformăm array-ul colegilor în string
+        optiune1.caminId, optiune1.cameraId,
+        optiune2.caminId, optiune2.cameraId,
+        optiune3.caminId, optiune3.cameraId
+      ]
+    );
 
-      const numarCamera = cameraResult.rows[0].numar_camera;
-      const numarPaturi = cameraResult.rows[0].numar_paturi;
-      const numarSolicitanti = colegi.length + 1; // +1 pentru utilizatorul curent
+    res.json({ message: "Cererea a fost înregistrată cu succes!" });
 
-      if (numarSolicitanti > numarPaturi) {
-          return res.status(400).json({ message: `Numărul maxim de persoane pentru această cameră este ${numarPaturi}.` });
-      }
-
-      const colegiString = colegi.join(",");
-
-      await db.query(
-          "INSERT INTO cereri_cazare (user_id, camin_id, etaj, camera_id, colegi) VALUES ($1, $2, $3, $4, $5)",
-          [userId, caminId, etaj, cameraId, colegiString]
-      );
-
-      const userResult = await db.query("SELECT email, nume, prenume FROM users WHERE id = $1", [userId]);
-      const userEmail = userResult.rows[0].email;
-      const userNume = userResult.rows[0].nume;
-      const userPrenume = userResult.rows[0].prenume;
-
-      // 🔹 Trimitem email-ul de confirmare
-      // const mailOptions = {
-      //   from: `"Cazare Campus" <noreply@cazare.ro>`, 
-      //   to: userEmail, 
-      //   subject: "Confirmare Cerere de Cazare",
-      //   text: `Salut, ${userPrenume} ${userNume}! Cererea ta de cazare în căminul ${caminId}, etajul ${etaj}, camera ${numarCamera} a fost înregistrată.`,
-      // };
-
-      // transporter.sendMail(mailOptions, (error, info) => {
-      //   if (error) {
-      //       console.error("Eroare la trimiterea emailului:", error);
-      //   } else {
-      //       console.log("Email trimis:", info.response);
-      //   }
-      // });
-
-      res.json({ message: "Cererea a fost înregistrată cu succes!" });
   } catch (error) {
-      console.error("Error inserting cerere:", error);
-      res.status(500).json({ message: "Eroare de server" });
+    console.error("❌ Eroare la trimiterea cererii:", error);
+    res.status(500).json({ message: "Eroare de server" });
   }
 });
+
+
 
 passport.use(new Strategy(async function verify(username, password, cb) {
   console.log(username);
