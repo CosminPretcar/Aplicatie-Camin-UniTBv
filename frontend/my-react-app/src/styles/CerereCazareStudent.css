@@ -210,10 +210,138 @@
   border: none;
   cursor: pointer;
   border-radius: 6px;
-  display: block;
+  display: flex;
+  justify-content: flex-end;
   margin: 0 auto;
 }
 
 .submit-btn:hover {
   background-color: #0056b3;
 }
+
+.alert-card {
+  width: 100%; /* Face cardul la fel de lat ca div-ul părinte */
+  /* max-width: none; Poți ajusta această valoare dacă vrei o limită maximă */
+  margin: 20px auto; /* Îl centrează */
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-left: 5px solid #007bff;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.alert-card h3 {
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.alert-card ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.alert-card li {
+  padding: 5px 0;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.alert-card li::before {
+  content: "⚠️"; /* Pictogramă atenționare */
+  margin-right: 8px;
+  color: #ff9800;
+  font-size: 16px;
+}
+
+.tabel-container {
+  width: 90%;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid black;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.camera-cereri-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background: #ffffff;
+  border: 2px solid black;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.camera-cereri-table th, .camera-cereri-table td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
+}
+
+.camera-cereri-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  border-bottom: 2px solid black;
+}
+
+.camera-cereri-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Container pentru checkbox și buton */
+.form-footer {
+  display: flex;
+  justify-content: space-between; /* Checkbox la stânga, buton la dreapta */
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  padding: 15px;
+  background: #ffffff;
+  border-top: 2px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Stilizare checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.checkbox-container input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #007bff; /* Culoare albastră */
+  cursor: pointer;
+}
+
+/* Stilizare buton */
+.submit-btn {
+  background: #007bff;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+
+
+

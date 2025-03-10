@@ -10,6 +10,7 @@ import HomeAdministrator from "./administator/HomeAdministrator";
 import CereriCazareAdmin from "./administator/CereriCazareAdmin";
 import PrezentareCamine from "./PrezentareCamine";
 import ProfilStudent from "./student/ProfilStudent";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 
 function App() {

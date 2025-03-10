@@ -36,7 +36,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    cb(null, `profile-${req.user.id}${ext}`); // Salvăm poza cu ID-ul utilizatorului
+    cb(null, `profile-${req.user.id}${ext}`); // Salvez poza cu ID-ul utilizatorului
   }
 });
 
@@ -161,6 +161,41 @@ app.get("/camere/:caminId", async (req, res) => {
   }
 });
 
+app.get("/statistici/cereri/:caminId/:etaj?", async (req, res) => {
+  const { caminId, etaj } = req.params;
+  try {
+    let query = `
+      SELECT c.id, c.numar_camera, c.etaj, c.numar_paturi,
+              COALESCE(SUM(CASE WHEN cerere_cazare.optiune1_camera = c.id THEN 1 ELSE 0 END), 0) AS optiune_1,
+              COALESCE(SUM(CASE WHEN cerere_cazare.optiune2_camera = c.id THEN 1 ELSE 0 END), 0) AS optiune_2,
+              COALESCE(SUM(CASE WHEN cerere_cazare.optiune3_camera = c.id THEN 1 ELSE 0 END), 0) AS optiune_3
+       FROM camere c
+       LEFT JOIN cerere_cazare ON 
+          cerere_cazare.optiune1_camera = c.id 
+          OR cerere_cazare.optiune2_camera = c.id 
+          OR cerere_cazare.optiune3_camera = c.id
+       WHERE c.camin_id = $1
+    `;
+
+    const queryParams = [caminId];
+
+    if (etaj) {
+      query += ` AND c.etaj = $2`;
+      queryParams.push(parseInt(etaj));
+    }
+
+    query += ` GROUP BY c.id, c.numar_camera, c.etaj, c.numar_paturi ORDER BY c.etaj, c.numar_camera`;
+
+    const result = await db.query(query, queryParams);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Eroare la preluarea statisticilor cererilor:", error);
+    res.status(500).json({ error: "Eroare de server" });
+  }
+});
+
+
+
 app.get("/utilizatori", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
@@ -194,23 +229,23 @@ app.post("/cereri", async (req, res) => {
   try {
     const { cereri, colegi } = req.body;
 
-    // Verificăm dacă există cereri valide
+    // Verific dacă există cereri valide
     if (!cereri || cereri.length === 0) {
       return res.status(400).json({ message: "Trebuie să selectați cel puțin o cameră!" });
     }
 
-    // Extragem valorile pentru fiecare opțiune
+    // Extrage valorile pentru fiecare opțiune
     const optiune1 = cereri[0] || { caminId: null, cameraId: null };
     const optiune2 = cereri[1] || { caminId: null, cameraId: null };
     const optiune3 = cereri[2] || { caminId: null, cameraId: null };
 
-    // Inserăm cererea în baza de date
+    // Inserez cererea în baza de date
     await db.query(
       `INSERT INTO cerere_cazare (user_id, colegi, optiune1_camin, optiune1_camera, optiune2_camin, optiune2_camera, optiune3_camin, optiune3_camera) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         req.user.id,
-        colegi.join(","), // Transformăm array-ul colegilor în string
+        colegi.join(","), // Transform array-ul colegilor în string
         optiune1.caminId, optiune1.cameraId,
         optiune2.caminId, optiune2.cameraId,
         optiune3.caminId, optiune3.cameraId
@@ -270,9 +305,6 @@ passport.deserializeUser(async (id, cb) => {
       return cb(null, false);
     }
 
-    console.log("🟢 Utilizator deserializat:", result.rows[0]); // Debugging
-    
-
     cb(null, result.rows[0]);
   } catch (error) {
     cb(error);
@@ -302,8 +334,240 @@ app.post("/upload-profile-pic", upload.single("pozaProfil"), async (req, res) =>
   }
 });
 
-// Servim fișierele statice din folderul uploads
 app.use("/uploads", express.static("uploads"));
+
+app.get("/cereri", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
+  }
+
+  try {
+    // Obțin căminul administrat de utilizator
+    const adminResult = await db.query("SELECT camin_id FROM administratori WHERE user_id = $1", [req.user.id]);
+
+    if (adminResult.rows.length === 0 || !adminResult.rows[0].camin_id) {
+      return res.status(403).json({ message: "Nu aveți permisiunea de a vedea aceste cereri." });
+    }
+
+    const caminAdmin = adminResult.rows[0].camin_id;
+
+    // Selectez cererile, înlocuind ID-urile colegilor cu numele lor
+    const result = await db.query(
+      `SELECT c.id, u.nume, u.prenume, c.data_creare, 
+              CASE WHEN c.optiune1_camin = $1 THEN c.optiune1_camin ELSE NULL END AS optiune1_camin,
+              CASE WHEN c.optiune1_camin = $1 THEN cam1.numar_camera ELSE NULL END AS optiune1_camera,
+              CASE WHEN c.optiune2_camin = $1 THEN c.optiune2_camin ELSE NULL END AS optiune2_camin,
+              CASE WHEN c.optiune2_camin = $1 THEN cam2.numar_camera ELSE NULL END AS optiune2_camera,
+              CASE WHEN c.optiune3_camin = $1 THEN c.optiune3_camin ELSE NULL END AS optiune3_camin,
+              CASE WHEN c.optiune3_camin = $1 THEN cam3.numar_camera ELSE NULL END AS optiune3_camera,
+              (SELECT STRING_AGG(concat(u2.nume, ' ', u2.prenume), ', ')
+               FROM users u2
+               WHERE string_to_array(c.colegi, ',')::int[] @> ARRAY[u2.id]) AS colegi
+       FROM cerere_cazare c
+       JOIN users u ON c.user_id = u.id
+       LEFT JOIN camere cam1 ON c.optiune1_camera = cam1.id
+       LEFT JOIN camere cam2 ON c.optiune2_camera = cam2.id
+       LEFT JOIN camere cam3 ON c.optiune3_camera = cam3.id
+       WHERE c.optiune1_camin = $1 
+          OR c.optiune2_camin = $1 
+          OR c.optiune3_camin = $1
+       ORDER BY c.data_creare ASC`,
+      [caminAdmin]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching cereri:", error);
+    res.status(500).send("Eroare de server");
+  }
+});
+
+app.get("/etaje-si-camere", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
+  }
+
+  try {
+    // Obțin căminul administrat de utilizator
+    const adminResult = await db.query("SELECT camin_id FROM administratori WHERE user_id = $1", [req.user.id]);
+
+    if (adminResult.rows.length === 0 || !adminResult.rows[0].camin_id) {
+      return res.status(403).json({ message: "Nu aveți permisiunea de a vedea aceste date." });
+    }
+
+    const caminAdmin = adminResult.rows[0].camin_id;
+
+    // Selectez etajele și camerele disponibile pentru acest cămin
+    const etajeSiCamere = await db.query(
+      `SELECT DISTINCT etaj FROM camere WHERE camin_id = $1 ORDER BY etaj ASC`,
+      [caminAdmin]
+    );
+
+    const camere = await db.query(
+      `SELECT id, numar_camera, etaj FROM camere WHERE camin_id = $1 ORDER BY etaj, numar_camera`,
+      [caminAdmin]
+    );
+
+    res.json({ etaje: etajeSiCamere.rows, camere: camere.rows });
+  } catch (error) {
+    console.error("Error fetching etaje si camere:", error);
+    res.status(500).send("Eroare de server");
+  }
+});
+
+app.get("/camine/camere", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Neautorizat. Vă rugăm să vă autentificați." });
+  }
+
+  try {
+    const adminResult = await db.query("SELECT camin_id FROM administratori WHERE user_id = $1", [req.user.id]);
+
+    if (adminResult.rows.length === 0 || !adminResult.rows[0].camin_id) {
+      return res.status(403).json({ message: "Nu aveți permisiunea de a vedea camerele acestui cămin." });
+    }
+
+    const caminAdmin = adminResult.rows[0].camin_id;
+
+    const camere = await db.query(
+      `SELECT etaj, numar_camera, este_disponibila FROM camere WHERE camin_id = $1 ORDER BY etaj, numar_camera`,
+      [caminAdmin]
+    );
+
+    res.json(camere.rows);
+  } catch (error) {
+    console.error("Error fetching camere:", error);
+    res.status(500).send("Eroare de server");
+  }
+});
+
+app.put("/cereri/validare", async (req, res) => {
+  const { cerereId, optiune } = req.body;
+
+  if (!cerereId || !optiune) {
+    return res.status(400).json({ message: "Lipsesc parametrii necesari." });
+  }
+
+  try {
+    // Obținem numele studentului și colegii săi
+    const cerereResult = await db.query(
+      `SELECT u.nume, u.prenume, c.optiune1_camera, c.optiune2_camera, c.optiune3_camera, c.colegi
+       FROM cerere_cazare c
+       JOIN users u ON c.user_id = u.id
+       WHERE c.id = $1`,
+      [cerereId]
+    );
+
+    if (cerereResult.rows.length === 0) {
+      return res.status(404).json({ message: "Cererea nu a fost găsită." });
+    }
+
+    const cerere = cerereResult.rows[0];
+    const studentPrincipal = `${cerere.nume} ${cerere.prenume}`;
+
+    // Aleg numărul camerei din opțiunea selectată
+    const numarCamera =
+      optiune === "1" ? cerere.optiune1_camera :
+      optiune === "2" ? cerere.optiune2_camera :
+      optiune === "3" ? cerere.optiune3_camera :
+      null;
+
+    if (!numarCamera) {
+      return res.status(400).json({ message: "Opțiunea selectată nu conține o cameră validă." });
+    }
+
+    // Găsesc ID-ul camerei pe baza numărului camerei
+    console.log("🔎 Căutăm camera cu număr:", numarCamera);
+
+    const cameraIdResult = await db.query(
+      `SELECT id, student1, student2, student3, student4 FROM camere WHERE id = $1`,
+      [parseInt(numarCamera, 10)]
+    );
+    
+
+    if (cameraIdResult.rows.length === 0) {
+      return res.status(404).json({ message: "Camera nu a fost găsită." });
+    }
+
+    const camera = cameraIdResult.rows[0];
+    const cameraId = camera.id;
+    let { student1, student2, student3, student4 } = camera;
+
+    //Obțin numele colegilor
+    let colegiNume = [];
+    if (cerere.colegi) {
+      const colegiIds = cerere.colegi.split(",").map(id => parseInt(id.trim()));
+      if (colegiIds.length > 0) {
+        const colegiResult = await db.query(
+          `SELECT CONCAT(nume, ' ', prenume) AS nume_complet FROM users WHERE id = ANY($1)`,
+          [colegiIds]
+        );
+        colegiNume = colegiResult.rows.map(row => row.nume_complet);
+      }
+    }
+
+    //Verific locurile disponibile
+    const studentiOcupati = [student1, student2, student3, student4].filter(s => s !== null).length;
+    const locuriDisponibile = 4 - studentiOcupati;
+
+    if (colegiNume.length + 1 > locuriDisponibile) {
+      return res.status(400).json({ message: "Camera nu are suficiente locuri disponibile." });
+    }
+
+    
+    const studentiNoi = [studentPrincipal, ...colegiNume];
+
+    if (!student1) student1 = studentiNoi.shift();
+    if (!student2 && studentiNoi.length > 0) student2 = studentiNoi.shift();
+    if (!student3 && studentiNoi.length > 0) student3 = studentiNoi.shift();
+    if (!student4 && studentiNoi.length > 0) student4 = studentiNoi.shift();
+
+    //Setez camera ca indisponibilă dacă este complet ocupată
+    const esteDisponibila = !(student1 && student2 && student3 && student4);
+
+    await db.query(
+      `UPDATE camere 
+       SET student1 = $1, student2 = $2, student3 = $3, student4 = $4, este_disponibila = $5
+       WHERE id = $6`,
+      [student1, student2, student3, student4, esteDisponibila, cameraId]
+    );
+
+    //Șterg cererea după validare
+    await db.query("DELETE FROM cerere_cazare WHERE id = $1", [cerereId]);
+
+    res.json({ message: "Cererea a fost validată cu succes!" });
+
+  } catch (error) {
+    console.error("Eroare la validarea cererii:", error);
+    res.status(500).json({ message: "Eroare de server." });
+  }
+});
+
+app.delete("/cereri/:cerereId", async (req, res) => {
+  const { cerereId } = req.params;
+
+  if (!cerereId) {
+    return res.status(400).json({ message: "Lipseste ID-ul cererii" });
+  }
+
+  try {
+    //Șterg cererea din baza de date
+    const result = await db.query("DELETE FROM cerere_cazare WHERE id = $1 RETURNING *", [cerereId]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Cererea nu a fost găsită" });
+    }
+
+    res.json({ message: "Cererea a fost respinsă și ștearsă cu succes!" });
+  } catch (error) {
+    console.error("Eroare la respingerea cererii:", error);
+    res.status(500).json({ message: "Eroare de server" });
+  }
+});
+
+
+
+
 
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`);

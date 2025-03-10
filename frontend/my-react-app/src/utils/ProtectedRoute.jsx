@@ -14,7 +14,7 @@ const ProtectedRoute = ({children , roles}) => {
     }
 
     if (!user) {
-      return <p>Se încarcă datele...</p>; // ✅ Evită eroarea până se încarcă user-ul
+      return <p>Se încarcă datele...</p>; 
     }
     
     const userRole = user.esteAdmin ? 'admin' : 'user';

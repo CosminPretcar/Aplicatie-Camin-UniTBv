@@ -13,7 +13,6 @@ function NavBarAdmin() {
     const fetchAdmin = async () => {
       try {
         const response = await axios.get("http://localhost:4000/me", { withCredentials: true });
-        console.log("Raspuns API", response.data);
         if (response.data.isAuthenticated && response.data.esteAdmin) {
           setAdmin(response.data);
         } else {

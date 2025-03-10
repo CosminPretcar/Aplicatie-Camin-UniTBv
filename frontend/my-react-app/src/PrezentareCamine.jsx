@@ -16,8 +16,6 @@ function PrezentareCamine() {
   return (
     <div className="container mt-4">
       <h1 className="text-center mb-4">Prezentarea Căminelor Studențești în cadrul UniTBv</h1>
-      
-      {/* Secțiune: Introducere */}
       <div className="card mb-3">
         <div className="card-body">
           <h5 className="card-title"><i className="bi bi-house-door-fill"></i> Introducere</h5>

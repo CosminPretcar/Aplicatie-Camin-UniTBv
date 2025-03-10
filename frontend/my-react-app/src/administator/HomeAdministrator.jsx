@@ -1,14 +1,48 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import NavBarAdmin from "../components/NavBarAdmin";
+import axios from "axios";
 
 function HomeAdministrator() {
+  const [user, setUser] = useState({ nume: "utilizator", prenume: "" });
+  const [ora, setOra] = useState(new Date());
+
+  useEffect(() => {
+    axios.get("http://localhost:4000/me", { withCredentials: true })
+      .then(response => {
+        if (response.data.isAuthenticated) {
+          setUser({ nume: response.data.nume, prenume: response.data.prenume });
+        }
+      })
+      .catch(error => console.error("Error fetching user:", error));
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOra(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+
   return (
-    <div>
-      <NavBarAdmin />
-      <br />
-      <h1>Bine ai venit, Administrator!</h1>
-      <p>Aceasta este pagina de administrare.</p>
+    <div className="d-flex">
+    <NavBarAdmin />
+    <div className="container-fluid" style={{ marginLeft: "280px", height: "100vh" }}>
+      <div className="row mt-2">
+        <div className="col-md-3 d-flex align-items-center">
+          <div className="card bg-dark text-white p-3 w-100 shadow">
+            <h5 className="text-center">🕒 {ora.toLocaleTimeString()}</h5>
+          </div>
+        </div>
+        <div className="col-md-9">
+          <div className="card shadow p-4 text-center">
+            <h2>Bine ai revenit, {user.prenume} {user.nume}!</h2>
+          </div>
+        </div>
+      </div>
     </div>
+    
+  </div>
   );
 }
 
