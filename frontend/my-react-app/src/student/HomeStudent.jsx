@@ -31,17 +31,34 @@ function HomeStudent() {
         <div className="row mt-2">
           <div className="col-md-3 d-flex align-items-center">
             <div className="card bg-dark text-white p-3 w-100 shadow">
-              <h5 className="text-center">🕒 {ora.toLocaleTimeString()}</h5>
+            <h5 className="text-center">🕒 {ora.toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" })}</h5>
             </div>
           </div>
-          <div className="col-md-9">
-            <div className="card shadow p-4 text-center">
+          <div className="col-md-6">
+            <div className="card shadow p-3 text-center">
               <h2>Bine ai revenit, {user.prenume} {user.nume}!</h2>
+            </div>
+          </div>
+          <div className="col-md-3 d-flex align-items-center">
+            <div className="card bg-dark text-white p-3 w-100 shadow">
+              <h5 className="text-center">📅 {ora.toLocaleDateString("ro-RO", { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })}</h5>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div className="row mt-2">
+          <div className="col-md-6">
+            <div className="card shadow p-3 text-center">
+              <h2>Avizier digital</h2>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="card shadow p-3 text-center">
+              <h2>Memento</h2>
             </div>
           </div>
         </div>
       </div>
-      
     </div>
   );
 }

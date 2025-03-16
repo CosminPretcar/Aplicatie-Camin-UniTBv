@@ -71,12 +71,12 @@ function NavBarAdmin() {
             Cereri Cazare
           </a>
         </li>
-        <li>
+        {/* <li>
           <a onClick={() => navigate("/admin/settings")} className="nav-link text-white" style={{ cursor: "pointer" }}>
             <i className="bi bi-gear me-2"></i>
             Setări
           </a>
-        </li>
+        </li> */}
         <li>
           <a onClick={handleLogout} className="nav-link text-white" style={{ cursor: "pointer" }}>
             <i className="bi bi-box-arrow-right"></i>

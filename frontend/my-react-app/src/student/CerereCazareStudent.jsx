@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import "../styles/CerereCazareStudent.css";
+import GraficStatisticiCereri from "../utils/GraficStatisticiCereri";
 
 function CerereCazare() {
   const [camine, setCamine] = useState([]);
@@ -10,12 +11,15 @@ function CerereCazare() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statisticiCereri, setStatisticiCereri] = useState([]);
   const [etajSelectat, setEtajSelectat] = useState("");
+  const [acceptRedistribuire, setAcceptRedistribuire] = useState(false);
+  const [caminSelectatGrafic, setCaminSelectatGrafic] = useState("");
 
 
   const [optCamine, setOptCamine] = useState(["", "", ""]);
   const [optCamere, setOptCamere] = useState(["", "", ""]);
   const [optEtaje, setOptEtaje] = useState(["", "", ""]);
   const [selectedColegi, setSelectedColegi] = useState([]);
+  
 
   useEffect(() => {
     axios.get("http://localhost:4000/camine").then((response) => {
@@ -48,18 +52,18 @@ function CerereCazare() {
   }, [searchTerm]);
 
   useEffect(() => {
-    if (optCamine[0]) { 
+    if (caminSelectatGrafic) {  // Verificăm dacă s-a selectat un cămin pentru grafic
       const etajParam = etajSelectat ? `/${etajSelectat}` : ""; 
-      console.log("📡 Cerere către:", `http://localhost:4000/statistici/cereri/${optCamine[0]}${etajParam}`);
+      console.log("📡 Cerere către:", `http://localhost:4000/statistici/cereri/${caminSelectatGrafic}${etajParam}`);
   
       axios
-        .get(`http://localhost:4000/statistici/cereri/${optCamine[0]}${etajParam}`)
+        .get(`http://localhost:4000/statistici/cereri/${caminSelectatGrafic}${etajParam}`)
         .then((response) => {
           setStatisticiCereri(response.data);
         })
-        .catch((error) => console.error("❌ Eroare la preluarea statisticilor cererilor:", error));
+        .catch((error) => console.error("Eroare la preluarea statisticilor cererilor:", error));
     }
-  }, [optCamine, etajSelectat]);
+  }, [caminSelectatGrafic, etajSelectat]);
   
 
   const handleOptCaminChange = (index, value) => {
@@ -132,32 +136,39 @@ function CerereCazare() {
     });
     setSearchTerm("");
   };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const cerere = optCamere.map((camera, index) => ({
       caminId: optCamine[index],
       etaj: optEtaje[index],
       cameraId: camera,
     }));
-
+  
     if (cerere.some(opt => !opt.cameraId)) {
       alert("Selectați toate opțiunile de camere!");
       return;
     }
-
-    alert(`Cererea de cazare trimisă:\n${JSON.stringify(cerere, null, 2)}\nColeg(i): ${selectedColegi.join(", ")}`);
-
-    axios.post("http://localhost:4000/cereri", {
-      cereri: cerere,
-      colegi: selectedColegi,
-    }, { withCredentials: true })
-    .then(response => {
-      alert(response.data.message);
-    })
-    .catch(error => {
-      console.error("Eroare la trimiterea cererii: ", error);
-      alert("Eroare la trimiterea cererii!");
-    });
+  
+    try {
+      const response = await axios.post("http://localhost:4000/cereri", {
+        cereri: cerere,
+        colegi: selectedColegi,
+        acceptRedistribuire: acceptRedistribuire,
+      }, { withCredentials: true });
+  
+      alert(response.data.message); // ✅ Afișează alert doar dacă cererea a fost depusă cu succes!
+      setOptCamine(["", "", ""]);
+      setOptEtaje(["", "", ""]);
+      setOptCamere(["", "", ""]);
+      setSelectedColegi([]);
+      setAcceptRedistribuire(false);
+  
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.message);  // 🛑 Dacă există deja o cerere, afișează doar acest mesaj
+      } else {
+        alert("Eroare la trimiterea cererii!");
+      }
+    }
   };
 
   return (
@@ -191,7 +202,7 @@ function CerereCazare() {
                     .filter((value, i, self) => self.indexOf(value) === i)
                     .map((etaj) => (
                       <option key={etaj} value={etaj}>
-                        Etaj {etaj}
+                        {etaj == 0 ? "Parter" : `Etaj ${etaj}`}
                       </option>
                     ))}
                 </select>
@@ -269,10 +280,12 @@ function CerereCazare() {
               <div className="checkbox-container">
                 <input 
                   type="checkbox" 
-                  id="confirm-checkbox"   
+                  id="confirm-checkbox" 
+                  checked={acceptRedistribuire}
+                  onChange={(e) => setAcceptRedistribuire(e.target.checked)}  
                 />
                 <label htmlFor="confirm-checkbox">
-                  În cazul în care opțiunile tale sunt ocupate, dorești să fii repartizat de către administratorii de cămin în altă cameră alături de colegii tăi sau aștepți a doua fază.
+                  În cazul în care opțiunile tale sunt ocupate, dorești să fii repartizat de către administratorii de cămin în altă cameră alături de colegii tăi?
                 </label>
               </div>
                   
@@ -283,59 +296,43 @@ function CerereCazare() {
           </div>
 
             <div className="tabel-container">
-              <h3>📊 Statistici cereri pe camere</h3>  
+              <h3>📊 Statistici cereri pe camere</h3> 
+              <div className="form-group">
+                <label>Selectează căminul:</label>
+                <select value={caminSelectatGrafic} onChange={(e) => setCaminSelectatGrafic(e.target.value)}>
+                  <option value="">Selectează un cămin</option>
+                  {camine.map((camin) => (
+                    <option key={camin.id} value={camin.id}>
+                      {camin.nume_camin}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="form-group">
                 <label>Selectează etajul:</label>
                 <select value={etajSelectat} onChange={(e) => setEtajSelectat(e.target.value)}>
                   <option value="">Toate etajele</option>
                   {[...new Set(statisticiCereri.map((c) => c.etaj))].map((etaj) => (
                     <option key={etaj} value={etaj}>
-                      Etaj {etaj}
+                      {etaj == 0 ? "Parter" : `Etaj ${etaj}`}
                     </option>
                   ))}
                 </select>
               </div>
-              <table className="camera-cereri-table">
-              <thead>
-                <tr>
-                  <th>Nr. Camera</th>
-                  <th>Etaj</th>
-                  <th>Paturi</th>
-                  <th>Cereri Opțiunea 1</th>
-                  <th>Cereri Opțiunea 2</th>
-                  <th>Cereri Opțiunea 3</th>
-                </tr>
-              </thead>
-              <tbody>
-                {statisticiCereri.map((camera) => (
-                  <tr key={camera.id}>
-                    <td>{camera.numar_camera}</td>
-                    <td>{camera.etaj}</td>
-                    <td>{camera.numar_paturi}</td>
-                    <td style={{ color: camera.optiune_1 >= camera.numar_paturi }}>
-                      {camera.optiune_1}
-                    </td>
-                    <td style={{ color: camera.optiune_2 >= camera.numar_paturi }}>
-                      {camera.optiune_2}
-                    </td>
-                    <td style={{ color: camera.optiune_3 >= camera.numar_paturi }}>
-                      {camera.optiune_3}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              </table>
-                <div className="alert-card">
-                  <h3>📌 Despre cazare</h3>
-                  <ul>
-                    <li>✔️ Daca nu poti completa acest formular, inseamna ca nu ai primit dreptul in cadrul fazei de cazare!</li>
-                    <li>✔️ Este recomandat ca fiecare student sa completeze cele 3 opțiuni de cazare.</li>
-                    <li>✔️ Studentii trebuie sa selecteze aceleasi optiuni in cerere ca sa poate fi repartizati in aceeasi camera</li>
-                    <li>✔️ Numărul maxim de persoane din cameră nu poate fi depășit.</li>
-                    <li>✔️ După trimiterea cererii, modificările nu mai sunt posibile.</li>
-                    <li>✔️ Odată aprobată, cazarea devine finală și nu poate fi schimbată decât în cazuri speciale.</li>
-                    <li>✔️ Este recomandat sa studiati tabelul de mai sus, astfel incat sa se evite selectarea acelorasi optiuni de catre mai multi studenti </li>
-                  </ul>
+                  
+                <GraficStatisticiCereri statistici={statisticiCereri} etajSelectat={etajSelectat} caminSelectat={caminSelectatGrafic}/>
+                
+          <div className="alert-card">
+            <h3>📌 Despre cazare</h3>
+            <ul>
+              <li>✔️ Daca nu poti completa acest formular, inseamna ca nu ai primit dreptul in cadrul fazei de cazare!</li>
+              <li>✔️ Este recomandat ca fiecare student sa completeze cele 3 opțiuni de cazare.</li>
+              <li>✔️ Studentii trebuie sa selecteze aceleasi optiuni in cerere ca sa poate fi repartizati in aceeasi camera</li>
+              <li>✔️ Numărul maxim de persoane din cameră nu poate fi depășit.</li>
+              <li>✔️ După trimiterea cererii, modificările nu mai sunt posibile.</li>
+              <li>✔️ Odată aprobată, cazarea devine finală și nu poate fi schimbată decât în cazuri speciale.</li>
+              <li>✔️ Este recomandat sa studiati graficul de mai sus, astfel incat sa se evite selectarea acelorasi optiuni de catre mai multi studenti </li>
+            </ul>
            </div>
         </div>
       </div>

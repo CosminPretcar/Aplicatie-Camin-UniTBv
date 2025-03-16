@@ -34,9 +34,6 @@ function PrezentareCamine() {
           <p className="card-text">
           Alegerea unui cămin potrivit este un pas important pentru orice student. Este esențial să ții cont de aspecte precum condițiile de locuire, tipul camerei, regulile impuse și, bineînțeles, costurile implicate. Fiecare cămin are propriile sale particularități, iar informațiile corecte și actualizate te pot ajuta să faci cea mai bună alegere pentru tine.
           </p>
-          <div className="alert alert-info text-center" role="alert">
-            📌**Știați că?** Multe cămine organizează evenimente și proiecte educaționale, oferind un mediu dinamic și stimulant pentru studenți!
-          </div>
         </div>
       </div>
 
@@ -110,7 +107,7 @@ function PrezentareCamine() {
                     <span> 4 dulapuri (dimensiuni)</span>, <span> două paturi supraetajate (dimensiuni)</span>,
                     <span> două birouri(dimensiuni)</span>, 
                     <span> un blat de lucru (dimensiuni)</span>, <span>două etajere</span> și 
-                    <span> un dulap mobil cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu.
+                    <span> o casetieră cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu.
                   </p>
                   <p>
                     Grupurile sanitare sunt <span>organizate în module</span>, fiecare deservind <span>două camere</span>. 
@@ -139,6 +136,7 @@ function PrezentareCamine() {
                     <li>Cuptor cu microunde</li>
                     <li>Matura si mop pentru a mentine curatenia in camera</li>
                   </ul>
+                  <br />
                 </div>
               </div>
             </div>
@@ -156,7 +154,7 @@ function PrezentareCamine() {
                   Camerele cu <span>4 paturi</span> sunt complet echipate cu <span>4 dulapuri (dimensiuni)</span>, 
                   <span> două paturi supraetajate (dimensiuni)</span>, <span>două birouri(dimensiuni)</span>, 
                   <span> un blat de lucru (dimensiuni)</span>, <span>două etajere</span> și 
-                  <span> un dulap mobil cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu. 
+                  <span> o casetieră cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu. 
                   În camerele cu <span>3 paturi</span>, din cauza numărului redus de locatari, 
                   <span> unele dintre aceste elemente pot lipsi</span> sau pot avea dimensiuni diferite pentru a optimiza spațiul disponibil. 
                 </p>
@@ -179,7 +177,6 @@ function PrezentareCamine() {
                     <li>Conexiune ethernet si Wi-Fi disponibile</li>
                     <li>Două lustre</li>
                   </ul>
-
                   <h6><i className="bi bi-wallet"></i>Obiecte necesare de achiziționat alături de colegi</h6>
                   <ul>
                     <li>Frigider</li>
@@ -303,6 +300,7 @@ function PrezentareCamine() {
                     <li>Studenții trebuie să curețe după ei și să nu blocheze accesul altor colegi.</li>
                     <li>Orice defecțiuni trebuie raportate administrației pentru reparații.</li>
                   </ul>
+                  <br />
                 </div>
               </div>
             </div>
@@ -331,6 +329,7 @@ function PrezentareCamine() {
                     <li>Excluderea temporară sau definitivă din cămin pentru încălcări grave.</li>
                     <li>Despăgubiri pentru daunele aduse mobilierului sau echipamentelor.</li>
                   </ul>
+                  <br />
                 </div>
               </div>
             </div>

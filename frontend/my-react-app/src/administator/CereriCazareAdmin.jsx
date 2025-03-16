@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import NavBarAdmin from "../components/NavBarAdmin";
 import "../styles/CerereCazareAdministrator.css";
 import axios from "axios";
@@ -14,7 +14,15 @@ function CereriCazareAdministrator() {
   const [camereCamin, setCamereCamin] = useState({});
   const [cerereSelectata, setCerereSelectata] = useState(null);
   const [optiuneSelectata, setOptiuneSelectata] = useState("");
+  const [studentiRedistribuire, setStudentiRedistribuire] = useState([]);
+  const [studentSelectat, setStudentSelectat] = useState(null);
+  const [cameraSelectata, setCameraSelectata] = useState("");
+  const [cereriColegi, setCereriColegi] = useState([]);
 
+
+  const cazareRef = useRef(null);
+  const validareRef = useRef(null);
+  const tabelRef = useRef(null);//tabel cereri
 
   useEffect(() => {
     fetch("http://localhost:4000/cereri", {
@@ -40,16 +48,24 @@ function CereriCazareAdministrator() {
       .then((response) => response.json())
       .then((data) => {
         const groupedCamere = {};
-        data.forEach(({ etaj, numar_camera, este_disponibila }) => {
+        data.forEach(({ etaj, numar_camera, numar_paturi, este_disponibila }) => {
           if (!groupedCamere[etaj]) {
             groupedCamere[etaj] = [];
           }
-          groupedCamere[etaj].push({ numar_camera, este_disponibila });
+          groupedCamere[etaj].push({ numar_camera, numar_paturi, este_disponibila });
         });
         setCamereCamin(groupedCamere);
       })
       .catch((error) => console.error("Eroare la preluarea camerelor:", error));
   }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:4000/studenti-redistribuire", { credentials: "include" })
+      .then((response) => response.json())
+      .then((data) => setStudentiRedistribuire(data))
+      .catch((error) => console.error("Eroare la preluarea studenților pentru redistribuire:", error));
+  }, []);
+  
 
   const camereFiltrate = filterEtaj ? camere.filter((c) => c.etaj == filterEtaj) : camere;
 
@@ -121,8 +137,111 @@ const handleRespingere = async () => {
   }
 };
 
-  
-  
+const handleCazareManuala = async () => {
+  if (!studentSelectat || !cameraSelectata) {
+    alert("Selectați un student și o cameră!");
+    return;
+  }
+
+  try {
+    const response = await axios.put("http://localhost:4000/studenti/cazare", {
+      studentId: studentSelectat.id,
+      cameraId: cameraSelectata
+    }, { withCredentials: true });
+
+    alert(response.data.message);
+    setStudentSelectat(null);
+    setCameraSelectata("");
+    window.location.reload(); // Reîncărcăm lista pentru a actualiza camerele
+
+  } catch (error) {
+    console.error("Eroare la cazarea studentului:", error);
+    alert(error.response?.data?.message || "A apărut o eroare!");
+  }
+};
+
+useEffect(() => {
+  fetch("http://localhost:4000/camine/camere-disponibile", { credentials: "include" })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("📥 Camere disponibile primite în frontend:", data); // Debugging
+      setCamere(data);
+    })
+    .catch((error) => console.error("Eroare la preluarea camerelor disponibile:", error));
+}, []);
+
+const downloadExcel = async () => {
+  try {
+      const response = await fetch("http://localhost:4000/cereri/export-excel", {
+          method: "GET",
+          credentials: "include",
+      });
+
+      if (!response.ok) {
+          throw new Error("Eroare la descărcarea fișierului Excel");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Cereri_Cazare.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+  } catch (error) {
+      console.error("Eroare la descărcarea fișierului:", error);
+      alert("A apărut o eroare la descărcare!");
+  }
+};
+
+const findCereriColegi = (student) => {
+  if (!student) return [];
+
+  return cereri.filter((cerere) => 
+    cerere.colegi && cerere.colegi.includes(student.nume) && cerere.colegi.includes(student.prenume)
+  );
+};
+
+const downloadCamereExcel = async () => {
+  try {
+      const response = await fetch("http://localhost:4000/export/camere-excel", {
+          method: "GET",
+          credentials: "include",
+      });
+
+      if (!response.ok) {
+          throw new Error("Eroare la descărcarea fișierului Excel");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      // Verificăm dacă header-ul conține "Content-Disposition"
+      const contentDisposition = response.headers.get("Content-Disposition");
+      let fileName = "Camere_Camin.xlsx"; // Nume fallback
+
+      if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?([^"]+)"?/);
+          if (match && match[1]) {
+              fileName = match[1]; // Extragem numele real al fișierului
+          }
+      }
+
+      console.log("📂 Fișier descărcat:", fileName);
+
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+  } catch (error) {
+      console.error("Eroare la descărcarea fișierului:", error);
+      alert("A apărut o eroare la descărcare!");
+  }
+};
 
   return (
     <div>
@@ -169,7 +288,7 @@ const handleRespingere = async () => {
             </div>
           </div>
 
-          <table className="cereri-table">
+          <table ref={tabelRef} className="cereri-table">
             <thead>
               <tr>
                 <th>Id cerere</th>
@@ -180,30 +299,56 @@ const handleRespingere = async () => {
                 <th>Optiune 3</th>
                 <th>Colegi</th>
                 <th>Data si ora</th>
+                <th>Accepta redistribuirea</th>
                 <th>Optiuni cerere</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCereri.map((cerere) => (
-                <tr key={cerere.id}>
-                  <td>{cerere.id}</td>
-                  <td>{cerere.nume}</td>
-                  <td>{cerere.prenume}</td>
-                  <td>{cerere.optiune1_camin ? `Cămin ${cerere.optiune1_camin} - Camera ${cerere.optiune1_camera}` : "-"}</td>
-                  <td>{cerere.optiune2_camin ? `Cămin ${cerere.optiune2_camin} - Camera ${cerere.optiune2_camera}` : "-"}</td>
-                  <td>{cerere.optiune3_camin ? `Cămin ${cerere.optiune3_camin} - Camera ${cerere.optiune3_camera}` : "-"}</td>
-                  <td>{cerere.colegi || "-"}</td>
-                  <td>{new Date(cerere.data_creare).toLocaleString("ro-RO")}</td>
-                  <td>
-                    <button onClick={() => setCerereSelectata(cerere)}>Selectează</button>
+              {filteredCereri.length > 0 ? (
+                filteredCereri.map((cerere) => (
+                  <tr key={cerere.id}>
+                    <td>{cerere.id}</td>
+                    <td>{cerere.nume}</td>
+                    <td>{cerere.prenume}</td>
+                    <td>{cerere.optiune1_camin ? `Cămin ${cerere.optiune1_camin} - Camera ${cerere.optiune1_camera}` : "-"}</td>
+                    <td>{cerere.optiune2_camin ? `Cămin ${cerere.optiune2_camin} - Camera ${cerere.optiune2_camera}` : "-"}</td>
+                    <td>{cerere.optiune3_camin ? `Cămin ${cerere.optiune3_camin} - Camera ${cerere.optiune3_camera}` : "-"}</td>
+                    <td>{cerere.colegi || "-"}</td>
+                    <td>{new Date(cerere.data_creare).toLocaleString("ro-RO")}</td>
+                    <td>
+                      {cerere.accept_redistribuire ? (
+                        <span style={{ color: "green", fontWeight: "bold" }}>✔ Da</span>
+                      ) : (
+                        <span style={{ color: "red", fontWeight: "bold" }}>✖ Nu</span>
+                      )}
+                    </td>
+                    <td>
+                      <button 
+                          onClick={() => {
+                            setCerereSelectata(cerere);
+                            setCereriColegi(findCereriColegi(cerere));
+                            setTimeout(() => {
+                              validareRef.current?.scrollIntoView({ behavior: "smooth", block: "center"});
+                            }, 100); // Mic delay pentru siguranță
+                          }}
+                        >
+                          Selectează
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10" style={{ textAlign: "center", padding: "15px", fontStyle: "italic", color: "gray" }}>
+                    Nu există cereri de cazare.
                   </td>
-
                 </tr>
-              ))}
+              )}
             </tbody>
+
           </table>
           {cerereSelectata && (
-            <div className="validare-container">
+            <div ref={validareRef} className="validare-container">
               <h3>Validare Cerere #{cerereSelectata.id} - {cerereSelectata.nume} {cerereSelectata.prenume}</h3>
 
               <label>Selectează opțiunea de validare:</label>
@@ -214,31 +359,196 @@ const handleRespingere = async () => {
                 {cerereSelectata.optiune3_camera && <option value="3">Opțiunea 3: Camera {cerereSelectata.optiune3_camera}</option>}
               </select>
 
-              <button onClick={() => handleValidare()}>Validează Cererea</button>
-              <button onClick={() => handleRespingere()}>Respinge Cererea</button>
-              <button onClick={() => setCerereSelectata(null)}>Anulează</button>
+              <button 
+                style={{ color: "white", backgroundColor: "green", padding: "10px", border: "none", borderRadius: "5px", cursor: "pointer" }} 
+                onClick={() => {
+                  handleValidare();
+                  setTimeout(() => {
+                    tabelRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }, 100);
+                }}>
+                Validează Cererea
+              </button>
+
+              <button 
+                style={{ color: "white", backgroundColor: "red", padding: "10px", border: "none", borderRadius: "5px", cursor: "pointer" }} 
+                onClick={() => {
+                  handleRespingere();
+                  setTimeout(() => {
+                    tabelRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }, 100);
+                }}>
+                Respinge Cererea
+              </button>
+
+              <button 
+                style={{ color: "black", backgroundColor: "lightgray", padding: "10px", border: "none", borderRadius: "5px", cursor: "pointer" }} 
+                onClick={() => {
+                   setCerereSelectata(null);
+                   setTimeout(() => {
+                     tabelRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                   }, 100);
+                 }}
+                >
+                  Anulează
+              </button>  
+              {cereriColegi.length > 0 && (
+                <div className="colegi-cereri-container">
+                  <h3>Cererile în care studentul selectat apare ca și coleg:</h3>
+                  <table className="cereri-table">
+                    <thead>
+                      <tr>
+                        <th>Id cerere</th>
+                        <th>Nume</th>
+                        <th>Prenume</th>
+                        <th>Optiune 1</th>
+                        <th>Optiune 2</th>
+                        <th>Optiune 3</th>
+                        <th>Colegi</th>
+                        <th>Data si ora</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cereriColegi.map((cerere) => (
+                        <tr key={cerere.id}>
+                          <td>{cerere.id}</td>
+                          <td>{cerere.nume}</td>
+                          <td>{cerere.prenume}</td>
+                          <td>{cerere.optiune1_camin ? `Cămin ${cerere.optiune1_camin} - Camera ${cerere.optiune1_camera}` : "-"}</td>
+                          <td>{cerere.optiune2_camin ? `Cămin ${cerere.optiune2_camin} - Camera ${cerere.optiune2_camera}` : "-"}</td>
+                          <td>{cerere.optiune3_camin ? `Cămin ${cerere.optiune3_camin} - Camera ${cerere.optiune3_camera}` : "-"}</td>
+                          <td>{cerere.colegi || "-"}</td>
+                          <td>{new Date(cerere.data_creare).toLocaleString("ro-RO")}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
-
+          <div className="download-buttons">
+            <button onClick={downloadExcel} className="export-button">
+                📥 Descarcă lista cu cereri
+            </button>
+          </div>
           <br />
+          <hr />
           <h2>Camere disponibile în cămin</h2>
           <div className="camere-grid">
-            {Object.keys(camereCamin).map((etaj) => (
-              <div key={etaj} className="etaj-container">
-                <h3>Etaj {etaj}</h3>
-                <div className="camere-list">
-                  {camereCamin[etaj].map(({ numar_camera, este_disponibila }) => (
-                    <div 
-                      key={numar_camera} 
-                      className={`camera-card ${este_disponibila ? "disponibila" : "indisponibila"}`}
-                    >
-                      {numar_camera}
+            {Object.keys(camereCamin).map((etaj) => {
+              const camereEtaj = camereCamin[etaj];
+      
+              const grupuriCamere = [];
+              for (let i = 0; i < camereEtaj.length; i += 6) {
+                grupuriCamere.push(camereEtaj.slice(i, i + 6));
+              }
+            
+              return (
+                <div key={etaj} className="etaj-container">
+                  <h3>{etaj == 0 ? "Parter" : `Etaj ${etaj}`}</h3>
+              
+                  {grupuriCamere.map((grup, index) => (
+                    <div key={index} className="camere-list">
+                      {grup.map(({ numar_camera, numar_paturi, este_disponibila }) => (
+                        <div
+                          key={numar_camera}
+                          className={`camera-card ${este_disponibila ? "disponibila" : "indisponibila"}`}
+                        >
+                          {`${numar_camera} - ${numar_paturi} paturi`}
+                        </div>
+                      ))}
                     </div>
                   ))}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+          <div className="download-buttons">
+            <button onClick={downloadCamereExcel} className="export-button">
+                📥 Descarcă situatia camerelor
+            </button>
+          </div>  
+          <br />
+          <hr />
+          <h2>Studenti ce au cerut redistribuire</h2>
+            <table className="redistribuire-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nume</th>
+                  <th>Prenume</th>
+                  <th>Facultate</th>
+                  <th>Specializare</th>
+                  <th>Email</th>
+                  <th>Optiuni student</th>
+                </tr>
+              </thead>
+              <tbody>
+                {studentiRedistribuire.length > 0 ? (
+                  studentiRedistribuire.map((student) => (
+                    <tr key={student.id}>
+                      <td>{student.id}</td>
+                      <td>{student.nume}</td>
+                      <td>{student.prenume}</td>
+                      <td>{student.facultate}</td>
+                      <td>{student.specializare}</td>
+                      <td>{student.email}</td>
+                      <td>
+                        <button 
+                            className="select-student" 
+                            onClick={() => {
+                              setStudentSelectat(student); 
+                              setTimeout(() => {
+                                cazareRef.current?.scrollIntoView({ behavior: "smooth" });
+                              }, 100); // Mic delay pentru a asigura că elementul există
+                            }}
+                          >
+                            Selectează
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" style={{ textAlign: "center" }}>Nu există studenți care au cerut redistribuire.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <br />
+            {studentSelectat && (
+             <div ref={cazareRef} className="cazare-manuala">
+               <h3>Cazare manuală pentru {studentSelectat.nume} {studentSelectat.prenume}</h3>
+
+               <label>Selectează o cameră:</label>
+               <select onChange={(e) => setCameraSelectata(e.target.value)} value={cameraSelectata}>
+                <option value="">Alege o cameră</option>
+                {camere.length > 0 ? (
+                  camere.map((camera) => (
+                    <option key={camera.id} value={camera.id}>
+                      {`Camera ${camera.numar_camera}`}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>Nicio cameră disponibilă</option>
+                )}
+                </select>               
+                 <button 
+                   className="cazare-student"
+                   onClick={() => handleCazareManuala()} 
+                   disabled={!cameraSelectata}
+                 >
+                   Cazează studentul
+                 </button>
+                 <button 
+                   className="cancel-button"
+                   onClick={() => {setStudentSelectat(null); setCameraSelectata(null)}} // Resetează studentul selectat
+                  >
+                   Anulează
+                 </button> 
+             </div>
+            )}
         </div>
       </div>
     </div>

@@ -65,7 +65,7 @@ function NavBar() {
             Cerere Cazare
           </a>
         </li>
-        <li>
+        {/* <li>
           <a href="#" className="nav-link text-white">
             <i className="bi bi-table me-2"></i>
             Program masini de spalat
@@ -82,7 +82,7 @@ function NavBar() {
             <i className="bi bi-people me-2"></i>
             Butonul4
           </a>
-        </li>
+        </li> */}
         <li>
           <a onClick={handleLogout} className="nav-link text-white" style={{ cursor: "pointer" }}>
           <i className="bi bi-box-arrow-in-right"></i>
