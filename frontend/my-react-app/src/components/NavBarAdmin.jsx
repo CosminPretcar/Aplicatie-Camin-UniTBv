@@ -79,7 +79,7 @@ function NavBarAdmin() {
         </li> */}
         <li>
           <a onClick={handleLogout} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi bi-box-arrow-right"></i>
+            <i className="bi bi-box-arrow-right"> </i>
             Logout
           </a>
         </li>

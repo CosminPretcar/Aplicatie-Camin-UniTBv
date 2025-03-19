@@ -44,6 +44,7 @@ function CerereCazare() {
           withCredentials: true,
         });
         setUtilizatori(response.data);
+        console.log("📡 Utilizatori încărcați:", utilizatori);
       } catch (error) {
         console.error("Eroare la preluarea utilizatorilor:", error);
       }
@@ -270,7 +271,7 @@ function CerereCazare() {
                       <td>{user.prenume}</td>
                       <td>{user.facultate}</td>
                       <td>{user.specializare}</td>
-                      <td>null</td>
+                      <td>{user.grupa}</td>
                     </tr>
                   ))}
               </tbody>

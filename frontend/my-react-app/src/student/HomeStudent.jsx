@@ -3,6 +3,7 @@ import axios from "axios";
 import NavBar from "../components/NavBar";
 import { useLocation } from "react-router-dom";
 import "../styles/HomeStudent.css";
+import Avizier from "../student/AvizierDigitalStudent";
 
 function HomeStudent() {
   const [user, setUser] = useState({ nume: "utilizator", prenume: "" });
@@ -35,7 +36,7 @@ function HomeStudent() {
             </div>
           </div>
           <div className="col-md-6">
-            <div className="card shadow p-3 text-center">
+            <div className="card shadow p-3 text-center ">
               <h2>Bine ai revenit, {user.prenume} {user.nume}!</h2>
             </div>
           </div>
@@ -48,9 +49,7 @@ function HomeStudent() {
         <hr />
         <div className="row mt-2">
           <div className="col-md-6">
-            <div className="card shadow p-3 text-center">
-              <h2>Avizier digital</h2>
-            </div>
+           <Avizier />
           </div>
           <div className="col-md-6">
             <div className="card shadow p-3 text-center">

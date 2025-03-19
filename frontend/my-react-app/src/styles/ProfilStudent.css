@@ -1,0 +1,40 @@
+.card {
+    transition: all 0.4s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card.edit-mode {
+    background-color: #fffaf0;
+    border: 2px solid #f0ad4e;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+  }
+  
+  .editable-field {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeIn 0.4s ease-in-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Buton de editare cu efect smooth */
+  .btn-edit {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .btn-edit:hover {
+    transform: scale(1.05);
+    background-color: #f8f2da;
+  }
+
+  .card-profil, .card-camera, .card-about {
+    min-height: 350px; /* Ajustează această valoare în funcție de conținut */
+}
+  
+  

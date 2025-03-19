@@ -1,0 +1,3 @@
+.card-info, .card-camera, .card-about {
+    min-height: 330px; /* Ajustează această valoare în funcție de conținut */
+}

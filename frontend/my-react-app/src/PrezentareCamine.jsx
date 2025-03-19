@@ -364,7 +364,7 @@ function PrezentareCamine() {
                 </li>
                 <li><i className="bi bi-person-walking"></i> Proximitatea față de facultate</li>
                 <li><i className="bi bi-people-fill"></i> Viață socială activă</li>
-                <li> Acces la facilități comune</li>
+                <li><i className="bi bi-house-heart"></i> Acces la facilități comune</li>
                 <li><i className="bi bi-book-half"></i> Mediu motivant pentru studiu</li>
               </ul>
             </div>
@@ -375,11 +375,11 @@ function PrezentareCamine() {
             <div className="card-body">
               <h5 className="card-title"><i className="bi bi-hand-thumbs-down"></i> Dezavantaje</h5>
               <ul>
-                <li>Zgomot și lipsă de intimitate</li>
+                <li><i className="bi bi-exclamation-triangle"></i> Zgomot și lipsă de intimitate</li>
                 <li><i className="bi bi-book"> </i> Reguli stricte</li>
-                <li>Condiții diferite în funcție de cămin</li>
-                <li>Spațiu limitat</li>
-                <li>Posibile conflicte cu colegii de cameră</li>
+                <li><i className="bi bi-building"></i> Condiții diferite în funcție de cămin</li>
+                <li><i className="bi bi-box-seam"></i> Spațiu limitat</li>
+                <li><i className="bi bi-emoji-angry"></i> Posibile conflicte cu colegii de cameră</li>
               </ul>
             </div>
           </div>

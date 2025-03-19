@@ -21,6 +21,15 @@ function NavBar() {
       }
     };
     fetchUser();
+
+      // 👇 Ascultăm evenimentul și refacem request-ul când poza se schimbă
+  const handleProfilePictureUpdate = () => fetchUser();
+
+  window.addEventListener("profilePictureUpdated", handleProfilePictureUpdate);
+
+  return () => {
+    window.removeEventListener("profilePictureUpdated", handleProfilePictureUpdate);
+  };
   }, []);
 
   const handleLogout = async() => {
@@ -61,17 +70,17 @@ function NavBar() {
         </li>
         <li>
           <a onClick={() => navigate("/cerere-cazare")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-          <i className="bi bi-body-text"></i>
+          <i className="bi bi-body-text me-2"></i>
             Cerere Cazare
           </a>
         </li>
-        {/* <li>
-          <a href="#" className="nav-link text-white">
-            <i className="bi bi-table me-2"></i>
-            Program masini de spalat
+        <li>
+          <a onClick={() => navigate("/reviewlunar")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+            <i className="bi-star-fill me-2"></i>
+            Review lunar
           </a>
         </li>
-        <li>
+        {/* <li>
           <a href="#" className="nav-link text-white">
             <i className="bi bi-grid me-2"></i>
             Butonul3
@@ -85,7 +94,7 @@ function NavBar() {
         </li> */}
         <li>
           <a onClick={handleLogout} className="nav-link text-white" style={{ cursor: "pointer" }}>
-          <i className="bi bi-box-arrow-in-right"></i>
+          <i className="bi bi-box-arrow-in-right me-2"></i>
             Logout
           </a>
         </li>

@@ -10,6 +10,8 @@ import HomeAdministrator from "./administator/HomeAdministrator";
 import CereriCazareAdmin from "./administator/CereriCazareAdmin";
 import PrezentareCamine from "./PrezentareCamine";
 import ProfilStudent from "./student/ProfilStudent";
+import ProfilColegi from "./student/ProfilColegi";
+import ReviewLunar from "./student/ReviewLunarStudent";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
@@ -36,6 +38,16 @@ function App() {
           <Route path="/profilstudent/:nume" element={
             <ProtectedRoute roles={["user"]}>
               <ProfilStudent />
+            </ProtectedRoute>
+          } />
+          <Route path="/reviewlunar" element={
+            <ProtectedRoute roles={["user"]}>
+              <ReviewLunar />
+            </ProtectedRoute>
+          } />
+          <Route path="/profil-coleg/:nume" element={
+            <ProtectedRoute roles={["user"]}>
+              <ProfilColegi key={window.location.pathname} />
             </ProtectedRoute>
           } />
         {/* Rute ce trebuiesc accesate doar de administratorii de camin */}

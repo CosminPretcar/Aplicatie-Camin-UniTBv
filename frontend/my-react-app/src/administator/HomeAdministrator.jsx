@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import NavBarAdmin from "../components/NavBarAdmin";
 import axios from "axios";
+import Avizier from "./AvizierDigitalAdministrator";
 
 function HomeAdministrator() {
   const [user, setUser] = useState({ nume: "utilizator", prenume: "" });
@@ -48,9 +49,7 @@ function HomeAdministrator() {
       <hr />
       <div className="row mt-2">
         <div className="col-md-6">
-          <div className="card shadow p-3 text-center">
-            <h2>Avizier digital</h2>
-          </div>
+          <Avizier />
         </div>
         <div className="col-md-6">
           <div className="card shadow p-3 text-center">
@@ -58,7 +57,7 @@ function HomeAdministrator() {
           </div>
         </div>
         </div>
-    </div>
+      </div>
   </div>
   );
 }

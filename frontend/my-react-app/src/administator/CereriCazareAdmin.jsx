@@ -185,7 +185,13 @@ const downloadExcel = async () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "Cereri_Cazare.xlsx";
+
+      const dateObj = new Date();
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const year = dateObj.getFullYear();
+      const currentDate = `${day}-${month}-${year}`;
+      a.download = `Cereri_Cazare_${currentDate}.xlsx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -232,7 +238,12 @@ const downloadCamereExcel = async () => {
 
       console.log("📂 Fișier descărcat:", fileName);
 
-      a.download = fileName;
+      const dateObj = new Date();
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const year = dateObj.getFullYear();
+      const currentDate = `${day}-${month}-${year}`;
+      a.download = `Camere ${currentDate}.xlsx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

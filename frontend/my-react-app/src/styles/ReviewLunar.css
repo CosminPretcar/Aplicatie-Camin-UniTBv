@@ -1,0 +1,115 @@
+/* Fundal general */
+/* .page-container {
+    background: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+} */
+
+/* Card mare pentru review lunar */
+/* .review-card {
+    width: 90%;
+    max-width: 900px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+} */
+
+/* Card individual pentru fiecare categorie */
+.category-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Buton personalizat */
+.custom-button {
+    background-color: #007bff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    transition: all 0.3s ease-in-out;
+}
+
+.custom-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.custom-container {
+    width: 100%;
+    margin-left: 280px;
+    padding: 20px; /* Adaugă padding pentru aspect aerisit */
+}
+
+/* Aliniere pe înălțime a celor două coloane */
+.custom-container .row {
+    display: flex;
+    align-items: stretch; /* Ambele carduri vor avea aceeași înălțime */
+}
+
+/* Asigură că cardurile se extind pentru a avea aceeași înălțime */
+.review-card, .rules-card {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Asigură o aliniere corectă a sliderului */
+/* Container pentru numere, astfel încât să fie aliniate corect cu sliderul */
+.slider-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+/* Container pentru numerele sliderului */
+.slider-values {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    width: 105%;  /* Extinde puțin lățimea peste slider */
+    margin: 0 auto;
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+    text-align: center;
+    padding: 0 12px; /* Ajustează distanța față de marginile sliderului */
+}
+
+/* Ajustează poziția numerelor */
+.slider-values span {
+    position: relative;
+    top: 5px; /* Ușoară ajustare verticală */
+    transition: color 0.3s ease, font-weight 0.3s ease;
+}
+
+/* Evidențiază numărul selectat */
+.slider-values .active {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.rules-card p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.rules-card .list-group-item {
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 8px 12px;
+}
+
+.small-text {
+    font-size: 12px;
+}
+
+
+
+
+
+
+
