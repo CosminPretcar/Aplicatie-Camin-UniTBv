@@ -64,7 +64,7 @@ function ProgramareResurse() {
     setProgramari(res.data);
 
     const me = await axios.get(
-      `http://localhost:4000/programari/me?start=${start}&end=${end}`,
+      `http://localhost:4000/programari/me?start=${start}&end=${end}&id_resursa=${idResursa}`,
       { withCredentials: true }
     );
     setProgramarileMele(me.data);
@@ -104,8 +104,8 @@ function ProgramareResurse() {
   
   // încarcă programările proprii mereu
   useEffect(() => {
-    incarcaProgramarileMele();
-  }, []);
+    incarcareProgramari(); // 👉 folosește funcția care încarcă și programarileMele, și programările generale, filtrate
+  }, [idResursa]);
 
   const slotOcupat = (zi, ora) =>
     programari.some((p) => {

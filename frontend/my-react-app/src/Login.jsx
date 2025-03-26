@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { userContext } from "./utils/ContextProvider";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "./styles/Login.css"
@@ -15,38 +16,41 @@ function Login({setUser}) {
   const [eroare, setEroare] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const { refetchUser } = useContext(userContext);
+
 
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    axios.post("http://localhost:4000/login",
-        { username, password }, 
+  
+    try {
+      const response = await axios.post("http://localhost:4000/login",
+        { username, password },
         { withCredentials: true }
-    )
-    .then(response => {
-        if (response.status === 200) {
-            const { nume, prenume, esteAdmin } = response.data;
-            alert("Login successful!");
-            setUser({ nume, prenume, esteAdmin });
-            console.log("User după login:", { nume, prenume, esteAdmin });
-
-            if (esteAdmin) {
-                navigate("/admin/dashboard");
-            } else {
-                navigate("/home");
-            }
+      );
+  
+      if (response.status === 200) {
+        const { nume, prenume, esteAdmin } = response.data;
+        alert("Login successful!");
+        await refetchUser(); // sincronizezi ContextProvider-ul
+        setUser({ nume, prenume, esteAdmin }); // doar local, dar nu mai e vital
+        console.log("User după login:", { nume, prenume, esteAdmin });
+  
+        if (esteAdmin) {
+          navigate("/admin/dashboard", { replace: true });
+        } else {
+          navigate("/home", { replace: true });
         }
-    })
-    .catch(error => {
+      }
+    } catch (error) {
       if (error.response) {
         setEroare(error.response.data.message || "Date incorecte.");
       } else {
         setEroare("A apărut o eroare. Încearcă din nou.");
       }
-    });
-};
+    }
+  };
 
   return (
     

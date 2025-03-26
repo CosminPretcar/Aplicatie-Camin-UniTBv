@@ -12,6 +12,7 @@ import path from "path"
 import ngrok from "ngrok";
 import ExcelJS from "exceljs"
 import PDFDocument from "pdfkit"
+import cron from "node-cron"
 
 dotenv.config();
 
@@ -57,6 +58,18 @@ const storageSesizari = multer.diskStorage({
 });
 const uploadSesizari = multer({ storage: storageSesizari });
 
+cron.schedule("0 * * * *", async () => {
+  try {
+    const result = await db.query(`
+      DELETE FROM programari_resurse
+      WHERE (data < CURRENT_DATE)
+         OR (data = CURRENT_DATE AND (ora_start::time + (durata_minute || ' minutes')::interval) < CURRENT_TIME)
+    `);
+    console.log(`🧹 ${result.rowCount} programări expirate șterse automat.`);
+  } catch (err) {
+    console.error("Eroare la ștergerea programărilor expirate:", err);
+  }
+});
 
 app.use(cors({
   origin: "http://localhost:3000", 
@@ -1787,24 +1800,33 @@ app.get("/programari", async (req, res) => {
 
 // 📋 programările proprii ale studentului
 app.get("/programari/me", async (req, res) => {
-  const { start, end } = req.query;
+  const { start, end, id_resursa } = req.query;
   if (!req.isAuthenticated()) return res.status(401).json({ message: "Neautentificat" });
 
   try {
-    const result = await db.query(`
+    let query = `
       SELECT p.id, p.ora_start, p.data, r.nume AS nume_resursa
       FROM programari_resurse p
       JOIN resurse r ON p.id_resursa = r.id
       WHERE p.id_student = $1 AND p.data BETWEEN $2 AND $3
-      ORDER BY p.data, p.ora_start
-    `, [req.user.id, start, end]);
+    `;
+    const params = [req.user.id, start, end];
 
+    if (id_resursa) {
+      query += " AND p.id_resursa = $4";
+      params.push(parseInt(id_resursa, 10));
+    }
+
+    query += " ORDER BY p.data, p.ora_start";
+
+    const result = await db.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error("Eroare la programari/me:", err);
     res.status(500).json({ message: "Eroare de server" });
   }
 });
+
 
 
 // ➕ adăugare programare
