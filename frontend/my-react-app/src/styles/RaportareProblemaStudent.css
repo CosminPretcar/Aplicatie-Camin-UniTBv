@@ -1,0 +1,18 @@
+.rules-card {
+    background-color: #f9f9f9;
+  }
+  
+  .custom-button {
+    min-width: 200px;
+  }
+  
+  .page-container {
+    min-height: 100vh;
+    background-color: #f0f2f5;
+  }
+  
+  .custom-container {
+    padding: 40px;
+    flex-grow: 1;
+  }
+  

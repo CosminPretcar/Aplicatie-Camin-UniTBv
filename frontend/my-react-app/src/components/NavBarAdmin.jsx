@@ -59,24 +59,30 @@ function NavBarAdmin() {
             Dashboard
           </a>
         </li>
-        {/* <li>
-          <a onClick={() => navigate("/admin/users")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi bi-people me-2"></i>
-            Gestionare Utilizatori
+        <li>
+          <a onClick={() => navigate("/admin/review-lunar")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+          <i className="bi-star-fill me-2"></i>
+            Review Lunar
           </a>
-        </li> */}
+        </li>
         <li>
           <a onClick={() => navigate("/admin/cereri-cazare")} className="nav-link text-white" style={{ cursor: "pointer" }}>
             <i className="bi bi-file-earmark-text me-2"></i>
             Cereri Cazare
           </a>
         </li>
-        {/* <li>
-          <a onClick={() => navigate("/admin/settings")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+        <li>
+          <a onClick={() => navigate("/admin/studenti-pe-camere")} className="nav-link text-white" style={{ cursor: "pointer" }}>
             <i className="bi bi-gear me-2"></i>
-            Setări
+            Studenti pe camere
           </a>
-        </li> */}
+        </li>
+        <li>
+          <a onClick={() => navigate("/admin/sesizari")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+            <i className="bi bi-gear me-2"></i>
+            Sesizari
+          </a>
+        </li>
         <li>
           <a onClick={handleLogout} className="nav-link text-white" style={{ cursor: "pointer" }}>
             <i className="bi bi-box-arrow-right"> </i>

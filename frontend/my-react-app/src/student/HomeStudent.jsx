@@ -8,6 +8,9 @@ import Avizier from "../student/AvizierDigitalStudent";
 function HomeStudent() {
   const [user, setUser] = useState({ nume: "utilizator", prenume: "" });
   const [ora, setOra] = useState(new Date());
+  const [urmatoareaProgramare, setUrmatoareaProgramare] = useState(null);
+  const [toateProgramarile, setToateProgramarile] = useState([]);
+
   useEffect(() => {
     axios.get("http://localhost:4000/me", { withCredentials: true })
       .then(response => {
@@ -23,6 +26,37 @@ function HomeStudent() {
       setOra(new Date());
     }, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const fetchUrmatoareaProgramare = async () => {
+      const azi = new Date();
+      const start = azi.toISOString().split("T")[0];
+      const end = new Date(azi.getTime() + 7 * 24 * 60 * 60 * 1000) // următoarele 7 zile
+        .toISOString().split("T")[0];
+  
+      try {
+        const res = await axios.get(`http://localhost:4000/programari/me?start=${start}&end=${end}`, {
+          withCredentials: true,
+        });
+  
+        if (res.data.length > 0) {
+          // sortăm după dată + oră
+          const ordonate = res.data.sort((a, b) => {
+            const t1 = new Date(`${a.data}T${a.ora_start}`);
+            const t2 = new Date(`${b.data}T${b.ora_start}`);
+            return t1 - t2;
+          });
+  
+          setUrmatoareaProgramare(ordonate[0]);
+          setToateProgramarile(res.data); // adaugă în interiorul try
+        }
+      } catch (err) {
+        console.error("Eroare la încărcarea programărilor:", err);
+      }
+    };
+  
+    fetchUrmatoareaProgramare();
   }, []);
 
   return (
@@ -52,9 +86,53 @@ function HomeStudent() {
            <Avizier />
           </div>
           <div className="col-md-6">
-            <div className="card shadow p-3 text-center">
-              <h2>Memento</h2>
+            <div
+              className="card shadow border-2 border-dark rounded-4 p-4 text-dark"
+              style={{
+                background: "linear-gradient(to right, #ffffff, #e7f4ff)",
+                minHeight: "280px"
+              }}
+            >
+              <h4 className="text-center mb-3">🧠 Memento</h4>
+            
+              {urmatoareaProgramare ? (
+                <>
+                  <div className="alert alert-info p-2 small mb-4 text-start">
+                    <strong>🔔 Următoarea ta programare:</strong><br />
+                    {new Date(urmatoareaProgramare.data).toLocaleDateString("ro-RO", {
+                      weekday: "long", day: "2-digit", month: "long"
+                    })} — ora <strong>{urmatoareaProgramare.ora_start.slice(0, 5)}</strong><br />
+                    <span className="badge bg-primary mt-2">{urmatoareaProgramare.nume_resursa}</span>
+                  </div>
+                  
+                  {toateProgramarile.length > 1 && (
+                    <>
+                      <h6 className="text-muted mb-2">📋 Programările tale viitoare:</h6>
+                      <ul className="list-group small text-start">
+                        {toateProgramarile.map((p, idx) => (
+                          <li
+                            key={idx}
+                            className="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            <span>
+                              {new Date(p.data).toLocaleDateString("ro-RO", {
+                                weekday: "short", day: "2-digit", month: "short"
+                              })} — ora {p.ora_start.slice(0, 5)}
+                            </span>
+                            <span className="badge bg-secondary">{p.nume_resursa}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </>
+              ) : (
+                <div className="text-center text-muted mt-3">
+                  Nu ai programări active în perioada următoare.
+                </div>
+              )}
             </div>
+
           </div>
         </div>
       </div>

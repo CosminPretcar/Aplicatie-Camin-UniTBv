@@ -34,7 +34,7 @@
   }
 
   .card-profil, .card-camera, .card-about {
-    min-height: 350px; /* Ajustează această valoare în funcție de conținut */
+    min-height: 400px; /* Ajustează această valoare în funcție de conținut */
 }
   
   

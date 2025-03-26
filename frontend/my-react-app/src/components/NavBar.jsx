@@ -22,14 +22,14 @@ function NavBar() {
     };
     fetchUser();
 
-      // 👇 Ascultăm evenimentul și refacem request-ul când poza se schimbă
-  const handleProfilePictureUpdate = () => fetchUser();
+    
+    const handleProfilePictureUpdate = () => fetchUser();
 
-  window.addEventListener("profilePictureUpdated", handleProfilePictureUpdate);
+    window.addEventListener("profilePictureUpdated", handleProfilePictureUpdate);
 
-  return () => {
-    window.removeEventListener("profilePictureUpdated", handleProfilePictureUpdate);
-  };
+    return () => {
+      window.removeEventListener("profilePictureUpdated", handleProfilePictureUpdate);
+    };
   }, []);
 
   const handleLogout = async() => {
@@ -80,18 +80,24 @@ function NavBar() {
             Review lunar
           </a>
         </li>
-        {/* <li>
-          <a href="#" className="nav-link text-white">
-            <i className="bi bi-grid me-2"></i>
-            Butonul3
+        <li>
+          <a onClick={() => navigate("/colegi-pe-camere")} className="nav-link text-white" style={{cursor:"pointer"}}>
+            <i className="bi bi-people me-2"></i>
+            Colegii de camin
+          </a>
+        </li> 
+        <li>
+          <a onClick={() => navigate("/raporteaza-probleme")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+            <i className="bi-star-fill me-2"></i>
+            Raporteaza o problema
           </a>
         </li>
         <li>
-          <a href="#" className="nav-link text-white">
-            <i className="bi bi-people me-2"></i>
-            Butonul4
+          <a onClick={() => navigate("/programare-resurse")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+            <i className="bi-star-fill me-2"></i>
+            Programare resurse
           </a>
-        </li> */}
+        </li>
         <li>
           <a onClick={handleLogout} className="nav-link text-white" style={{ cursor: "pointer" }}>
           <i className="bi bi-box-arrow-in-right me-2"></i>
@@ -103,12 +109,12 @@ function NavBar() {
       <hr />
       <div className="profile-button">
         <a 
-          onClick={() => navigate(`/profilstudent/${user?.nume}`)} 
+          onClick={() => navigate(`/profil-personal/${user?.nume}`)} 
           className="d-flex align-items-center text-white text-decoration-none"
           style={{ cursor: "pointer" }}
         >
           <img 
-            src={user?.poza_profil ? `http://localhost:4000${user.poza_profil}` : "/assets/poza_def.jpg"}
+            src={user?.poza_profil ? `http://localhost:4000${user.poza_profil}?t=${Date.now()}` : "/assets/poza_def.jpg"}
             alt="Profil" 
             width="32" 
             height="32" 

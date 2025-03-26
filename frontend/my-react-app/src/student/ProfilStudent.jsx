@@ -137,7 +137,7 @@ const handleDescriereChange = (e) => {
               <div className="row align-items-center">
                 <div className="col-md-4 text-center">
                   <img
-                    src={user?.poza_profil ? `http://localhost:4000${user.poza_profil}` : "/assets/poza_def.jpg"}
+                    src={user?.poza_profil ? `http://localhost:4000${user.poza_profil}?t=${Date.now()}` : "/assets/poza_def.jpg"}
                     alt="Profil"
                     className="rounded-circle img-fluid mb-3"
                     style={{ width: "150px", height: "150px", objectFit: "cover" }}
@@ -223,7 +223,7 @@ const handleDescriereChange = (e) => {
                   <ul className="list-group">
                     {cameraInfo.colegi.map((coleg, index) => (
                       <li key={index} className="list-group-item">
-                        <Link to={`/profil-coleg/${encodeURIComponent(coleg.nume)}`} className="text-decoration-none">
+                        <Link to={`/vizualizare-profil/${encodeURIComponent(coleg.nume)}`} className="text-decoration-none">
                           <strong>{coleg.prenume} {coleg.nume}</strong>
                         </Link> - {coleg.email}
                         🎓 <em>{coleg.facultate && coleg.facultate.trim() !== "" ? coleg.facultate : "Facultate nespecificată"}</em> |
