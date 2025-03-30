@@ -19,6 +19,17 @@ function CerereCazare() {
   const [optCamere, setOptCamere] = useState(["", "", ""]);
   const [optEtaje, setOptEtaje] = useState(["", "", ""]);
   const [selectedColegi, setSelectedColegi] = useState([]);
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastType, setToastType] = useState("success"); // sau "danger"
+
+  const showCustomToast = (message, type = "success") => {
+    setToastMsg(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  };
   
 
   useEffect(() => {
@@ -115,7 +126,7 @@ function CerereCazare() {
 
       
     if (!optCamere.some((camera) => camera !== "")) {
-      alert("Trebuie să selectezi cel puțin o cameră înainte de a alege colegii!");
+      showCustomToast("Selectează mai întâi o cameră!", "danger");
       return;
     } 
     if (selectedColegi.includes(userId)) {
@@ -124,7 +135,7 @@ function CerereCazare() {
     }
 
     if (numarStudentiSelectati > numarTotalPaturi) {
-      alert("Numărul de studenți selectați depășește numărul de paturi disponibile!");
+      showCustomToast("Ai depășit numărul de paturi disponibile!", "danger");
       return;
     }
 
@@ -145,7 +156,7 @@ function CerereCazare() {
     }));
   
     if (cerere.some(opt => !opt.cameraId)) {
-      alert("Selectați toate opțiunile de camere!");
+      showCustomToast("Selectează toate camerele înainte de a trimite cererea!", "danger");
       return;
     }
   
@@ -156,7 +167,7 @@ function CerereCazare() {
         acceptRedistribuire: acceptRedistribuire,
       }, { withCredentials: true });
   
-      alert(response.data.message); // ✅ Afișează alert doar dacă cererea a fost depusă cu succes!
+      showCustomToast(response.data.message, "success");// ✅ Afișează alert doar dacă cererea a fost depusă cu succes!
       setOptCamine(["", "", ""]);
       setOptEtaje(["", "", ""]);
       setOptCamere(["", "", ""]);
@@ -165,9 +176,9 @@ function CerereCazare() {
   
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        alert(error.response.data.message);  // 🛑 Dacă există deja o cerere, afișează doar acest mesaj
+        showCustomToast(error.response.data.message, "danger");  // 🛑 Dacă există deja o cerere, afișează doar acest mesaj
       } else {
-        alert("Eroare la trimiterea cererii!");
+        showCustomToast("Eroare la trimiterea cererii!", "danger");
       }
     }
   };
@@ -337,6 +348,23 @@ function CerereCazare() {
            </div>
         </div>
       </div>
+      {showToast && (
+        <div
+          className="toast show position-fixed bottom-0 end-0 m-4"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          style={{ zIndex: 9999, minWidth: "250px" }}
+        >
+          <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>
+            <strong className="me-auto">{toastType === "success" ? "Succes" : "Eroare"}</strong>
+            <button type="button" className="btn-close btn-close-white" onClick={() => setShowToast(false)}></button>
+          </div>
+          <div className="toast-body">
+            {toastMsg}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

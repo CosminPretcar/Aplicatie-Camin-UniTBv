@@ -18,6 +18,8 @@ function Login({setUser}) {
 
   const { refetchUser } = useContext(userContext);
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
 
   const navigate = useNavigate();
 
@@ -32,16 +34,19 @@ function Login({setUser}) {
   
       if (response.status === 200) {
         const { nume, prenume, esteAdmin } = response.data;
-        alert("Login successful!");
+        setToastMsg("Autentificare reușită! Redirectionare în curs...");
+        setShowToast(true);
         await refetchUser(); // sincronizezi ContextProvider-ul
         setUser({ nume, prenume, esteAdmin }); // doar local, dar nu mai e vital
         console.log("User după login:", { nume, prenume, esteAdmin });
   
-        if (esteAdmin) {
-          navigate("/admin/dashboard", { replace: true });
-        } else {
-          navigate("/home", { replace: true });
-        }
+        setTimeout(() => {
+          if (esteAdmin) {
+            navigate("/admin/dashboard", { replace: true });
+          } else {
+            navigate("/home", { replace: true });
+          }
+        }, 750);
       }
     } catch (error) {
       if (error.response) {
@@ -101,8 +106,8 @@ function Login({setUser}) {
         </div>
       )}
       <p className="text-center mt-3">
-  <Link to="/resetare-parola">Ai uitat parola?</Link>
-</p>
+       <Link to="/resetare-parola">Ai uitat parola?</Link>
+      </p>
 
       </div>
       <div style={{marginTop: "100px"}}>
@@ -114,8 +119,29 @@ function Login({setUser}) {
                   >
                     aici!
             </span>
-          </p>
+        </p>
       </div>
+      {showToast && (
+  <div
+    className="toast show position-fixed bottom-0 end-0 m-4"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    style={{ zIndex: 9999, minWidth: "250px" }}
+  >
+    <div className="toast-header bg-success text-white">
+      <strong className="me-auto">Succes</strong>
+      <button
+        type="button"
+        className="btn-close btn-close-white"
+        onClick={() => setShowToast(false)}
+      ></button>
+    </div>
+    <div className="toast-body">
+      {toastMsg}
+    </div>
+  </div>
+)}
     </div>
   );
 }

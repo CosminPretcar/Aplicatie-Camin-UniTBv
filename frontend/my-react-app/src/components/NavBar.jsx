@@ -64,37 +64,37 @@ function NavBar() {
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item">
           <a onClick={() => navigate("/home")} className="nav-link text-white" aria-current="page" style={{ cursor: "pointer" }}>
-            <i className="bi bi-house me-2"></i>
+            <i className="bi bi-house-door-fill me-2"></i>
             Home
           </a>
         </li>
         <li>
           <a onClick={() => navigate("/cerere-cazare")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-          <i className="bi bi-body-text me-2"></i>
+          <i className="bi bi-journal-text me-2"></i>
             Cerere Cazare
           </a>
         </li>
         <li>
           <a onClick={() => navigate("/reviewlunar")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi-star-fill me-2"></i>
+          <i className="bi bi-stars me-2"></i>
             Review lunar
           </a>
         </li>
         <li>
           <a onClick={() => navigate("/colegi-pe-camere")} className="nav-link text-white" style={{cursor:"pointer"}}>
-            <i className="bi bi-people me-2"></i>
+          <i className="bi bi-person-lines-fill me-2"></i>
             Colegii de camin
           </a>
         </li> 
         <li>
           <a onClick={() => navigate("/raporteaza-probleme")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi-star-fill me-2"></i>
+          <i className="bi bi-exclamation-octagon-fill me-2"></i>
             Raporteaza o problema
           </a>
         </li>
         <li>
           <a onClick={() => navigate("/programare-resurse")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi-star-fill me-2"></i>
+          <i className="bi bi-calendar-check me-2"></i>
             Programare resurse
           </a>
         </li>

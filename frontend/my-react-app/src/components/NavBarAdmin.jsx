@@ -55,31 +55,31 @@ function NavBarAdmin() {
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item">
           <a onClick={() => navigate("/admin/dashboard")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi bi-house me-2"></i>
+          <i className="bi bi-house-door-fill me-2"></i>
             Dashboard
           </a>
         </li>
         <li>
+          <a onClick={() => navigate("/admin/cereri-cazare")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+          <i className="bi bi-journal-check me-2"></i>
+            Cereri Cazare
+          </a>
+        </li>        
+        <li>
           <a onClick={() => navigate("/admin/review-lunar")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-          <i className="bi-star-fill me-2"></i>
+          <i className="bi bi-stars me-2"></i>
             Review Lunar
           </a>
         </li>
         <li>
-          <a onClick={() => navigate("/admin/cereri-cazare")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi bi-file-earmark-text me-2"></i>
-            Cereri Cazare
-          </a>
-        </li>
-        <li>
           <a onClick={() => navigate("/admin/studenti-pe-camere")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi bi-gear me-2"></i>
+          <i className="bi bi-door-open-fill me-2"></i>
             Studenti pe camere
           </a>
         </li>
         <li>
           <a onClick={() => navigate("/admin/sesizari")} className="nav-link text-white" style={{ cursor: "pointer" }}>
-            <i className="bi bi-gear me-2"></i>
+          <i className="bi bi-tools me-2"></i>
             Sesizari
           </a>
         </li>

@@ -18,6 +18,11 @@ function ProfilStudent() {
   const [sporturi, setSporturi] = useState("");
   const [hobby, setHobby] = useState("");
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastType, setToastType] = useState("success"); // sau "danger"
+
+
   const MAX_WORDS = 50;
   const [wordsLeft, setWordsLeft] = useState(MAX_WORDS);
 
@@ -71,6 +76,14 @@ function ProfilStudent() {
     }
   };
 
+  const showCustomToast = (message, type = "success") => {
+    setToastMsg(message);
+    setToastType(type);
+    setShowToast(true);
+  
+    setTimeout(() => setShowToast(false), 3000); // se închide automat
+  };
+
   const handleSave = async () => {
     try {
       const response = await axios.post("http://localhost:4000/upload-profile-pic", {
@@ -78,7 +91,7 @@ function ProfilStudent() {
       }, { withCredentials: true });
 
       if (response.data.success) {
-        alert("Profil actualizat!")
+        showCustomToast("Profil actualizat!", "success");
         setUser(prevUser => ({ ...prevUser, telefon }));
         setIsEditing(false);
       }
@@ -103,7 +116,7 @@ const handleSaveDescriere = async () => {
             { descriere: descriereLimitata, sporturi_preferate: sporturi, hobby_uri: hobby }, 
             { withCredentials: true }
         );
-        alert("Profil actualizat!");
+        showCustomToast("Profil actualizat!", "success");
         setIsEditingAbout(false);
     } catch (error) {
         console.error("Eroare la actualizarea profilului:", error);
@@ -240,6 +253,25 @@ const handleDescriereChange = (e) => {
           )}
         </div>
       </div>
+      {showToast && (
+        <div
+          className="toast show position-fixed bottom-0 end-0 m-4"
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          style={{ zIndex: 9999, minWidth: "250px" }}
+        >
+          <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>
+            <strong className="me-auto">{toastType === "success" ? "Succes" : "Eroare"}</strong>
+            <button
+              type="button"
+              className="btn-close btn-close-white"
+              onClick={() => setShowToast(false)}
+            ></button>
+          </div>
+          <div className="toast-body">{toastMsg}</div>
+        </div>
+      )}
     </div>
   );
 }

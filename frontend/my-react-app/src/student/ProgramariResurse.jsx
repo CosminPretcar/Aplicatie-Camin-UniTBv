@@ -20,6 +20,7 @@ function ProgramareResurse() {
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [eroare, setEroare] = useState("");
+  
 
   const zile = [...Array(5)].map((_, i) => dayjs().add(i, "day"));
 
@@ -27,7 +28,6 @@ function ProgramareResurse() {
     const oreGenerate = [];
   
     if (tipResursa === "masina_spalat") {
-      // Sloturi de 2h între 08:00 și 22:00 (ultimul slot: 22:00–24:00)
       for (let h = 8; h <= 22; h += 2) {
         oreGenerate.push(`${h.toString().padStart(2, "0")}:00`);
       }
@@ -104,7 +104,8 @@ function ProgramareResurse() {
   
   // încarcă programările proprii mereu
   useEffect(() => {
-    incarcareProgramari(); // 👉 folosește funcția care încarcă și programarileMele, și programările generale, filtrate
+    incarcaProgramariResursaSelectata(); 
+    incarcaProgramarileMele();           
   }, [idResursa]);
 
   const slotOcupat = (zi, ora) =>

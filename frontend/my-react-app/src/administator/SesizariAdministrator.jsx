@@ -27,6 +27,9 @@ function SesizariAdministrare() {
   const sesizariDeAfisat = sesizariFiltrate.slice(indexStart, indexEnd);
   const totalPagini = Math.ceil(sesizariFiltrate.length / sesizariPerPagina);
 
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastType, setToastType] = useState("success");
 
   const openPreview = (lista, index) => {
     setImgPreviewList(lista);
@@ -88,7 +91,7 @@ function SesizariAdministrare() {
       link.click();
     } catch (error) {
       console.error("Eroare la exportul sesizărilor:", error);
-      alert("A apărut o eroare la export.");
+      showToast("A apărut o eroare la export.", "danger");
     }
   };
 
@@ -102,7 +105,14 @@ function SesizariAdministrare() {
     } catch (err) {
       console.error("Eroare la salvarea notiței:", err);
     }
-  };  
+  }; 
+  
+  const showCustomToast = (message, type = "success") => {
+    setToastMsg(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
 
   
@@ -307,11 +317,11 @@ function SesizariAdministrare() {
                     mesaj: mesajEmail,
                   }, { withCredentials: true });
                 
-                  alert("Email trimis cu succes!");
+                  showCustomToast("Email trimis cu succes!", "success");
                   setShowEmailModal(false);
                 } catch (err) {
                   console.error("Eroare la trimiterea emailului:", err);
-                  alert("A apărut o eroare.");
+                  showCustomToast("A apărut o eroare la trimiterea emailului.", "danger");
                 }
               }}
             >
@@ -320,6 +330,15 @@ function SesizariAdministrare() {
           </div>
         </Modal.Body>
       </Modal>
+      {showToast && (
+        <div className="toast show position-fixed bottom-0 end-0 m-4" style={{ zIndex: 9999 }}>
+          <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>
+            <strong className="me-auto">{toastType === "success" ? "Succes" : "Eroare"}</strong>
+            <button type="button" className="btn-close btn-close-white" onClick={() => setShowToast(false)}></button>
+          </div>
+          <div className="toast-body">{toastMsg}</div>
+        </div>
+      )}
     </div>
     
   );

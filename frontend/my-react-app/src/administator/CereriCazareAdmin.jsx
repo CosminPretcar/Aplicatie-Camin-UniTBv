@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import NavBarAdmin from "../components/NavBarAdmin";
 import "../styles/CerereCazareAdministrator.css";
 import axios from "axios";
+import { Modal, Button } from "react-bootstrap";
 
 function CereriCazareAdministrator() {
 
@@ -23,6 +24,29 @@ function CereriCazareAdministrator() {
   const cazareRef = useRef(null);
   const validareRef = useRef(null);
   const tabelRef = useRef(null);//tabel cereri
+
+  // 1. toate state-urile la început
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastType, setToastType] = useState("success");
+
+  const showCustomToast = (message, type = "success") => {
+    setToastMsg(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const handleRespingere = () => {
+    if (!cerereSelectata) {
+      showCustomToast("Nu a fost selectată nicio cerere!", "danger");
+      return;
+    }
+    setShowConfirmModal(true);
+  };
 
   useEffect(() => {
     fetch("http://localhost:4000/cereri", {
@@ -86,7 +110,7 @@ function CereriCazareAdministrator() {
 
 const handleValidare = async () => {
   if (!optiuneSelectata) {
-    alert("Selectează o opțiune pentru validare!");
+    showCustomToast("Selectează o opțiune pentru validare!", "danger");
     return;
   }
 
@@ -101,45 +125,35 @@ const handleValidare = async () => {
       optiune: optiuneSelectata
     }, { withCredentials: true });
 
-    alert(response.data.message);
+    showCustomToast(response.data.message, "success");
     setCerereSelectata(null);
     window.location.reload();
 
   } catch (error) {
     console.error("Eroare la validare:", error);
-    alert(error.response?.data?.message || "A apărut o eroare!");
+    showCustomToast(error.response?.data?.message || "A apărut o eroare!", "danger");
   }
 };
 
-const handleRespingere = async () => {
-  if (!cerereSelectata) {
-    alert("Nu a fost selectată nicio cerere!");
-    return;
-  }
-
-  const confirmare = window.confirm("Sigur vrei să respingi această cerere?");
-  if (!confirmare) return;
-
+const confirmaStergere = async () => {
   try {
-    console.log("🗑 Ștergere cerere:", cerereSelectata.id);
-
     const response = await axios.delete(`http://localhost:4000/cereri/${cerereSelectata.id}`, {
       withCredentials: true
     });
-
-    alert(response.data.message);
+    showCustomToast(response.data.message, "success");
     setCerereSelectata(null);
-    window.location.reload();
-
+    setShowConfirmModal(false);
+    setTimeout(() => window.location.reload(), 2000);
   } catch (error) {
-    console.error("Eroare la ștergerea cererii:", error);
-    alert(error.response?.data?.message || "A apărut o eroare!");
+    console.error("Eroare la ștergere:", error);
+    showCustomToast(error.response?.data?.message || "A apărut o eroare!", "danger");
+    setShowConfirmModal(false);
   }
 };
 
 const handleCazareManuala = async () => {
   if (!studentSelectat || !cameraSelectata) {
-    alert("Selectați un student și o cameră!");
+    showCustomToast("Selectează un student și o cameră!", "danger");
     return;
   }
 
@@ -149,14 +163,14 @@ const handleCazareManuala = async () => {
       cameraId: cameraSelectata
     }, { withCredentials: true });
 
-    alert(response.data.message);
+    showCustomToast(response.data.message, "success");
     setStudentSelectat(null);
     setCameraSelectata("");
     window.location.reload(); // Reîncărcăm lista pentru a actualiza camerele
 
   } catch (error) {
     console.error("Eroare la cazarea studentului:", error);
-    alert(error.response?.data?.message || "A apărut o eroare!");
+    showCustomToast(error.response?.data?.message || "A apărut o eroare!", "danger");
   }
 };
 
@@ -197,7 +211,7 @@ const downloadExcel = async () => {
       document.body.removeChild(a);
   } catch (error) {
       console.error("Eroare la descărcarea fișierului:", error);
-      alert("A apărut o eroare la descărcare!");
+      showCustomToast("A apărut o eroare la descărcare!", "danger");
   }
 };
 
@@ -250,7 +264,7 @@ const downloadCamereExcel = async () => {
       window.URL.revokeObjectURL(url);
   } catch (error) {
       console.error("Eroare la descărcarea fișierului:", error);
-      alert("A apărut o eroare la descărcare!");
+      showCustomToast("A apărut o eroare la descărcare!", "danger");
   }
 };
 
@@ -562,6 +576,25 @@ const downloadCamereExcel = async () => {
             )}
         </div>
       </div>
+      {showToast && (
+        <div className="toast show position-fixed bottom-0 end-0 m-4" style={{ zIndex: 9999 }}>
+          <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>
+            <strong className="me-auto">{toastType === "success" ? "Succes" : "Eroare"}</strong>
+            <button type="button" className="btn-close btn-close-white" onClick={() => setShowToast(false)}></button>
+          </div>
+          <div className="toast-body">{toastMsg}</div>
+        </div>
+      )}
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmare respingere cerere</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Ești sigur că vrei să respingi această cerere?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>Anulează</Button>
+          <Button variant="danger" onClick={confirmaStergere}>Confirmă</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

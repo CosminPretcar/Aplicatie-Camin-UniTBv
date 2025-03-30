@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import {Toast, Modal, Button} from "react-bootstrap"
 
 function Avizier() {
   const [anunturi, setAnunturi] = useState([]);
   const [nouAnunt, setNouAnunt] = useState("");
   const [importanta, setImportanta] = useState("medie");
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+  const [toastType, setToastType] = useState("success");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [anuntDeSters, setAnuntDeSters] = useState(null);
+
+  const showCustomToast = (message, type = "success") => {
+    setToastMsg(message);
+    setToastType(type);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   useEffect(() => {
     axios.get("http://localhost:4000/anunturi")
@@ -24,9 +38,21 @@ function Avizier() {
   };
 
   const handleDeleteAnunt = (id) => {
-    axios.delete(`http://localhost:4000/anunturi/${id}`)
-      .then(() => setAnunturi(anunturi.filter(anunt => anunt.id !== id)))
-      .catch(error => console.error("Eroare la ștergerea anunțului:", error));
+    setAnuntDeSters(id);
+    setShowConfirmModal(true);
+  };
+
+  const confirmaStergere = async () => {
+    try {
+      await axios.delete(`http://localhost:4000/anunturi/${anuntDeSters}`);
+      setAnunturi(anunturi.filter(a => a.id !== anuntDeSters));
+      showCustomToast("Anunțul a fost șters!", "success");
+    } catch (err) {
+      console.error("Eroare la ștergere:", err);
+      showCustomToast("Eroare la ștergerea anunțului!", "danger");
+    } finally {
+      setShowConfirmModal(false);
+    }
   };
 
   const getBadgeColor = (importanta) => {
@@ -99,6 +125,26 @@ function Avizier() {
           ))
         )}
       </div>
+      {showToast && (
+        <div className="toast show position-fixed bottom-0 end-0 m-4" style={{ zIndex: 9999 }}>
+          <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>
+            <strong className="me-auto">{toastType === "success" ? "Succes" : "Eroare"}</strong>
+            <button type="button" className="btn-close btn-close-white" onClick={() => setShowToast(false)}></button>
+          </div>
+          <div className="toast-body">{toastMsg}</div>
+        </div>
+      )}
+
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmare ștergere</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Ești sigur(ă) că vrei să ștergi acest anunț?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>Anulează</Button>
+          <Button variant="danger" onClick={confirmaStergere}>Confirmă</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

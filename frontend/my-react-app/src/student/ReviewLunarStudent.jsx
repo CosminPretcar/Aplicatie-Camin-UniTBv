@@ -18,6 +18,19 @@ function ReviewLunar() {
 
     const [caminId, setCaminId] = useState(null);
 
+    const [showToast, setShowToast] = useState(false);
+    const [toastMsg, setToastMsg] = useState("");
+    const [toastType, setToastType] = useState("success"); // "success" sau "danger"
+
+    const showCustomToast = (message, type = "success") => {
+        setToastMsg(message);
+        setToastType(type);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      };
+      
+
+
     useEffect(() => {
         const fetchCaminId = async () => {
             try {
@@ -44,7 +57,7 @@ function ReviewLunar() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!caminId) {
-            alert("Nu poti trimite o recenzie fără să fii înscris într-un cămin.");
+            showCustomToast("Nu poți trimite o recenzie fără să fii înscris într-un cămin.", "danger");
             return;
         }
 
@@ -59,10 +72,10 @@ function ReviewLunar() {
                 securitate: formData.securitate,
                 comentarii: formData.comentarii
             });
-            alert("Review trimis cu succes!");
+            showCustomToast("Review trimis cu succes!", "success");
         } catch (error) {
             console.error("Eroare la trimiterea feedback-ului", error);
-            alert("A apărut o problemă, încearcă din nou.");
+            showCustomToast("A apărut o problemă, încearcă din nou.", "danger");
         }
     };
 
@@ -198,6 +211,21 @@ function ReviewLunar() {
                     </Col>
                 </Row>
             </div>
+            {showToast && (
+             <div
+               className="toast show position-fixed bottom-0 end-0 m-4"
+               role="alert"
+               aria-live="assertive"
+               aria-atomic="true"
+               style={{ zIndex: 9999, minWidth: "250px" }}
+             >
+               <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>
+                 <strong className="me-auto">{toastType === "success" ? "Succes" : "Eroare"}</strong>
+                 <button type="button" className="btn-close btn-close-white" onClick={() => setShowToast(false)}></button>
+               </div>
+               <div className="toast-body">{toastMsg}</div>
+             </div>
+            )}
         </div>
     );
 }

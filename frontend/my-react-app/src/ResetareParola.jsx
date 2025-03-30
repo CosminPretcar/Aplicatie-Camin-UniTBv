@@ -9,9 +9,15 @@ function ResetareParola() {
   const [parolaNoua, setParolaNoua] = useState("");
   const [confirmare, setConfirmare] = useState("");
   const [feedback, setFeedback] = useState(null);
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loadingCod, setLoadingCod] = useState(false);
+  const [loadingParola, setLoadingParola] = useState(false);
+
+
 
   const trimiteCod = async (e) => {
     e.preventDefault();
+    setLoadingEmail(true);
     try {
       const response = await axios.post("http://localhost:4000/cerere-schimbare-parola", { email });
       setFeedback({ success: true, message: response.data.message });
@@ -21,11 +27,14 @@ function ResetareParola() {
         success: false,
         message: err.response?.data?.message || "Eroare la trimiterea codului.",
       });
+    } finally {
+      setLoadingEmail(false);
     }
   };
 
   const verificaCod = async (e) => {
     e.preventDefault();
+    setLoadingCod(true);
     try {
       const response = await axios.post("http://localhost:4000/verifica-cod", { email, cod });
       setFeedback({ success: true, message: response.data.message });
@@ -35,11 +44,14 @@ function ResetareParola() {
         success: false,
         message: err.response?.data?.message || "Cod invalid sau expirat.",
       });
+    } finally {
+      setLoadingCod(false);
     }
   };
 
   const schimbaParola = async (e) => {
     e.preventDefault();
+    setLoadingParola(true);
     if (parolaNoua !== confirmare) {
       return setFeedback({ success: false, message: "Parolele nu coincid." });
     }
@@ -61,6 +73,8 @@ function ResetareParola() {
         success: false,
         message: err.response?.data?.message || "Eroare la schimbarea parolei.",
       });
+    } finally {
+      setLoadingParola(false);
     }
   };
 
@@ -81,8 +95,15 @@ function ResetareParola() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </Form.Group>
-            <button className="btn btn-primary w-100" type="submit">
-              Trimite cod pe email
+            <button className="btn btn-primary w-100" type="submit" disabled={loadingEmail}>
+              { loadingEmail ? (
+                <span>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Se trimite...
+                </span>
+              ) : (
+                "Trimite cod pe email"
+              )}
             </button>
           </Form>
         )}
@@ -99,8 +120,15 @@ function ResetareParola() {
                 onChange={(e) => setCod(e.target.value)}
               />
             </Form.Group>
-            <button className="btn btn-success w-100" type="submit">
-              Verifică codul
+            <button className="btn btn-success w-100" type="submit" disabled={loadingCod}>
+              {loadingCod ? (
+                <span>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Se verifică...
+                </span>
+              ) : (
+                "Verifică codul"
+              )}
             </button>
           </Form>
         )}
@@ -126,8 +154,15 @@ function ResetareParola() {
                 onChange={(e) => setConfirmare(e.target.value)}
               />
             </Form.Group>
-            <button className="btn btn-success w-100 mt-2" type="submit">
-              Schimbă parola
+            <button className="btn btn-success w-100 mt-2" type="submit" disabled={loadingParola}>
+              {loadingParola ? (
+                <span>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Se schimbă parola...
+                </span>
+              ) : (
+                "Schimbă parola"
+              )}
             </button>
           </Form>
         )}

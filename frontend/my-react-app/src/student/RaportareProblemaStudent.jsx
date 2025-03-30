@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import { Container, Form, Button, Row, Col, Card, Table, Spinner, Modal } from "react-bootstrap";
@@ -16,6 +16,11 @@ function RaporteazaProblema() {
   const [showModal, setShowModal] = useState(false);
   const [imgPreviewList, setImgPreviewList] = useState([]);
   const [currentImgIndex, setCurrentImgIndex] = useState(0);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [sesizareDeSters, setSesizareDeSters] = useState(null);
+
+  const formRef = useRef(null);
+
 
   const openPreview = (lista, index) => {
     setImgPreviewList(lista);
@@ -65,27 +70,22 @@ function RaporteazaProblema() {
     }
     
   };
-  
-  const handleDelete = async (id) => {
-    if (!window.confirm("Ești sigur că vrei să ștergi această sesizare?")) return;
-  
-    try {
-      await axios.delete(`http://localhost:4000/sesizari/${id}`, {
-        withCredentials: true,
-      });
-      setMesaj("Sesizarea a fost ștearsă.");
-      getProblemeUser(); // reload
-    } catch (err) {
-      console.error("Eroare la ștergere:", err);
-      setEroare("Nu s-a putut șterge sesizarea.");
-    }
-  };
 
+  const handleConfirmStergere = (id) => {
+    setSesizareDeSters(id);
+    setShowConfirmModal(true);
+  };
+  
   const handleEdit = (sesizare) => {
     setTitlu(sesizare.titlu);
     setDescriere(sesizare.descriere);
     setEditId(sesizare.id); // 👈 avem nevoie de un state nou
-    setImagine(null); // resetăm imaginea în caz că vrei să pui alta
+    setImagini([]);
+    setPreviewImagini([]);
+      // Scroll cu efect de smooth
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100); // delay mic pentru a asigura re-render
   };
 
   const getProblemeUser = async () => {
@@ -125,7 +125,7 @@ function RaporteazaProblema() {
           <Col md={8}>
             <Card className="p-4 shadow-lg review-card border-2 border-dark rounded">
               <h2 className="mb-4 text-center">🚨 Raportează o problemă</h2>
-              <Form onSubmit={handleSubmit}>
+              <Form ref={formRef} onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>📌 Titlul problemei</Form.Label>
                   <Form.Control
@@ -278,7 +278,7 @@ function RaporteazaProblema() {
                                 <Button variant="outline-primary" size="sm" onClick={() => handleEdit(p)}>
                                   ✏️
                                 </Button>{" "}
-                                <Button variant="outline-danger" size="sm" onClick={() => handleDelete(p.id)}>
+                                <Button variant="outline-danger" size="sm" onClick={() => handleConfirmStergere(p.id)}>
                                   🗑️
                                 </Button>
                               </>
@@ -330,6 +330,36 @@ function RaporteazaProblema() {
           </div>
         </Modal.Body>
       </Modal>
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmare ștergere</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Ești sigur(ă) că vrei să ștergi această sesizare? Această acțiune este permanentă.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+            Anulează
+          </Button>
+          <Button variant="danger" onClick={async () => {
+            try {
+              await axios.delete(`http://localhost:4000/sesizari/${sesizareDeSters}`, {
+                withCredentials: true,
+              });
+              setMesaj("Sesizarea a fost ștearsă.");
+              getProblemeUser();
+            } catch (err) {
+              console.error("Eroare la ștergere:", err);
+              setEroare("Nu s-a putut șterge sesizarea.");
+            } finally {
+              setShowConfirmModal(false);
+            }
+          }}>
+            Confirmă ștergerea
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
     </div>
   );
 }
