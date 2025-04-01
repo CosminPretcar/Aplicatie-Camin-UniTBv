@@ -8,11 +8,12 @@ import { Strategy } from "passport-local";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import multer from "multer";
-import path from "path"
+import path from "path";
 import ngrok from "ngrok";
-import ExcelJS from "exceljs"
-import PDFDocument from "pdfkit"
-import cron from "node-cron"
+import ExcelJS from "exceljs";
+import PDFDocument from "pdfkit";
+import cron from "node-cron";
+import fetch from "node-fetch";
 
 dotenv.config();
 
@@ -1882,6 +1883,22 @@ app.delete("/programari/:id", async (req, res) => {
   } catch (err) {
     console.error("Eroare la ștergere programare:", err);
     res.status(500).json({ message: "Eroare server" });
+  }
+});
+
+app.post("/api/chatbot", async (req, res) => {
+  try {
+    const flaskRes = await fetch("http://127.0.0.1:5000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: req.body.message }),
+    });
+
+    const data = await flaskRes.json();
+    res.json({ reply: data.response });
+  } catch (error) {
+    console.error("Eroare proxy către Flask:", error);
+    res.status(500).json({ reply: "Eroare la serverul NLP." });
   }
 });
 

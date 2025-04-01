@@ -1,0 +1,1148 @@
+
+{
+  "intents": [
+    {
+      "tag": "export_excel_cazare",
+      "patterns": [
+        "cum export cererile de cazare?",
+        "cum pot salva toate cererile de cazare?",
+        "unde pot descarca toate cererile de cazare?",
+        "de unde descarc lista cu cereri?",
+        "vreau să export cererile de cazare",
+        "pot salva cererile de cazare?",
+        "cum generez un Excel cu cererile?",
+        "unde găsesc opțiunea de export cereri?",
+        "pot exporta lista completă de cereri?",
+        "unde este butonul de export?",
+        "cum descarc cererile în format Excel?",
+        "salvez cererile într-un fișier?",
+        "cum pot obține cererile într-un document?",
+        "aș dori să export cererile de cazare",
+        "aș putea exporta lista completă de cereri?",
+        "vreau să exporta lista completă de cereri?",
+        "există o opțiune pentru exportarea cererilor?",
+        "în ce format se exportă cererile de cazare?",
+        "pot salva datele în format CSV?",
+        "pot genera rapoarte cu cererile?",
+        "cum fac export al tuturor cererilor primite?",
+        "pot descărca istoricul cererilor?",
+        "am nevoie de un backup cu toate cererile",
+        "trebuie să salvez toate solicitările într-un fișier",
+        "vreau să am un document cu toate cererile",
+        "există funcție de export pentru cererile de cazare?"
+      ],
+      "responses": [
+        "Pentru a exporta cererile de cazare, intră pe pagina 'Cereri de cazare' și apasă butonul 'Descarcă lista cu cereri'!",
+        "Accesează pagina 'Cereri de cazare', iar în partea de sus vei găsi butonul 'Descarcă lista cu cereri'. Apasă-l pentru a exporta toate datele în format Excel.",
+        "Pentru a descărca toate cererile într-un fișier Excel, navigează la secțiunea 'Cereri de cazare' și folosește butonul de export din partea de sus a paginii."
+      ]
+    },
+    {
+      "tag": "resetare_parola",
+      "patterns": [
+        "am uitat parola",
+        "cum îmi resetez parola?",
+        "nu mai pot intra, ce fac?",
+        "parola nu mai merge",
+        "nu-mi mai știu parola",
+        "vreau să-mi schimb parola",
+        "cum pot schimba parola?",
+        "am nevoie de o nouă parolă",
+        "login-ul nu mai funcționează",
+        "am nevoie de resetare parolă",
+        "cum schimb parola uitată?",
+        "nu merge parola, ce fac?",
+        "vreau să recuperez parola",
+        "nu pot accesa contul din cauza parolei",
+        "cum procedez dacă nu mai știu datele de autentificare?",
+        "am încercat să mă loghez dar nu reușesc",
+        "parola a expirat, cum o resetez?",
+        "eroare la autentificare, cum procedez?",
+        "nu pot intra în cont, am uitat credențialele",
+        "trebuie să-mi schimb parola urgent",
+        "cum pot să-mi recuperez accesul?",
+        "sunt blocat la ecranul de login",
+        "vreau o parolă nouă pentru cont",
+        "este posibil să recuperez parola prin email?",
+        "nu îmi mai amintesc parola de acces",
+        "există opțiune de resetare prin SMS?",
+        "procesul de recuperare parolă durează mult?"
+      ],
+      "responses": [
+        "Poți reseta parola apăsând pe 'Ai uitat parola?' pe pagina de login și urmând pașii de verificare pe email.",
+        "Pe pagina de login, caută opțiunea 'Ai uitat parola?' și click pe ea. Vei primi un email cu instrucțiuni pentru resetare.",
+        "Pentru recuperarea parolei, accesează link-ul 'Ai uitat parola?' din pagina de autentificare. Vei primi pe email un link securizat pentru setarea unei parole noi."
+      ]
+    },
+    {
+      "tag": "programare_masina_spalat",
+      "patterns": [
+        "unde pot face programare la mașina de spălat?",
+        "vreau să rezerv o mașină de spălat",
+        "cum mă programez la spălătorie?",
+        "cum fac o programare pentru spălat haine?",
+        "unde mă înscriu pentru spălat?",
+        "cum rezerv un slot la spălătorie?",
+        "unde e programarea la mașina de spălat?",
+        "pot face rezervare la spălat?",
+        "cum accesez programarea pentru mașina de spălat?",
+        "unde fac rezervare la spălătorie?",
+        "vreau un slot pentru spălat",
+        "cum găsesc intervalele disponibile la spălat?",
+        "programare pentru spălat haine",
+        "cum folosesc mașina de spălat prin aplicație?",
+        "aș dori să rezerv o mașină de spălat",
+        "care sunt orele disponibile pentru spălat?",
+        "cum aflu dacă mașinile sunt libere?",
+        "pot anula o programare la mașina de spălat?",
+        "este vreo limită de timp pentru spălat?",
+        "pot vedea cine a rezervat înaintea mea?",
+        "pot face programare în avans pentru spălătorie?",
+        "cum știu dacă programarea s-a confirmat?",
+        "există notificare când pot merge la spălat?", 
+        "pot rezerva mai multe intervale consecutive?",
+        "cum funcționează sistemul de rezervări?",
+        "trebuie să plătesc pentru utilizarea mașinii de spălat?"
+      ],
+      "responses": [
+        "Mergi în secțiunea 'Programări' și selectează 'Mașini de spălat'. Alege intervalul orar dorit și confirmă rezervarea.",
+        "Pentru a programa mașina de spălat, accesează 'Programări' din meniul principal, apoi 'Mașini de spălat' și selectează un interval disponibil în calendar.",
+        "Programările pentru mașinile de spălat se realizează în secțiunea 'Programări'. Selectează tipul resursei 'Mașini de spălat', alege una disponibilă și rezervă intervalul dorit din calendar."
+      ]
+    },
+    {
+      "tag": "export_excel_camere",
+      "patterns": [
+        "cum export situatia camerelor din camin?",
+        "cum pot salva situatia camerelor din camin?",
+        "unde pot descarca camerele din camin?",
+        "vreau sa export lista cu camere",
+        "pot genera un Excel cu camerele?",
+        "de unde descarc situatia camerelor?",
+        "unde e butonul de export camere?",
+        "cum salvez camerele în PDF sau Excel?",
+        "pot exporta lista cu camerele în Excel?",
+        "cum obțin un raport al camerelor?",
+        "vreau o listă cu camerele din aplicație",
+        "unde este opțiunea de export PDF pentru camere?",
+        "există export pentru camere ocupate?",
+        "în ce pagină este opțiunea de export pdf pentru camere?",
+        "pot să am o evidență a camerelor în format Excel?",
+        "cum descarc situația detaliată a camerelor?",
+        "vreau să export datele despre ocuparea camerelor",
+        "de unde pot obține un document cu toate camerele?",
+        "pot genera statistici despre ocuparea camerelor?",
+        "există o opțiune pentru raport detaliat camere?",
+        "cum salvez datele despre ocupanți camere?",
+        "unde găsesc funcția de export pentru camere?",
+        "am nevoie de un export cu toate datele camerelor",
+        "pot descărca doar camerele ocupate de la un etaj?",
+        "există filtre pentru exportul camerelor?"
+      ],
+      "responses": [
+        "Pentru a exporta situația camerelor din cămin, intră pe pagina 'Camere' și apasă butonul 'Descarcă situația camerelor'!",
+        "Accesează secțiunea 'Camere' din meniul principal și folosește butonul 'Descarcă situația camerelor' pentru a obține un fișier Excel cu toate informațiile.",
+        "Pentru a obține un document cu situația camerelor, navigează la pagina 'Camere' și caută opțiunea 'Descarcă situația camerelor' în partea de sus."
+      ]
+    },
+    {
+      "tag": "evolutia_recenziilor",
+      "patterns": [
+        "cum pot vedea recenziile din camin?",
+        "cum pot vedea evolutia recenziilor din camin?",
+        "unde pot vedea comentariile din recenziile date de studentii din camin?",
+        "unde sunt recenziile?",
+        "vreau sa vad feedback-ul studenților",
+        "cum verific evaluările lunare?",
+        "unde pot citi părerile studenților?",
+        "unde accesez recenziile lunare?",
+        "unde văd istoricul recenziilor?",
+        "vreau să consult graficele cu recenzii",
+        "cum verific scorurile date în trecut?",
+        "recenziile anterioare se pot consulta?",
+        "unde sunt toate evaluările lunare?",
+        "cum vreau să vedea recenziile din camin?",
+        "în ce pagină sunt toate evaluările lunare?", 
+        "în ce pagină accesez recenziile lunare?",
+        "cum aș putea vedea recenziile din camin?",
+        "există un istoric al tuturor recenziilor?", 
+        "pot consulta feedback-ul pe luni anterioare?",
+        "cum accesez comentariile studenților?",
+        "unde găsesc graficul cu evoluția feedback-ului?",
+        "pot sorta recenziile după scor?",
+        "există opțiune de filtrare pentru comentarii?",
+        "cum analizez tendința recenziilor?",
+        "pot vedea media scorurilor lunare?",
+        "unde găsesc datele statistice despre recenzii?",
+        "pot vedea cine a dat cele mai bune recenzii?"
+      ],
+      "responses": [
+        "Pentru a vedea evoluția recenziilor și comentariile lăsate de studenți, intră pe pagina 'Review Lunar'!",
+        "Accesează secțiunea 'Review Lunar' din meniul principal pentru a vizualiza toate recenziile și comentariile studenților, organizate pe luni.",
+        "Pagina 'Review Lunar' îți oferă acces la istoricul complet al recenziilor, inclusiv graficul de evoluție și toate comentariile lăsate de studenți."
+      ]
+    },
+    {
+      "tag": "studenti",
+      "patterns": [
+        "cum pot gasi un student in camin?",
+        "cum pot lua legatura cu un student din camin?",
+        "unde gasesc lista cu studenti?",
+        "cum dau de un coleg de cameră?",
+        "vreau sa trimit mesaj unui student",
+        "cum pot vedea profilul unui student?",
+        "unde e secțiunea cu colegi?",
+        "pot căuta un coleg după nume?",
+        "cum caut un coleg?",
+        "există un motor de căutare pentru studenți?",
+        "vreau să văd lista completă de studenți",
+        "cum găsesc un student după cameră?",
+        "pot căuta un coleg pe etaj?",
+        "aș dori să văd lista completă de studenți",
+        "cum vreau să gasi un student in camin?",
+        "cum aș putea gasi un student in camin?",
+        "există opțiune de filtrare a studenților după facultate?",
+        "pot căuta un student după numărul de telefon?",
+        "cum găsesc detaliile de contact ale unui coleg?",
+        "cum aflu cine stă în camera X?",
+        "există o hartă cu distribuția studenților?",
+        "pot vedea studenții după anul de studiu?",
+        "cum contactez un student dintr-o anumită cameră?",
+        "unde găsesc informații despre colegii mei?",
+        "pot vedea hobby-urile colegilor mei?",
+        "există un director cu toți studenții?"
+      ],
+      "responses": [
+        "Pentru a găsi un student, poți intra pe pagina 'Studenți pe camere' sau 'Colegi de cămin' și aici îl poți căuta, apoi poți accesa profilul său!",
+        "Accesează secțiunea 'Colegi de cămin' din meniu pentru a vedea lista completă de studenți. Poți căuta după nume sau filtra după etaj și cameră.",
+        "Pagina 'Studenți pe camere' îți permite să găsești orice student din cămin. Folosește funcția de căutare sau filtrează rezultatele după etaj pentru a găsi mai ușor pe cine cauți."
+      ]
+    },
+    {
+      "tag": "gestionare_anunturi",
+      "patterns": [
+        "cum adaug un anunț în avizier?",
+        "pot șterge un anunț deja postat?",
+        "unde modific importanța unui anunț?",
+        "cum funcționează culoarea și pictograma unui anunț?",
+        "unde găsesc toate anunțurile postate?",
+        "ce înseamnă anunț critic în avizier?",
+        "pot seta importanța la scăzută sau medie?",
+        "unde pot edita un anunț?",
+        "pot schimba conținutul unui anunț?",
+        "cum setezi data expirării unui anunț?",
+        "unde vizualizez toate anunțurile existente?",
+        "pot programa un anunț pentru mai târziu?",
+        "vreau să schimba conținutul unui anunț?",
+        "în ce pagină vizualizez toate anunțurile existente?",
+        "aș putea schimba conținutul unui anunț?",
+        "există opțiune pentru anunțuri temporare?",
+        "cum setez durata de afișare a unui anunț?",
+        "pot adăuga imagini la anunțuri?",
+        "cum modific prioritatea unui anunț existent?",
+        "pot vedea statistici de vizualizare pentru anunțuri?",
+        "cum fac un anunț să apară primul în lista?",
+        "pot șterge mai multe anunțuri deodată?",
+        "există limită pentru numărul de anunțuri?",
+        "cum formatez textul în anunțuri?",
+        "pot adăuga link-uri în anunț?",
+        "anunțurile expirate se șterg automat?"
+      ],
+      "responses": [
+        "Poți adăuga un anunț completând câmpul din partea de sus a paginii 'Avizier Digital' și selectând importanța dorită. Poți șterge un anunț folosind butonul 🗑️.",
+        "În pagina 'Avizier Digital', completează textul anunțului în formularul din partea superioară, selectează nivelul de importanță (scăzut, mediu, critic) și apasă 'Adaugă'. Pentru ștergere, folosește iconița 🗑️ de lângă anunț.",
+        "Pentru gestionarea anunțurilor, accesează 'Avizier Digital'. Aici poți adăuga anunțuri noi, seta nivelul de importanță care determină culoarea și iconița afișată, și poți șterge anunțurile existente cu butonul coș."
+      ]
+    },
+    {
+      "tag": "cereri_cazare_admin",
+      "patterns": [
+        "cum validez o cerere de cazare?",
+        "pot respinge o cerere de cazare?",
+        "unde aleg opțiunea de validare pentru o cerere?",
+        "cum filtrez cererile după etaj sau cameră?",
+        "pot reseta filtrele pentru cereri?",
+        "unde pot descărca lista cererilor de cazare?",
+        "cum redistribui un student într-o cameră?",
+        "unde văd cererile în care apare un coleg?",
+        "unde gestionez cererile de cazare?",
+        "pot filtra cererile după student?",
+        "cum văd cererile colegilor?",
+        "există o secțiune pentru redistribuire?",
+        "pot căuta o cerere după nume?",
+        "vreau să filtra cererile după student?",
+        "unde vreau să descărca lista cererilor de cazare?",
+        "vreau să respinge o cerere de cazare?",
+        "aș putea respinge o cerere de cazare?",
+        "în ce pagină pot descărca lista cererilor de cazare?",
+        "cum adaug comentarii la o cerere de cazare?",
+        "pot vedea istoricul cererilor unui student?",
+        "există statistici despre numărul de cereri?",
+        "cum procesez mai multe cereri deodată?",
+        "pot vedea doar cererile nerezolvate?",
+        "cum modific datele unei cereri deja validate?",
+        "ce înseamnă status-urile diferite ale cererilor?",
+        "cum apar cererile care au fost respinse?",
+        "există notificări pentru cereri noi?",
+        "pot seta criterii de prioritizare pentru cereri?"
+      ],
+      "responses": [
+        "Pe pagina 'Cereri de Cazare', poți selecta o cerere și alege opțiunea de validare, respingere sau redistribuire. De asemenea, ai opțiuni de filtrare și export Excel.",
+        "Accesează pagina 'Cereri de Cazare' din panoul de administrare. Aici poți selecta orice cerere pentru a o valida, respinge sau redistribui studentul. Folosește filtrele disponibile pentru a găsi mai ușor anumite cereri și butonul de export pentru descărcarea listei complete.",
+        "În secțiunea 'Cereri de Cazare' poți gestiona toate solicitările. Selectează o cerere pentru a o procesa (validare/respingere/redistribuire), folosește filtrele pentru sortare după etaj, cameră sau student, și exportă lista completă în Excel folosind butonul dedicat."
+      ]
+    },
+    {
+      "tag": "camere_studenti_admin",
+      "patterns": [
+        "cum vizualizez camerele căminului?",
+        "pot filtra camerele după etaj?",
+        "unde văd ce studenți sunt în fiecare cameră?",
+        "pot intra pe profilul unui student din listă?",
+        "unde e pagina cu studenții cazați pe camere?",
+        "unde este tabelul cu camerele?",
+        "cum văd distribuția studenților pe camere?",
+        "există o listă cu camerele ocupate?",
+        "unde pot accesa lista de camere pe etaje?",
+        "pot vedea detalii despre camere?",
+        "cum aflu ce studenți sunt într-o cameră?",
+        "cum filtrez camerele cazărilor?",
+        "pot vizualiza studenții pe cameră?",
+        "unde văd camera fiecărui student?",
+        "cum accesez camera unui student anume?",
+        "în ce pagină este tabelul cu camerele?",
+        "în ce pagină văd camera fiecărui student?",
+        "pot verifica gradul de ocupare al camerelor?",
+        "cum văd câte locuri libere mai sunt pe etaj?",
+        "unde găsesc informații despre facilitățile camerelor?",
+        "pot marca o cameră ca fiind indisponibilă?",
+        "există opțiune de căutare rapidă pentru o cameră?",
+        "pot vedea istoricul ocupanților unei camere?",
+        "cum identifici camerele cu probleme tehnice?",
+        "există statistici despre ocuparea camerelor?",
+        "pot vedea detalii despre echipamentele din camere?"
+      ],
+      "responses": [
+        "Pe pagina 'Camerele Căminului Administrat' poți filtra camerele după etaj și vizualiza studenții cazați. Numele sunt link-uri către profilurile lor.",
+        "Accesează secțiunea 'Camerele Căminului Administrat' pentru a vedea toate camerele organizate pe etaje. Poți folosi filtrele pentru a selecta un anumit etaj și poți accesa profilul oricărui student făcând click pe numele său din listă.",
+        "Pentru vizualizarea camerelor și a studenților cazați, deschide pagina 'Camerele Căminului Administrat'. Utilizează filtrele pentru a afișa doar camerele de pe un anumit etaj și fă click pe numele oricărui student pentru a-i accesa profilul complet."
+      ]
+    },
+    {
+      "tag": "reviewuri_admin",
+      "patterns": [
+        "unde văd recenziile studenților?",
+        "cum filtrez comentariile din recenzii?",
+        "unde e graficul evoluției recenziilor?",
+        "pot selecta luna pentru comentarii?",
+        "ce conține pagina cu review lunar?",
+        "unde găsesc feedback-ul studenților?",
+        "pot vedea evaluările lunare?",
+        "unde se analizează părerile studenților?",
+        "unde văd cum s-au schimbat recenziile?",
+        "există o secțiune cu comentariile detaliate?",
+        "cum analizez scorurile lunare?",
+        "unde este statistica recenziilor?",
+        "cum verific scorul primit de cămin?",
+        "pot accesa notele din recenzii?",
+        "în ce pagină este statistica recenziilor?",
+        "pot răspunde la comentariile studenților?",
+        "cum identific recenziile negative?",
+        "există statistici comparative între luni?",
+        "pot exporta datele din recenzii?",
+        "cum filtrez doar comentariile cu probleme?",
+        "unde văd media generală a recenziilor?",
+        "pot genera rapoarte de satisfacție?",
+        "cum aflu ce aspecte trebuie îmbunătățite?",
+        "există alerte pentru recenzii sub un anumit scor?",
+        "cum compar feedback-ul de la diferite etaje?",
+        "pot identifica tendințele din recenzii?"
+      ],
+      "responses": [
+        "Pagina 'Review Lunar' îți permite să vezi graficul cu evoluția recenziilor și comentariile studenților, filtrate pe luni.",
+        "Pentru a accesa recenziile și feedback-ul studenților, intră în secțiunea 'Review Lunar'. Aici vei găsi un grafic cu evoluția scorurilor lunare și toate comentariile organizate cronologic, cu posibilitatea de filtrare pe lună.",
+        "În pagina 'Review Lunar' poți analiza toate recenziile primite. Vei găsi un grafic interactiv care arată evoluția scorurilor în timp și poți citi comentariile studenților, filtrându-le după luna în care au fost lăsate."
+      ]
+    },
+    {
+      "tag": "sesizari_admin",
+      "patterns": [
+        "unde gestionez sesizările trimise de studenți?",
+        "pot filtra sesizările după status?",
+        "cum trimit un email unui student pentru o sesizare?",
+        "pot adăuga o notiță internă pentru o sesizare?",
+        "unde văd imaginile atașate la sesizări?",
+        "cum export sesizările în Excel?",
+        "unde schimb statusul unei sesizări?",
+        "unde se văd sesizările neprocesate?",
+        "cum gestionez sesizările primite?",
+        "există un istoric al sesizărilor?",
+        "unde văd sesizările rezolvate?",
+        "pot marca o sesizare ca în lucru?",
+        "cum descarc sesizările în PDF?",
+        "în ce pagină gestionez sesizările trimise de studenți?",
+        "vreau să filtra sesizările după status?",
+        "aș putea filtra sesizările după status?",
+        "în ce pagină văd imaginile atașate la sesizări?",
+        "cum pot asigna o sesizare unui coleg?",
+        "există notificări pentru sesizări noi?",
+        "pot prioritiza anumite tipuri de sesizări?",
+        "cum aflu cât timp a trecut de la deschiderea unei sesizări?",
+        "pot seta termene limită pentru rezolvarea sesizărilor?",
+        "cum văd statistici despre tipurile de probleme raportate?",
+        "există un sistem de rating pentru rezolvarea sesizărilor?",
+        "cum răspund la o sesizare urgent?",
+        "pot vedea cine se ocupă de o anumită sesizare?"
+      ],
+      "responses": [
+        "Pe pagina 'Sesizări' poți filtra, actualiza statusul, vizualiza imagini, adăuga notițe interne, trimite emailuri și exporta sesizările în Excel.",
+        "Accesează secțiunea 'Sesizări' pentru gestionarea completă a problemelor raportate. Aici poți filtra sesizările după status, actualiza starea lor, vizualiza imaginile atașate, adăuga notițe interne, comunica direct cu studenții prin email și exporta toate datele în Excel.",
+        "Pagina 'Sesizări' este centrul de management al tuturor problemelor raportate. Poți filtra lista după diverse criterii, actualiza statusul fiecărei sesizări, vedea imaginile atașate, adăuga notițe pentru uz intern, trimite emailuri studenților direct din platformă și exporta datele în format Excel."
+      ]
+    },
+    {
+      "tag": "avizier_student",
+      "patterns": [
+        "unde văd anunțurile de la administrație?",
+        "cum aflu informații importante din cămin?",
+        "unde este avizierul digital?",
+        "cum știu dacă un anunț este critic?",
+        "cum sunt afișate anunțurile?",
+        "unde se postează anunțurile?",
+        "cum accesez avizierul?",
+        "unde citesc ultimele anunțuri?",
+        "pot vedea anunțurile vechi?",
+        "există anunțuri grupate pe importanță?",
+        "unde se găsește secțiunea cu anunțuri?",
+        "ce e nou în avizier?",
+        "cum aflu dacă s-a postat un anunț?",
+        "în ce pagină este avizierul digital?",
+        "cum recunosc un anunț urgent?",
+        "primesc notificări pentru anunțuri noi?",
+        "pot marca un anunț ca fiind citit?",
+        "cum sunt organizate anunțurile în avizier?",
+        "cât timp rămân vizibile anunțurile?",
+        "unde găsesc informații despre evenimente?",
+        "există un filtru pentru anunțuri?",
+        "pot căuta un anunț specific?",
+        "pot să văd doar anunțurile recente?",
+        "cum aflu când a fost postat un anunț?",
+        "anunțurile importante sunt marcate special?"
+      ],
+      "responses": [
+        "Accesează pagina 'Avizier Digital' pentru a vedea toate anunțurile postate de administrație, împărțite pe nivel de importanță.",
+        "Pentru a vedea toate anunțurile importante, intră în secțiunea 'Avizier Digital'. Aici vei găsi toate informațiile postate de administrație, organizate după nivelul de importanță - critice, medii și scăzute.",
+        "Toate anunțurile oficiale se găsesc în pagina 'Avizier Digital', unde sunt afișate în ordine cronologică și codificate prin culori în funcție de importanța lor: roșu pentru anunțuri critice, galben pentru cele de importanță medie și verde pentru informații cu importanță scăzută."
+      ]
+    },
+    {
+      "tag": "cerere_cazare_student",
+      "patterns": [
+        "cum completez cererea de cazare?",
+        "pot selecta colegi de cameră?",
+        "câte opțiuni pot pune în formular?",
+        "ce înseamnă redistribuire la cazare?",
+        "pot vedea statistici despre camerele disponibile?",
+        "unde găsesc formularul de cazare?",
+        "cum aleg preferințele de cazare?",
+        "când pot trimite cererea?",
+        "ce trebuie să completez la cazare?",
+        "pot modifica cererea după trimitere?",
+        "pot retrimite o cerere?",
+        "unde pot încărca cererea?",
+        "ce date se cer pentru cazare?",
+        "unde verific dacă am trimis cererea?",
+        "ce este opțiunea de redistribuire?",
+        "cum funcționează prioritatea la cazare?",
+        "care e deadline-ul pentru cereri?",
+        "cum aleg căminul preferat?",
+        "sunt disponibile camere pentru familii?",
+        "cum adaug preferințe pentru cameră?"
+      ],
+      "responses": [
+        "În formularul de cazare poți alege până la 3 opțiuni, poți adăuga colegi de cameră și activa opțiunea de redistribuire. Vezi și statistici pentru camere."
+      ]
+    },
+    {
+      "tag": "colegi_pe_camere",
+      "patterns": [
+        "unde văd colegii de pe același etaj?",
+        "pot vedea cine e în camera mea?",
+        "cum accesez profilul colegilor?",
+        "unde este lista cu colegi de pe cameră?",
+        "unde pot vedea colegii din cămin?",
+        "vreau să știu cine stă cu mine",
+        "unde pot vedea ocupanții camerei?",
+        "pot afla cu cine împart camera?",
+        "care sunt colegii mei de etaj?",
+        "unde este secțiunea cu colegii de cameră?",
+        "vreau să îmi văd colegii de cămin",
+        "cum verific cine mai e în cameră?",
+        "unde e lista cu toți colegii din cameră?",
+        "ce colegi am în cameră?",
+        "unde pot consulta colegii de pe etaj?",
+        "pot vedea studenții de la alte etaje?",
+        "cum găsesc pe cineva în cămin?",
+        "care sunt colegii de cameră noi?",
+        "pot afla mai multe despre colegii mei?",
+        "informații despre ocupanții camerelor"
+      ],
+      "responses": [
+        "Accesează pagina 'Colegi pe camere' și selectează etajul dorit pentru a vedea ocupanții fiecărei camere și a accesa profilurile lor."
+      ]
+    },
+    {
+      "tag": "profil_student",
+      "patterns": [
+        "cum îmi editez profilul?",
+        "pot adăuga o poză de profil?",
+        "unde completez despre mine?",
+        "cum îmi schimb numărul de telefon?",
+        "unde îmi actualizez datele personale?",
+        "pot edita informațiile din cont?",
+        "cum modific poza din profil?",
+        "unde pot adăuga hobby-urile?",
+        "cum editez descrierea de pe profil?",
+        "unde completez profilul meu?",
+        "cum îmi personalizez profilul?",
+        "cum schimb datele personale?",
+        "cum adaug sporturile preferate?",
+        "unde găsesc setările profilului?",
+        "vreau să actualizez datele din cont",
+        "pot modifica adresa de email?",
+        "cum adaug link către social media?",
+        "unde introduc specializarea mea?",
+        "cum schimb parola contului?",
+        "cum setez preferințele de confidențialitate?"
+      ],
+      "responses": [
+        "Pe pagina 'Profil Personal' poți edita datele tale, poza de profil, telefonul și câmpurile despre tine (descriere, sporturi, hobby-uri)."
+      ]
+    },
+    {
+      "tag": "programari_resurse",
+      "patterns": [
+        "unde fac programare la mașina de spălat?",
+        "cum rezerv sala de lectură?",
+        "pot vedea calendarul cu sloturi libere?",
+        "cum îmi șterg o programare?",
+        "unde văd programările mele?",
+        "cum anulez o rezervare?",
+        "cum aleg un interval orar?",
+        "pot rezerva pentru altă zi?",
+        "unde aleg resursa dorită?",
+        "există limită la programări?",
+        "unde văd dacă am o programare activă?",
+        "unde aleg ora pentru mașină de spălat?",
+        "cum fac rezervare pentru sală de lectură?",
+        "pot rezerva bucătăria comună?",
+        "cum programez sala de sport?",
+        "câte rezervări pot face pe zi?",
+        "pot rezerva aceeași resursă de mai multe ori?",
+        "există notificări pentru programări?",
+        "cât timp în avans pot rezerva?",
+        "cum funcționează lista de așteptare?"
+      ],
+      "responses": [
+        "Accesează pagina 'Programări Resurse', selectează tipul și resursa, apoi rezervă un slot în calendar. Poți vizualiza și șterge programările tale."
+      ]
+    },
+    {
+      "tag": "raportare_problema",
+      "patterns": [
+        "cum raportez o problemă?",
+        "unde trimit sesizări despre cămin?",
+        "pot atașa imagini la sesizare?",
+        "pot edita sau șterge sesizările mele?",
+        "unde văd ce am raportat?",
+        "unde pot sesiza o problemă?",
+        "unde pot face o sesizare?",
+        "cum semnalez o problemă?",
+        "unde raportez o defecțiune?",
+        "cum anunț o defecțiune?",
+        "unde completez o sesizare?",
+        "vreau să trimit o sesizare cu poze",
+        "unde scriu despre problema din cameră?",
+        "cum pot sesiza problema rapid?",
+        "cât durează rezolvarea unei sesizări?",
+        "cum verific statusul sesizării mele?",
+        "ce categorii de probleme pot raporta?",
+        "pot marca o sesizare ca urgentă?",
+        "primesc notificări când se rezolvă problema?",
+        "cum descriu detaliat o problemă?"
+      ],
+      "responses": [
+        "Folosește pagina 'Raportează problemă' pentru a trimite sesizări, atașa imagini, și edita sau șterge sesizările neprocesate."
+      ]
+    },
+    {
+      "tag": "review_lunar_student",
+      "patterns": [
+        "unde dau review despre cămin?",
+        "cum ofer feedback lunar?",
+        "pot adăuga comentarii la recenzie?",
+        "unde văd graficul cu evoluția recenziilor?",
+        "unde las o evaluare despre condiții?",
+        "pot lăsa păreri despre cămin?",
+        "cum notez serviciile căminului?",
+        "cum dau un rating pentru cămin?",
+        "unde pot scrie un comentariu despre experiența mea?",
+        "vreau să las feedback pentru luna asta",
+        "unde completez formularul de feedback?",
+        "cum trimit o recenzie despre cămin?",
+        "unde văd nota medie dată de studenți?",
+        "pot contribui la evaluarea căminului?",
+        "cum îmi exprim opinia despre condiții?",
+        "când se deschide formularul de feedback?",
+        "pot lăsa recenzii anonime?",
+        "cine vede evaluările mele?",
+        "pot modifica un review trimis?",
+        "cum văd feedbackul altor studenți?"
+      ],
+      "responses": [
+        "Pe pagina 'Review Lunar' poți oferi un rating pentru condițiile din cămin și adăuga comentarii. Vei vedea și graficul evoluției."
+      ]
+    },
+    {
+      "tag": "salut",
+      "patterns": [
+        "salut",
+        "bună",
+        "hello",
+        "hei",
+        "buna ziua",
+        "neata",
+        "servus",
+        "bună ziua",
+        "servus!",
+        "hei, salut",
+        "salutare",
+        "holaaa",
+        "bună dimineața",
+        "seara bună",
+        "bună seara",
+        "hey there",
+        "hi",
+        "ce mai zici",
+        "ce zici",
+        "noroc"
+      ],
+      "responses": [
+        "Salut! Cu ce te pot ajuta?",
+        "Bună! Spune-mi ce ai nevoie.",
+        "Hei! Sunt aici să te ajut cu aplicația Cămin@UniTBv."
+      ]
+    },
+    {
+      "tag": "ce_faci",
+      "patterns": [
+        "ce faci?",
+        "ce mai faci?",
+        "cum ești?",
+        "totul bine?",
+        "ce zici?",
+        "ești bine?",
+        "totul ok?",
+        "ești funcțional?",
+        "ai o zi bună?",
+        "cum îți merge?",
+        "cum merge treaba?",
+        "cum e viața?",
+        "cum o duci?",
+        "ești pe fază?",
+        "ești activ?",
+        "merge bine?",
+        "ai multe de răspuns?",
+        "ești ocupat azi?",
+        "ai treabă multă?",
+        "cum te simți?"
+      ],
+      "responses": [
+        "Totul bine, sunt gata să te ajut!",
+        "Mă bucur să te văd! Ai vreo întrebare legată de cămin?",
+        "Funcționez la capacitate maximă 😄 Cum te pot ajuta?"
+      ]
+    },
+    {
+      "tag": "multumesc",
+      "patterns": [
+        "mulțumesc",
+        "merci",
+        "ms",
+        "fain",
+        "apreciez",
+        "mersi fain",
+        "super, mersi!",
+        "ești tare!",
+        "apreciez ajutorul",
+        "mersi mult!",
+        "mulțam fain!",
+        "mulțumesc frumos",
+        "foarte drăguț din partea ta",
+        "mersi pentru ajutor",
+        "super util",
+        "tare de tot",
+        "mi-ai fost de mare ajutor",
+        "mersi de informații",
+        "perfect, mulțumesc",
+        "chiar mi-ai rezolvat problema"
+      ],
+      "responses": [
+        "Cu plăcere! Dacă mai ai nevoie de ceva, sunt aici.",
+        "Oricând! 😊",
+        "Cu drag, spor în continuare!"
+      ]
+    },
+    {
+      "tag": "nu_stiu",
+      "patterns": [
+        "nu știu",
+        "n-am idee",
+        "nu prea înțeleg",
+        "poți să repeți?",
+        "nu sunt sigur",
+        "nu e clar",
+        "nu înțeleg ce trebuie să fac",
+        "m-am încurcat",
+        "nu mi-e clar ce urmează",
+        "poți explica din nou?",
+        "nu pricep cum funcționează",
+        "poti explica altfel?",
+        "nu știu ce să aleg",
+        "nu știu de unde încep",
+        "sunt confuz",
+        "mai explică-mi o dată",
+        "mai pe înțelesul meu",
+        "sunt nou aici, nu știu cum merge",
+        "nu înțeleg pașii",
+        "nu am înțeles deloc"
+      ],
+      "responses": [
+        "Nu e nicio problemă, explic mai clar 😊",
+        "Hai să încercăm altfel. Cu ce pot începe?",
+        "Îți explic pas cu pas – doar spune-mi ce nu e clar."
+      ]
+    },
+    {
+      "tag": "confirmare_email",
+      "patterns": [
+        "primesc confirmare pe email?",
+        "unde văd confirmarea sesizării?",
+        "am primit email că a fost trimis?",
+        "când îmi vine emailul?",
+        "verificare pe email",
+        "primesc email de confirmare?",
+        "emailul ajunge imediat?",
+        "mi-ai trimis confirmarea?",
+        "cum știu că s-a trimis?",
+        "verific undeva confirmarea?",
+        "în cât timp ajunge emailul?",
+        "trebuie să confirm emailul?",
+        "de ce nu am primit confirmare?",
+        "pot cere retrimitearea emailului?",
+        "ce fac dacă nu primesc confirmarea?",
+        "am verificat și spam-ul dar nu am găsit",
+        "cine trimite confirmarea?",
+        "ce conține emailul de confirmare?",
+        "e posibil să nu primesc confirmarea?",
+        "cum știu că aplicația a primit cererea mea?"
+      ],
+      "responses": [
+        "Primești automat un email de confirmare după trimiterea unei cereri, sesizări sau resetare de parolă. Verifică și folderul Spam."
+      ]
+    },
+    {
+      "tag": "intervale_indisponibile",
+      "patterns": [
+        "de ce nu pot rezerva dimineața?",
+        "există intervale blocate la sală?",
+        "sunt ore indisponibile?",
+        "nu pot selecta 08:00 - 09:00",
+        "interval de curățenie",
+        "care sunt orele blocate?",
+        "de ce nu merge 08:00?",
+        "intervalele nealocate care sunt?",
+        "nu apare intervalul dorit",
+        "sală de lectură blocată dimineața",
+        "când sunt făcute curățeniile?",
+        "de ce unele intervale sunt gri?",
+        "când nu se pot face rezervări?",
+        "care sunt orele rezervate pentru mentenanță?",
+        "când e închisă sala de lectură?",
+        "de ce sunt blocate unele ore?",
+        "care e programul de curățenie?",
+        "când e indisponibilă bucătăria?",
+        "când pot folosi sala de lectură?",
+        "care sunt orele funcționale?"
+      ],
+      "responses": [
+        "Intervalul 08:00 – 09:00 este rezervat pentru curățenie și nu poate fi selectat la sălile de lectură."
+      ]
+    },
+    {
+      "tag": "functie_chatbot",
+      "patterns": [
+        "cu ce mă poți ajuta?",
+        "ce știi să faci?",
+        "care e rolul tău?",
+        "cum mă ajuți?",
+        "ce întrebări pot să-ți pun?",
+        "ce știe să facă asistentul?",
+        "cu ce mă poate ajuta robotul?",
+        "ce întrebări pot pune chatbotului?",
+        "ai acces la informații despre camere?",
+        "ești un robot sau o persoană?",
+        "ce funcții ai?",
+        "ce informații oferi?",
+        "ce date ai despre cămine?",
+        "la ce ești util?",
+        "despre ce mă poți informa?",
+        "câte poți să-mi spui?",
+        "ce comenzi accepți?",
+        "poți rezolva probleme?",
+        "ce nu știi să faci?",
+        "care sunt limitele tale?"
+      ],
+      "responses": [
+        "Te pot ajuta cu informații despre cazare, cereri, sesizări, programări, și multe altele legate de aplicația Cămin@UniTBv!"
+      ]
+    },
+    {
+      "tag": "atasamente_sesizari",
+      "patterns": [
+        "pot atașa imagini?",
+        "ce tipuri de fișiere pot încărca?",
+        "pot pune mai multe poze?",
+        "pot previzualiza imaginile?",
+        "unde văd ce am încărcat?",
+        "cum atașez o poză?",
+        "câte imagini pot încărca?",
+        "ce formate de fișiere sunt acceptate?",
+        "se salvează pozele înainte de trimitere?",
+        "unde apar atașamentele?",
+        "pot atașa un video cu problema?",
+        "cum adaug dovezi foto?",
+        "se pot încărca documente PDF?",
+        "sunt limită la dimensiunea fișierelor?",
+        "cum fac o poză direct din aplicație?",
+        "se comprimă imaginile?",
+        "pot șterge atașamentele încărcate?",
+        "ce fac dacă imaginea e prea mare?",
+        "se pot încărca fișiere audio?",
+        "cum adaug documente la sesizare?"
+      ],
+      "responses": [
+        "La trimiterea unei sesizări poți atașa mai multe imagini, pe care le poți previzualiza înainte de trimitere."
+      ]
+    },
+    {
+      "tag": "email_catre_student",
+      "patterns": [
+        "pot trimite email unui student?",
+        "unde trimit mesaj unui coleg?",
+        "cum trimit email din profil?",
+        "vreau să contactez un coleg",
+        "unde este formularul de email către coleg?",
+        "pot scrie un mesaj unui student?",
+        "cum comunic prin aplicație cu un coleg?",
+        "unde găsesc opțiunea de trimitere email?",
+        "pot contacta un coleg de cameră?",
+        "cum pot discuta cu cineva din cămin?",
+        "vreau să-i scriu unui coleg",
+        "cum trimit un mesaj privat?",
+        "este posibil să contactez colegii?",
+        "cum iau legătura cu cineva din cameră?",
+        "vreau să-i dau mail colegului meu",
+        "există chat în aplicație?",
+        "pot contacta toți colegii de cameră deodată?",
+        "cum trimit mesaj administratorului?",
+        "pot trimite mail anonim?",
+        "pot contacta studenți de la alte etaje?"
+      ],
+      "responses": [
+        "Din pagina 'Profil Colegi', poți folosi formularul pentru a trimite un email colegului respectiv, dacă ai acces la acea funcționalitate."
+      ]
+    },
+    {
+      "tag": "notificari_aplicatie",
+      "patterns": [
+        "cum activez notificările?",
+        "primesc alerte pentru programări?",
+        "cum dezactivez notificările?",
+        "de ce nu primesc notificări?",
+        "vreau notificări pentru sesizări",
+        "unde setez preferințele de notificare?",
+        "primesc notificări pe email?",
+        "sunt notificat când se rezolvă problema?",
+        "când primesc notificări?",
+        "ce tipuri de notificări există?",
+        "de ce nu-mi apar alertele?",
+        "pot seta notificări personalizate?",
+        "pot primi notificări push?",
+        "cum funcționează sistemul de alerte?",
+        "vreau să opresc emailurile",
+        "cum verific istoricul notificărilor?",
+        "pot fi notificat înainte de programare?",
+        "cât timp înainte primesc alerta?",
+        "pot primi notificări și pe telefon?",
+        "pot primi alerte de la colegii de cameră?"
+      ],
+      "responses": [
+        "Poți gestiona notificările din secțiunea 'Setări cont', unde poți activa sau dezactiva alertele pentru sesizări, programări și noutăți. Primești notificări atât în aplicație cât și pe email."
+      ]
+    },
+    {
+      "tag": "plata_online",
+      "patterns": [
+        "cum plătesc căminul online?",
+        "pot plăti cu cardul?",
+        "unde găsesc opțiunea de plată?",
+        "ce metode de plată acceptați?",
+        "cum generez factura?",
+        "primesc chitanță după plată?",
+        "pot plăti în rate?",
+        "unde văd istoricul plăților?",
+        "cum achit restanțele?",
+        "pot plăti pentru mai multe luni?",
+        "cum verific dacă plata a fost procesată?",
+        "pot plăti prin transfer bancar?",
+        "cum aflu cât am de plată?",
+        "care e termenul limită de plată?",
+        "unde găsesc datele pentru virament?",
+        "pot plăti și utilități separat?",
+        "există comisioane la plată?",
+        "unde văd facturile anterioare?",
+        "cum fac o plată parțială?",
+        "cum generez un cod de plată?"
+      ],
+      "responses": [
+        "Accesează secțiunea 'Plăți online' pentru a vedea sumele de plată, genera factura și efectua plata cu cardul. Vei primi automat o confirmare pe email după procesarea plății."
+      ]
+    },
+    {
+      "tag": "anunturi_camin",
+      "patterns": [
+        "unde văd anunțurile noi?",
+        "există notificări pentru evenimente?",
+        "unde sunt postate noutățile?",
+        "cum aflu ultimele știri din cămin?",
+        "există un panou de anunțuri?",
+        "unde găsesc programul de dezinsecție?",
+        "cum aflu despre întreruperile de apă?",
+        "unde sunt anunțate întâlnirile?",
+        "există un calendar de evenimente?",
+        "cum mă abonez la știri?",
+        "unde văd anunțurile importante?",
+        "primesc notificări pentru anunțuri?",
+        "cum aflu data următoarei întrețineri?",
+        "unde sunt postate regulamentele noi?",
+        "există un newsletter pentru studenți?",
+        "cum găsesc anunțuri vechi?",
+        "pot marca anunțuri ca citite?",
+        "unde sunt anunțurile de la administrator?",
+        "cum filtrez anunțurile relevante?",
+        "unde văd anunțurile urgente?"
+      ],
+      "responses": [
+        "În secțiunea 'Anunțuri și noutăți' găsești toate informațiile importante despre cămin, evenimente, lucrări și întreruperi programate. Anunțurile noi sunt evidențiate pentru a fi ușor de observat."
+      ]
+    },
+    {
+      "tag": "schimbare_camera",
+      "patterns": [
+        "cum pot schimba camera?",
+        "vreau să mă mut în altă cameră",
+        "cum fac cerere de schimb?",
+        "unde completez formularul de mutare?",
+        "pot face schimb cu alt student?",
+        "când pot solicita schimbarea camerei?",
+        "ce motive trebuie să am pentru schimb?",
+        "pot schimba camera în timpul anului?",
+        "unde depun cererea de schimb?",
+        "pot schimba căminul?",
+        "care e procedura de schimb?",
+        "cum mă mut la alt etaj?",
+        "trebuie să justific schimbarea camerei?",
+        "cum găsesc pe cineva pentru schimb?",
+        "pot vedea camerele disponibile?",
+        "există un termen limită pentru schimb?",
+        "cum aflu dacă cererea a fost aprobată?",
+        "există taxă pentru schimbarea camerei?",
+        "e posibilă mutarea la alt cămin?",
+        "pot cere cameră single?"
+      ],
+      "responses": [
+        "Pentru schimbarea camerei, accesează secțiunea 'Cereri speciale' unde poți completa formularul de schimb. Poți solicita o cameră specifică sau un schimb cu alt student, ambele variante necesitând aprobarea administratorului."
+      ]
+    },
+    {
+      "tag": "parola_uitata",
+      "patterns": [
+        "mi-am uitat parola",
+        "cum îmi resetez parola?",
+        "nu mai știu parola",
+        "nu pot să mă loghez",
+        "cum recuperez contul?",
+        "am uitat credențialele",
+        "unde resetez parola?",
+        "parola nu funcționează",
+        "cum schimb parola uitată?",
+        "nu-mi mai amintesc parola",
+        "pot recupera contul?",
+        "am introdus parola greșit",
+        "cum îmi deblochez contul?",
+        "nu funcționează loginul",
+        "cum primesc parolă nouă?",
+        "unde e opțiunea 'am uitat parola'?",
+        "îmi trebuie parolă nouă",
+        "cum accesez contul dacă am uitat parola?",
+        "cum procedez dacă nu-mi amintesc parola?",
+        "ce fac dacă nu mă pot conecta?"
+      ],
+      "responses": [
+        "Apasă pe 'Am uitat parola' de pe pagina de login, introdu adresa de email și vei primi un link de resetare. Link-ul expiră în 24 de ore, așa că folosește-l rapid pentru a-ți crea o nouă parolă."
+      ]
+    },
+    {
+      "tag": "program_administratie",
+      "patterns": [
+        "care e programul administratorului?",
+        "când e deschis biroul administrativ?",
+        "când pot merge la administrator?",
+        "care sunt orele de lucru cu publicul?",
+        "când e deschisă administrația?",
+        "care e programul biroului?",
+        "la ce oră găsesc administratorul?",
+        "program secretariat cămin",
+        "când pot rezolva probleme administrative?",
+        "programul de lucru al administrației",
+        "când e închis biroul administrativ?",
+        "în ce zile lucrează administratorul?",
+        "care sunt zilele de audiență?",
+        "când pot depune documente fizic?",
+        "administratorul e disponibil sâmbăta?",
+        "în weekend e deschisă administrația?",
+        "care e programul în sesiune?",
+        "când pot rezolva probleme urgente?",
+        "cum contactez administratorul în afara programului?",
+        "care e programul în vacanță?"
+      ],
+      "responses": [
+        "Biroul administrativ este deschis de luni până vineri între orele 10:00-12:00 și 14:00-16:00. Pentru urgențe în afara programului, poți contacta administratorul prin aplicație la secțiunea 'Contact urgențe'."
+      ]
+    },
+    {
+      "tag": "reguli_camin",
+      "patterns": [
+        "care sunt regulile din cămin?",
+        "până la ce oră e liniște?",
+        "când începe programul de liniște?",
+        "ce nu este permis în cămin?",
+        "ce obiecte sunt interzise?",
+        "pot aduce vizitatori?",
+        "care sunt orele de vizită?",
+        "pot găzdui pe cineva peste noapte?",
+        "pot avea animale de companie?",
+        "există reguli pentru bucătărie?",
+        "pot face petreceri în cameră?",
+        "care sunt sancțiunile pentru încălcarea regulilor?",
+        "unde găsesc regulamentul complet?",
+        "pot fuma în cămin?",
+        "ce se întâmplă dacă încalc regulile?",
+        "există camere de supraveghere?",
+        "pot avea aparate electrocasnice?",
+        "pot face modificări în cameră?",
+        "există reguli pentru balcon?",
+        "care sunt restricțiile de zgomot?"
+      ],
+      "responses": [
+        "Regulamentul complet al căminului este disponibil în secțiunea 'Informații utile'. Programul de liniște este între 22:00-08:00, vizitatorii sunt permiși până la ora 22:00, iar animalele de companie și fumatul sunt interzise în interiorul căminului."
+      ]
+    },
+    {
+      "tag": "facilitati_camin",
+      "patterns": [
+        "ce facilități are căminul?",
+        "există bucătărie comună?",
+        "căminul are sală de sport?",
+        "unde este spălătoria?",
+        "există sală de lectură?",
+        "câte mașini de spălat sunt?",
+        "există wifi în cămin?",
+        "există parcare pentru studenți?",
+        "căminul are camere cu baie proprie?",
+        "unde sunt dușurile?",
+        "există spații comune?",
+        "care sunt facilitățile de studiu?",
+        "există vreun chioșc în apropiere?",
+        "care sunt facilitățile de relaxare?",
+        "căminul are aer condiționat?",
+        "există spațiu pentru biciclete?",
+        "care sunt dotările din cameră?",
+        "sunt calculatoare pentru studenți?",
+        "există imprimantă comună?",
+        "căminul are curte sau grădină?"
+      ],
+      "responses": [
+        "Căminul dispune de bucătărie comună la fiecare etaj, sală de lectură, spălătorie cu 5 mașini de spălat, sală de fitness, wifi gratuit, parcare pentru studenți și spații de relaxare. Detalii complete găsești în secțiunea 'Facilități'."
+      ]
+    },
+    {
+      "tag": "camera_libera",
+      "patterns": [
+        "cum știu dacă e o cameră liberă?",
+        "pot verifica camerele disponibile?",
+        "unde văd camerele libere?",
+        "mai sunt locuri disponibile?",
+        "există o cameră liberă pe etajul meu?"
+      ],
+      "responses": [
+        "Poți vedea camerele disponibile în secțiunea 'Camere' din aplicație. Dacă ai rol de admin, poți filtra și după disponibilitate."
+      ]
+    },
+    {
+      "tag": "timp_mediu_raspuns",
+      "patterns": [
+        "cât durează să rezolve o sesizare?",
+        "care e timpul mediu de răspuns?",
+        "în cât timp primesc răspuns la sesizări?",
+        "cât aștept după ce trimit o sesizare?",
+        "se răspunde repede la cereri?"
+      ],
+      "responses": [
+        "Timpul mediu de răspuns variază în funcție de tipul sesizării, dar este afișat în secțiunea 'Sesizări' (admin)."
+      ]
+    },
+    {
+      "tag": "program_evenimente",
+      "patterns": [
+        "sunt evenimente în cămin?",
+        "unde văd programul de activități?",
+        "ce activități sunt planificate?",
+        "există evenimente pentru studenți?",
+        "unde e lista de evenimente?",
+        "unde văd ce urmează în cămin?",
+        "ce se mai întâmplă săptămâna asta?"
+      ],
+      "responses": [
+        "Poți verifica programul evenimentelor din secțiunea 'Avizier Digital' sau 'Evenimente' din aplicație (dacă este disponibilă)."
+      ]
+    },
+    {
+      "tag": "intrebari_generale",
+      "patterns": [
+        "cum funcționează aplicația?",
+        "ce este Cămin@UniTBv?",
+        "care e scopul aplicației?",
+        "ce pot face în platformă?",
+        "pentru ce folosesc aplicația asta?",
+        "cu ce mă ajută aplicația?",
+        "care sunt principalele funcții?",
+        "cum mă ajută aplicația în cămin?"
+      ],
+      "responses": [
+        "Aplicația Cămin@UniTBv te ajută să gestionezi digital toate aspectele legate de viața în cămin: cereri de cazare, sesizări, programări, recenzii și multe altele!"
+      ]
+    }    
+  ]
+}

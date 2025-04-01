@@ -4,12 +4,16 @@ import NavBar from "../components/NavBar";
 import { useLocation } from "react-router-dom";
 import "../styles/HomeStudent.css";
 import Avizier from "../student/AvizierDigitalStudent";
+import ChatBot from "../components/ChatBot";
+import "../styles/HomeStudent.css"
 
 function HomeStudent() {
   const [user, setUser] = useState({ nume: "utilizator", prenume: "" });
   const [ora, setOra] = useState(new Date());
   const [urmatoareaProgramare, setUrmatoareaProgramare] = useState(null);
   const [toateProgramarile, setToateProgramarile] = useState([]);
+  const [showChatBot, setShowChatBot] = useState(false);
+
 
   useEffect(() => {
     axios.get("http://localhost:4000/me", { withCredentials: true })
@@ -134,7 +138,18 @@ function HomeStudent() {
             </div>
 
           </div>
-        </div>
+        </div>    
+        {!showChatBot && (
+  <button
+    onClick={() => setShowChatBot(true)}
+    className="btn btn-primary rounded-circle chatbot-toggle-btn"
+  >
+    💬
+  </button>
+)}
+
+{showChatBot && <ChatBot onClose={() => setShowChatBot(false)} />}
+
       </div>
     </div>
   );
