@@ -22,6 +22,10 @@ function ProfilStudent() {
   const [toastMsg, setToastMsg] = useState("");
   const [toastType, setToastType] = useState("success"); // sau "danger"
 
+  const [infoAdmin, setInfoAdmin] = useState(null);
+  const [showAdminPopup, setShowAdminPopup] = useState(false);
+
+
 
   const MAX_WORDS = 50;
   const [wordsLeft, setWordsLeft] = useState(MAX_WORDS);
@@ -137,6 +141,18 @@ const handleDescriereChange = (e) => {
   }
 };
 
+const fetchAdminInfo = async () => {
+  try {
+    const response = await axios.get("http://localhost:4000/contact-administratie", {
+      withCredentials: true,
+    });
+    setInfoAdmin(response.data);
+    setShowAdminPopup(true);
+  } catch (err) {
+    console.error("Eroare la preluarea contactului administrației:", err);
+  }
+};
+
 
   return (
     <div className="d-flex">
@@ -229,7 +245,40 @@ const handleDescriereChange = (e) => {
             <div className="col-md-6 px-2">
               <div className="card p-4 shadow border-2 border-dark rounded card-camera">
                 <h4>📌 Detalii Cameră</h4>
-                <p><strong>Cămin:</strong> {cameraInfo.camin || "Nespecificat"}</p>
+                <p
+                  onMouseEnter={fetchAdminInfo}
+                  onMouseLeave={() => setShowAdminPopup(false)}
+                  title="Vezi datele administrației"
+                  style={{ position: "relative", display: "inline-block", cursor: "pointer", color: showAdminPopup ? "#0d6efd" : "inherit", textDecoration: showAdminPopup ? "underline" : "none", transition: "color 0.2s ease"}}
+                >
+                  <strong><span className="ms-1 text-primary me-1">🛈</span>Cămin:</strong> {cameraInfo.camin || "Nespecificat"}
+
+                  {showAdminPopup && infoAdmin && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        zIndex: 1000,
+                        backgroundColor: "#fff",
+                        border: "1px solid #ccc",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                        width: "260px",
+                        marginTop: "6px",
+                        opacity: 1,
+                        transition: "opacity 0.3s ease-in",
+                        animation: "fadeInAdmin 0.3s ease-in"
+                      }}
+                    >
+                      <strong>👮‍♂️ Administrația căminului</strong>
+                      <p><strong>Nume:</strong> {infoAdmin.nume} {infoAdmin.prenume}</p>
+                      <p><strong>Email:</strong> {infoAdmin.email}</p>
+                      <p><strong>Telefon:</strong> {infoAdmin.telefon}</p>
+                    </div>
+                  )}
+                </p>
                 <p><strong>Număr cameră:</strong> {cameraInfo.numar_camera || "Nespecificat"}</p>
                 <h5>👥 Colegi de Cameră</h5>
                 {cameraInfo?.colegi?.length > 0 ? (
@@ -275,5 +324,20 @@ const handleDescriereChange = (e) => {
     </div>
   );
 }
+
+<style>
+  {`
+    @keyframes fadeInAdmin {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `}
+</style>
 
 export default ProfilStudent;

@@ -37,7 +37,7 @@ const ChatBot = ({ onClose }) => {
   return (
     <div className="chatbot-box">
       <div className="chatbot-header">
-        Colegul ala mai mare
+        Asistentul tau virtual
         <button className="close-chatbot" onClick={onClose}>×</button>
       </div>
       <div className="chatbot-messages">

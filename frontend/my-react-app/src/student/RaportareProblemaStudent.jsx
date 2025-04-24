@@ -269,9 +269,15 @@ function RaporteazaProblema() {
                               <span className="badge bg-warning text-dark">Neprocesată</span>
                             )}
                           </td>
-                          <td>{new Date(p.data_trimitere).toLocaleDateString("ro-RO")}</td>
+                          <td>{new Date(p.data_trimitere).toLocaleString("ro-RO", {
+                            dateStyle: "short",
+                            timeStyle: "short"
+                          })}</td>
                           <td>{calculeazaTimpScurs(p.data_trimitere)}</td>
-                          <td>{p.data_update ? new Date(p.data_update).toLocaleDateString("ro-RO") : "—"}</td>
+                          <td>{p.data_update ? new Date(p.data_update).toLocaleString("ro-RO", {
+                            dateStyle: "short",
+                            timeStyle: "short"
+                          }) : "—"}</td>
                           <td>
                             {p.status === "neprocesata" ? (
                               <>

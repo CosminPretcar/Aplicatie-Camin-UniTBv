@@ -4,11 +4,11 @@ import axios from "axios";
 function AvizierStudent() {
   const [anunturi, setAnunturi] = useState([]);
 
-  useEffect(() => {
-    axios.get("http://localhost:4000/anunturi")
-      .then(response => setAnunturi(response.data))
-      .catch(error => console.error("Eroare la preluarea anunțurilor:", error));
-  }, []);
+  axios.get("http://localhost:4000/anunturi")
+  .then(response => {
+    const sortate = response.data.sort((a, b) => (b.fixat - a.fixat) || new Date(b.data) - new Date(a.data));
+    setAnunturi(sortate);
+  })
 
   const getBadgeColor = (importanta) => {
     switch (importanta) {
@@ -37,12 +37,12 @@ function AvizierStudent() {
   };
 
   return (
-    <div className="card shadow p-3 border-2 border-dark rounded" style={{ maxHeight: "700px", overflow: "hidden" }}>
+    <div className="card shadow p-3 border-2 border-dark rounded" style={{ maxHeight: "750px", overflow: "hidden", background: "linear-gradient(to left, #ffffff, #e7f4ff)" }}>
       <h2 className="text-center mb-3">📢 Avizier Digital</h2>
       <hr />
 
       {/* Lista anunțurilor cu scroll */}
-      <div className="mt-3" style={{ maxHeight: "600px", overflowY: "auto" }}>
+      <div className="mt-3" style={{ height: "700px", overflowY: "auto" }}>
         {anunturi.length === 0 ? (
           <p className="text-muted text-center">Nu există anunțuri.</p>
         ) : (
@@ -50,8 +50,12 @@ function AvizierStudent() {
             <div key={anunt.id} className={`card p-3 mb-2 ${getBadgeColor(anunt.importanta)}`}>
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h5 className="mb-0">{getIcon(anunt.importanta)} {anunt.text}</h5>
-                  <small className="text-muted">{new Date(anunt.data).toLocaleString("ro-RO")}</small>
+                  <h5 className="mb-0">
+                    {getIcon(anunt.importanta)} {anunt.text}
+                  </h5>
+                  <small className="text-muted">{new Date(anunt.data).toLocaleString("ro-RO")}
+                  {anunt.fixat && <span className="badge bg-light text-dark ms-2">📌 Fixat</span>}
+                  </small>
                 </div>
               </div>
             </div>

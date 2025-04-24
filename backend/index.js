@@ -14,6 +14,9 @@ import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
 import cron from "node-cron";
 import fetch from "node-fetch";
+import { trimiteNotificare } from "./utils/trimiteNotificare.js";
+import { trimiteNotificareGlobala } from "./utils/trimiteNotificareGlobala.js";
+
 
 dotenv.config();
 
@@ -59,18 +62,41 @@ const storageSesizari = multer.diskStorage({
 });
 const uploadSesizari = multer({ storage: storageSesizari });
 
-cron.schedule("0 * * * *", async () => {
+const storageForum = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/forum"),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+});
+
+const uploadForum = multer({ storage: storageForum });
+
+
+cron.schedule("*/10 * * * *", async () => {
   try {
     const result = await db.query(`
       DELETE FROM programari_resurse
-      WHERE (data < CURRENT_DATE)
-         OR (data = CURRENT_DATE AND (ora_start::time + (durata_minute || ' minutes')::interval) < CURRENT_TIME)
+      WHERE data = CURRENT_DATE AND ora_start::time <= CURRENT_TIME
     `);
-    console.log(`🧹 ${result.rowCount} programări expirate șterse automat.`);
+    console.log(`🧹 ${result.rowCount} programări începute șterse automat.`);
   } catch (err) {
-    console.error("Eroare la ștergerea programărilor expirate:", err);
+    console.error("Eroare la ștergerea programărilor:", err);
   }
 });
+
+// 🗑️ Șterge automat anunțurile studenților expirate
+cron.schedule("*/10 * * * *", async () => {
+  try {
+    const result = await db.query(`
+      DELETE FROM anunturi_studenti
+      WHERE data_expirare IS NOT NULL AND data_expirare <= CURRENT_TIMESTAMP
+    `);
+    if (result.rowCount > 0) {
+      console.log(`🧹 ${result.rowCount} anunțuri expirate ale studenților șterse.`);
+    }
+  } catch (err) {
+    console.error("Eroare la ștergerea anunțurilor expirate:", err);
+  }
+});
+
 
 app.use(cors({
   origin: "http://localhost:3000", 
@@ -119,6 +145,7 @@ app.get("/me", async (req, res) => {
       const studentData = studentInfo.rows[0] || {}; //daca nu exista setez un obiect gol
       return res.json({ 
         isAuthenticated: true, 
+        id: req.user.id,
         nume: req.user.nume, 
         prenume: req.user.prenume, 
         email: req.user.email, 
@@ -1128,6 +1155,14 @@ app.post("/anunturi", async (req, res) => {
       [text, importantaValidata]
     );
 
+    await trimiteNotificareGlobala(
+      "Anunț nou în avizier",
+      "Un administrator a publicat un nou anunț în avizierul digital.",
+      "avizier",
+      null,
+      result.rows[0].id
+    );
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Eroare la adăugarea anunțului:", error);
@@ -1139,12 +1174,40 @@ app.delete("/anunturi/:id", async (req, res) => {
   try {
     const { id } = req.params;
     await db.query("DELETE FROM anunturi WHERE id = $1", [id]);
+    await db.query("DELETE FROM notificari_globale WHERE id_anunt_admin = $1", [id]);
     res.json({ message: "Anunț șters cu succes" });
   } catch (error) {
     console.error("Eroare la ștergerea anunțului:", error);
     res.status(500).json({ error: "Eroare server" });
   }
 });
+
+app.put("/anunturi/:id", async (req, res) => {
+  const { id } = req.params;
+  const { text, importanta, fixat } = req.body;
+
+  try {
+    const importantaValidata = ["critică", "medie", "scăzută"].includes(importanta) ? importanta : "medie";
+
+    const result = await db.query(
+      `UPDATE anunturi 
+       SET text = $1, importanta = $2, fixat = $3
+       WHERE id = $4
+       RETURNING *`,
+      [text, importantaValidata, fixat ?? false, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Anunțul nu a fost găsit." });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Eroare la actualizarea anunțului:", error);
+    res.status(500).json({ message: "Eroare server" });
+  }
+});
+
 
 const getLunaCurenta = () => {
   const data = new Date();
@@ -1230,6 +1293,11 @@ app.get("/camera-me", async (req, res) => {
 
     const cameraId = cameraQuery.rows[0].camera_id;
 
+    const studentQuery = await db.query(
+      `SELECT camin_id FROM studenti WHERE user_id = $1`,
+      [req.user.id]
+    );
+
     // 2️⃣ Obținem informațiile camerei
     const cameraInfo = await db.query(
       `SELECT c.numar_camera, ca.nume_camin 
@@ -1254,6 +1322,7 @@ app.get("/camera-me", async (req, res) => {
 
     if (colegiUsersQuery.rows.length === 0) {
       return res.json({
+        camin_id: studentQuery.rows[0].camin_id,
         camin: cameraInfo.rows[0].nume_camin,
         numar_camera: cameraInfo.rows[0].numar_camera,
         colegi: []
@@ -1568,12 +1637,47 @@ app.put("/sesizari-admin/:id", isAdmin, async (req, res) => {
       `UPDATE sesizari SET status = $1, data_update = NOW() WHERE id = $2`,
       [status, id]
     );
-    res.json({ mesaj: "Status actualizat." });
+    const sesizare = await db.query(
+      `SELECT student_id FROM sesizari WHERE id = $1`,
+      [id]
+    );
+
+    if (sesizare.rows.length > 0) {
+      const studentId = sesizare.rows[0].student_id;
+
+      // 3️⃣ Trimite notificare studentului
+      await trimiteNotificare(
+        studentId,
+        "Sesizare actualizată",
+        `Sesizarea ta a fost actualizată cu statusul: "${status}".`,
+        "sesizare"
+      );
+    }
+
+    res.json({ message: "Status sesizare actualizat și notificare trimisă." });
   } catch (err) {
     console.error("Eroare actualizare status:", err);
     res.status(500).json({ mesaj: "Eroare de server." });
   }
 });
+
+app.delete("/sesizari/:id" ,async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await db.query("DELETE FROM sesizari WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Sesizarea nu a fost găsită." });
+    }
+
+    res.json({ message: "Sesizarea a fost ștearsă cu succes." });
+  } catch (error) {
+    console.error("Eroare la ștergerea sesizării:", error);
+    res.status(500).json({ message: "Eroare de server." });
+  }
+});
+
 
 app.post("/sesizari", uploadSesizari.array("imagini",5), async (req, res) => {
   if (!req.isAuthenticated()) {
@@ -1596,6 +1700,39 @@ app.post("/sesizari", uploadSesizari.array("imagini",5), async (req, res) => {
        VALUES ($1, $2, $3, $4)`,
       [req.user.id, titlu, descriere, imaginiConcat]
     );
+
+    const result = await db.query(`
+      SELECT camin_id FROM studenti WHERE user_id = $1
+    `, [req.user.id]);
+    
+    console.log("🎓 Camin ID găsit:", result.rows[0]?.camin_id);
+    
+    if (result.rows.length > 0) {
+      const caminId = result.rows[0].camin_id;
+    
+      // 2️⃣ Găsim user_id-ul administratorului acelui cămin
+      const adminResult = await db.query(`
+        SELECT user_id FROM administratori WHERE camin_id = $1
+      `, [caminId]);
+    
+      console.log("👮‍♂️ Admin găsit:", adminResult.rows);
+    
+      if (adminResult.rows.length > 0) {
+        const adminUserId = adminResult.rows[0].user_id;
+    
+        // 3️⃣ Trimitem notificarea
+        await trimiteNotificare(
+          adminUserId,
+          "Sesizare nouă",
+          "Exista o nouă sesizare de la un student din căminul tău.",
+          "sesizare"
+        );
+    
+        console.log("✅ Notificare trimisă către admin cu user_id:", adminUserId);
+      } else {
+        console.log("⚠️ Nu s-a găsit administrator pentru căminul:", caminId);
+      }
+    }
 
     res.status(201).json({ message: "Sesizarea a fost înregistrată." });
   } catch (error) {
@@ -1902,8 +2039,414 @@ app.post("/api/chatbot", async (req, res) => {
   }
 });
 
+app.get("/forum-studenti", async (req, res) => {
+  try {
+    const { rows } = await db.query(`
+      SELECT f.*, u.nume, u.prenume
+      FROM anunturi_studenti f
+      JOIN users u ON f.user_id = u.id
+      ORDER BY f.data_postare DESC
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error("Eroare la GET /forum-studenti:", err);
+    res.status(500).json({ message: "Eroare server" });
+  }
+});
+
+app.post("/forum-studenti", uploadForum.single("imagine"), async (req, res) => {
+  const { titlu, descriere, categorie, dataExpirare, afiseazaContact } = req.body;
+  const imagine = req.file ? req.file.filename : null;
+  const userId = req.user?.id;
+
+  if (!userId) return res.status(401).json({ message: "Neautentificat." });
+
+  try {
+    await db.query(
+      `INSERT INTO anunturi_studenti 
+       (titlu, descriere, categorie, imagine, data_expirare, afiseaza_contact, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [titlu, descriere, categorie, imagine, dataExpirare, afiseazaContact, userId]
+    );
+    
+    const rezultatAnunt = await db.query(
+      `INSERT INTO anunturi_studenti 
+       (titlu, descriere, categorie, imagine, data_expirare, afiseaza_contact, user_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id`,
+      [titlu, descriere, categorie, imagine, dataExpirare, afiseazaContact, userId]
+    );
+
+    const anuntId = rezultatAnunt.rows[0].id;
+
+    await trimiteNotificareGlobala(
+      "Anunț nou în forum",
+      `${req.user.prenume} ${req.user.nume} a postat un anunț nou: "${titlu}".`,
+      "forum", 
+      anuntId
+    );
+
+    const rezultat = await db.query(`
+      SELECT f.*, u.nume, u.prenume
+      FROM anunturi_studenti f
+      JOIN users u ON f.user_id = u.id
+      WHERE f.id = (SELECT MAX(id) FROM anunturi_studenti WHERE user_id = $1)
+    `, [userId]);
+
+    const caminQuery = await db.query(
+      `SELECT camin_id FROM studenti WHERE user_id = $1`,
+      [req.user.id]
+    );
+    
+    if (caminQuery.rows.length > 0) {
+      const caminId = caminQuery.rows[0].camin_id;
+    
+      // 🔍 Caută administratorul acelui cămin
+      const adminQuery = await db.query(
+        `SELECT user_id FROM administratori WHERE camin_id = $1`,
+        [caminId]
+      );
+    
+      if (adminQuery.rows.length > 0) {
+        const adminId = adminQuery.rows[0].user_id;
+    
+        // 🔔 Trimite notificare către admin
+        await trimiteNotificare(
+          adminId,
+          "Anunț nou postat",
+          "Un student a postat un anunț în forumul căminului. Verifică dacă respectă regulile.",
+          "forum"
+        );
+      }
+    }
+    
+    res.status(201).json({ anunt: rezultat.rows[0] });
+  } catch (err) {
+    console.error("Eroare la POST /forum-studenti:", err);
+    res.status(500).json({ message: "Eroare server" });
+  }
+});
+
+app.delete("/forum-studenti/:id", async (req, res) => {
+  const { id } = req.params;
+  const userId = req.user?.id;
+  const esteAdmin = req.user?.administrator;
+  const motiv = req.body?.motiv;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Neautentificat." });
+  }
+
+  try {
+    const anunt = await db.query(
+      `SELECT a.user_id, u.email, u.nume, u.prenume
+       FROM anunturi_studenti a
+       JOIN users u ON a.user_id = u.id
+       WHERE a.id = $1`,
+      [id]
+    );
+
+    if (anunt.rows.length === 0) {
+      return res.status(404).json({ message: "Anunțul nu există." });
+    }
+
+    const autorId = anunt.rows[0].user_id;
+
+    // Verificăm permisiunea
+    if (autorId !== userId && !esteAdmin) {
+      return res.status(403).json({ message: "Nu ai permisiunea să ștergi acest anunț." });
+    }
+    await db.query("DELETE FROM notificari_globale WHERE id_anunt_student = $1", [id]);
+    await db.query("DELETE FROM anunturi_studenti WHERE id = $1", [id]);
+
+    // Dacă e admin și avem motiv, trimitem email
+    if (esteAdmin && motiv) {
+      const { email, nume, prenume } = anunt.rows[0];
+      const mailOptions = {
+        from: `"Admin Cămin@UniTBv" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Anunțul tău a fost șters de un administrator",
+        text: `Salut, ${prenume} ${nume}!\n\nAnunțul tău postat pe platforma Cămin@UniTBv a fost șters de un administrator.\n\nMotivul:\n${motiv}\n\nTe rugăm să respecți regulile comunității când postezi în forum.`,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      await trimiteNotificare(
+        autorId,
+        "Anunț șters de administrator",
+        `Anunțul tău a fost șters de un administrator. Motiv: ${motiv}`,
+        "forum"
+      );
+    }
+
+    res.status(200).json({ message: "Anunț șters cu succes." });
+  } catch (err) {
+    console.error("Eroare la ștergere anunț:", err);
+    res.status(500).json({ message: "Eroare server." });
+  }
+});
+
+
+app.use("/uploads/forum", express.static("uploads/forum"));
+
+app.get("/notificari/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const result = await db.query(
+      `SELECT * FROM notificari WHERE user_id = $1 ORDER BY data DESC`,
+      [userId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("❌ Eroare la GET notificari:", err);
+    res.status(500).json({ message: "Eroare la încărcarea notificărilor." });
+  }
+});
+
+app.patch("/notificari/:id/citita", async (req, res) => {
+  const notificareId = req.params.id;
+
+  try {
+    await db.query(
+      `UPDATE notificari SET citita = true WHERE id = $1`,
+      [notificareId]
+    );
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("❌ Eroare la actualizarea notificării:", err);
+    res.status(500).json({ message: "Eroare la actualizarea notificării." });
+  }
+});
+
+app.get("/notificari-globale", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT * FROM notificari_globale ORDER BY data DESC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare la notificări globale:", err);
+    res.status(500).json({ message: "Eroare server." });
+  }
+});
+
+app.get("/contact-administratie", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Neautentificat." });
+  }
+
+  try {
+    // 1️⃣ Luăm camin_id al studentului din users
+    const userCamin = await db.query(
+      `SELECT camin_id FROM studenti WHERE user_id = $1`,
+      [req.user.id]
+    );
+
+    if (userCamin.rows.length === 0 || !userCamin.rows[0].camin_id) {
+      return res.status(404).json({ message: "Nu e asociat niciun cămin." });
+    }
+
+    const caminId = userCamin.rows[0].camin_id;
+
+    // 2️⃣ Căutăm administratorul acelui cămin
+    const admin = await db.query(
+      `SELECT u.nume, u.prenume, u.email
+       FROM administratori a
+       JOIN users u ON a.user_id = u.id
+       WHERE a.camin_id = $1
+       LIMIT 1`,
+      [caminId]
+    );
+
+    if (admin.rows.length === 0) {
+      return res.status(404).json({ message: "Nu s-a găsit administrator pentru acest cămin." });
+    }
+
+    res.json(admin.rows[0]);
+
+  } catch (err) {
+    console.error("Eroare la /contact-administratie:", err);
+    res.status(500).json({ message: "Eroare la server." });
+  }
+});
+
+app.delete("/notificari/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query("DELETE FROM notificari WHERE id = $1", [id]);
+    res.status(200).json({ message: "Notificare ștearsă." });
+  } catch (err) {
+    console.error("Eroare la ștergerea notificării:", err);
+    res.status(500).json({ message: "Eroare de server." });
+  }
+});
+
+app.get("/statistici/sesizari-pe-status", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT status, COUNT(*) AS valoare
+      FROM sesizari
+      GROUP BY status
+      ORDER BY status
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare la sesizari pe status:", err);
+    res.status(500).json({ eroare: "Eroare la preluarea sesizărilor" });
+  }
+});
+
+app.get("/statistici/evolutie-sesizari", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT TO_CHAR(data_trimitere, 'YYYY-MM') as luna, COUNT(*) as total
+      FROM sesizari
+      GROUP BY luna
+      ORDER BY luna
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare evolutie sesizari:", err);
+    res.status(500).json({ eroare: "Eroare la evoluție sesizări" });
+  }
+});
+
+app.get("/statistici/rating-mediu", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        luna_recenzie AS luna,
+        ROUND(AVG((
+          curatenie + facilitati + zgomot + internet + personal_administrativ + securitate
+        ) / 6.0), 2) AS media
+      FROM recenzii_camine
+      GROUP BY luna_recenzie
+      ORDER BY luna_recenzie
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare rating mediu:", err);
+    res.status(500).json({ eroare: "Eroare la preluarea ratingurilor" });
+  }
+});
+
+app.get("/statistici/grad-ocupare", async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // 1. Găsește căminul administrat de utilizatorul logat
+    const adminRes = await db.query(`
+      SELECT camin_id FROM administratori WHERE user_id = $1
+    `, [userId]);
+
+    if (adminRes.rowCount === 0) {
+      return res.status(404).json({ eroare: "Nu ești asociat cu niciun cămin." });
+    }
+
+    const caminId = adminRes.rows[0].camin_id;
+
+    // 2. Obține capacitatea totală a căminului
+    const caminRes = await db.query(`
+      SELECT capacitate_total FROM camine WHERE id = $1
+    `, [caminId]);
+
+    const capacitateTotala = Number(caminRes.rows[0]?.capacitate_total);
+
+    // 3. Numărăm locurile ocupate în camerele căminului
+    const camereRes = await db.query(`
+      SELECT student1, student2, student3, student4
+      FROM camere
+      WHERE camin_id = $1
+    `, [caminId]);
+
+    const ocupate = camereRes.rows.reduce((acc, cam) => {
+      const locuri = [cam.student1, cam.student2, cam.student3, cam.student4];
+      return acc + locuri.filter(s => s !== null).length;
+    }, 0);
+
+    res.json({ ocupate, total: capacitateTotala });
+  } catch (err) {
+    console.error("Eroare grad ocupare:", err);
+    res.status(500).json({ eroare: "Eroare la calcul grad ocupare" });
+  }
+});
+
+app.get("/statistici/locuri-ocupate-pe-etaj", async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const adminRes = await db.query(`
+      SELECT camin_id FROM administratori WHERE user_id = $1
+    `, [userId]);
+
+    const caminId = adminRes.rows[0]?.camin_id;
+    if (!caminId) return res.status(404).json({ eroare: "Nu ai un cămin atribuit." });
+
+    const result = await db.query(`
+      SELECT etaj,
+        COUNT(student1) + COUNT(student2) + COUNT(student3) + COUNT(student4) AS ocupate
+      FROM camere
+      WHERE camin_id = $1
+      GROUP BY etaj
+      ORDER BY etaj
+    `, [caminId]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare locuri ocupate pe etaj:", err);
+    res.status(500).json({ eroare: "Eroare la calculul ocupării" });
+  }
+});
+
+app.get("/statistici/timp-mediu-rezolvare", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        TO_CHAR(data_update, 'YYYY-MM') AS luna,
+        ROUND(AVG(EXTRACT(EPOCH FROM (data_update - data_trimitere)) / 3600), 2) AS ore_medii
+      FROM sesizari
+      WHERE status != 'neprocesata' AND data_update IS NOT NULL
+      GROUP BY luna
+      ORDER BY luna
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare la calcul timp mediu:", err);
+    res.status(500).json({ eroare: "Eroare server." });
+  }
+});
+
+app.get("/statistici/activitate-zilnica", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+        data::date AS zi,
+        COUNT(*) AS total
+      FROM (
+        SELECT data_trimitere AS data FROM sesizari
+        UNION ALL
+        SELECT data_creare FROM cerere_cazare
+        UNION ALL
+        SELECT TO_DATE(luna_recenzie, 'YYYY-MM') AS data FROM recenzii_camine
+      ) actiuni
+      GROUP BY zi
+      ORDER BY zi;
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Eroare activitate zilnică:", err);
+    res.status(500).json({ eroare: "Eroare server." });
+  }
+});
+
 
 
 app.listen(port, async () => {
   console.log(`App is running on http://localhost:${port}`);
 });
+
+export default db;

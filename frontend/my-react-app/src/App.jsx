@@ -20,6 +20,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import RaportareProblemaStudent from "./student/RaportareProblemaStudent";
 import SesizariAdministrare from "./administator/SesizariAdministrator";
 import ProgramareResurse from "./student/ProgramariResurse";
+import MonitorizareActivitate from "./administator/MonitorizareActivitate";
 
 
 function App() {
@@ -95,6 +96,11 @@ function App() {
           <Route path="/admin/sesizari" element={
             <ProtectedRoute roles={['admin']}>
               <SesizariAdministrare />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/monitorizare-activitate" element={
+            <ProtectedRoute roles={['admin']}>
+              <MonitorizareActivitate />
             </ProtectedRoute>
           } />
       </Routes>

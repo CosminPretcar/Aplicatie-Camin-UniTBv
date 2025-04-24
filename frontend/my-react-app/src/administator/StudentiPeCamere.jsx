@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import NavBarAdmin from "../components/NavBarAdmin";
-import { Table, Form, Card } from "react-bootstrap";
+import { Table, Form, Card, Badge } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function CamereCaminAdmin() {
@@ -43,6 +43,16 @@ function CamereCaminAdmin() {
             );
         };
 
+    const getRowColorClass = (camera) => {
+        const studenti = [camera.student1, camera.student2, camera.student3, camera.student4];
+        const nrOcupate = studenti.filter(Boolean).length;
+      
+        if (nrOcupate === 0) return "table-success"; // verde
+        if (nrOcupate < 4) return "table-warning"; // galben
+        return "table-danger"; // roșu
+      };
+          
+
     return (
         <div className="d-flex page-container">
             <NavBarAdmin />
@@ -65,13 +75,17 @@ function CamereCaminAdmin() {
                             </Form.Select>
 
                     </Form.Group>
+                    <div className="mt-2">
+                      <Badge bg="success" className="me-2">Cameră liberă</Badge>
+                      <Badge bg="warning" className="me-2 text-dark">Locuri disponibile</Badge>
+                      <Badge bg="danger">Cameră ocupată</Badge>
+                    </div>
                 </Card>
 
                 <Card className="p-3 shadow-lg border-2 border-dark">
                     <Table striped bordered hover responsive>
                         <thead className="table-dark">
                             <tr>
-                                <th>Etaj</th>
                                 <th>Nr. Cameră</th>
                                 <th>Student 1</th>
                                 <th>Student 2</th>
@@ -81,8 +95,7 @@ function CamereCaminAdmin() {
                         </thead>
                         <tbody>
                             {camereFiltrate.map((camera) => (
-                                <tr key={camera.id}>
-                                    <td>{camera.etaj === 0 ? "Parter" : camera.etaj}</td>
+                                <tr key={camera.id} className={getRowColorClass(camera)}>
                                     <td>{camera.numar_camera}</td>
                                     <td>{renderStudent(camera.student1)}</td>
                                     <td>{renderStudent(camera.student2)}</td>

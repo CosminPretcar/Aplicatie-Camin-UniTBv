@@ -27,6 +27,10 @@ function SesizariAdministrare() {
   const sesizariDeAfisat = sesizariFiltrate.slice(indexStart, indexEnd);
   const totalPagini = Math.ceil(sesizariFiltrate.length / sesizariPerPagina);
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [sesizareDeSters, setSesizareDeSters] = useState(null);
+
+
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const [toastType, setToastType] = useState("success");
@@ -114,7 +118,25 @@ function SesizariAdministrare() {
     setTimeout(() => setShowToast(false), 3000);
   };
 
+  const confirmaStergereSesizare = (id) => {
+    setSesizareDeSters(id);
+    setShowConfirmModal(true);
+  };
+  
 
+  const stergeSesizare = async () => {
+    try {
+      await axios.delete(`http://localhost:4000/sesizari/${sesizareDeSters}`, {
+        withCredentials: true
+      });
+      showCustomToast("Sesizarea a fost ștearsă!", "success");
+      setShowConfirmModal(false);
+      getSesizari();
+    } catch (err) {
+      console.error("Eroare la ștergerea sesizării:", err);
+      showCustomToast("Eroare la ștergere.", "danger");
+    }
+  };
   
   return (
     <div className="d-flex page-container">
@@ -124,7 +146,7 @@ function SesizariAdministrare() {
           <h3 className="text-center mb-4">🛠️ Sesizări primite de la studenți</h3>
           <div className="d-flex justify-content-end mb-3">
             <Button variant="success" onClick={exportSesizariToExcel}>
-              ⬇️ Exportă cererile în Excel
+              ⬇️ Exportă sesizarile în Excel
             </Button>
           </div>
           <Form.Select
@@ -158,7 +180,7 @@ function SesizariAdministrare() {
                   <th>Ultima actualizare</th>
                   <th>Notita admin</th>
                   <th>Contact</th>
-                  <th>Actualizează</th>
+                  <th>Optiuni</th>
                 </tr>
               </thead>
               <tbody>
@@ -196,8 +218,14 @@ function SesizariAdministrare() {
                         {s.status}
                       </Badge>
                     </td>
-                    <td>{new Date(s.data_trimitere).toLocaleDateString("ro-RO")}</td>
-                    <td>{s.data_update ? new Date(s.data_update).toLocaleDateString("ro-RO") : "—"}</td>
+                    <td>{new Date(s.data_trimitere).toLocaleString("ro-RO", {
+                      dateStyle: "short",
+                      timeStyle: "short"
+                    })}</td>
+                    <td>{s.data_update ? new Date(s.data_update).toLocaleString("ro-RO", {
+                      dateStyle: "short",
+                      timeStyle: "short"
+                    }) : "—"}</td>
                     <td>
                       <Form.Control
                         as="textarea"
@@ -213,14 +241,25 @@ function SesizariAdministrare() {
                       </Button>
                     </td>
                     <td>
-                      <Form.Select
-                        value={s.status}
-                        onChange={(e) => updateStatus(s.id, e.target.value)}
-                      >
-                        <option value="neprocesata">neprocesata</option>
-                        <option value="in_lucru">in_lucru</option>
-                        <option value="rezolvata">rezolvata</option>
-                      </Form.Select>
+                      <div className="d-flex flex-column align-items-center">
+                        <Form.Select
+                          value={s.status}
+                          onChange={(e) => updateStatus(s.id, e.target.value)}
+                          className="mb-2"
+                          style={{ width: "120px" }}
+                        >
+                          <option value="neprocesata">neprocesata</option>
+                          <option value="in_lucru">in_lucru</option>
+                          <option value="rezolvata">rezolvata</option>
+                        </Form.Select>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => confirmaStergereSesizare(s.id)}
+                        >
+                          🗑️
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -330,6 +369,23 @@ function SesizariAdministrare() {
           </div>
         </Modal.Body>
       </Modal>
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmare ștergere</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Ești sigur că vrei să ștergi această sesizare? Acțiunea este ireversibilă.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
+            Anulează
+          </Button>
+          <Button variant="danger" onClick={stergeSesizare}>
+            Șterge
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {showToast && (
         <div className="toast show position-fixed bottom-0 end-0 m-4" style={{ zIndex: 9999 }}>
           <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>

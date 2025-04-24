@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {Toast, Modal, Button} from "react-bootstrap"
+import { Toast, Modal, Button } from "react-bootstrap";
 
 function Avizier() {
   const [anunturi, setAnunturi] = useState([]);
   const [nouAnunt, setNouAnunt] = useState("");
   const [importanta, setImportanta] = useState("medie");
+
+  const [editId, setEditId] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [editImportanta, setEditImportanta] = useState("medie");
 
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
@@ -22,14 +26,17 @@ function Avizier() {
 
   useEffect(() => {
     axios.get("http://localhost:4000/anunturi")
-      .then(response => setAnunturi(response.data))
+      .then(response => {
+        const sortate = response.data.sort((a, b) => b.fixat - a.fixat || new Date(b.data) - new Date(a.data));
+        setAnunturi(sortate);
+      })
       .catch(error => console.error("Eroare la preluarea anunțurilor:", error));
   }, []);
 
   const handleAddAnunt = () => {
     if (nouAnunt.trim() === "") return;
 
-    axios.post("http://localhost:4000/anunturi", { text: nouAnunt, importanta })
+    axios.post("http://localhost:4000/anunturi", { text: nouAnunt, importanta, fixat: false })
       .then(response => setAnunturi([response.data, ...anunturi]))
       .catch(error => console.error("Eroare la adăugarea anunțului:", error));
 
@@ -55,29 +62,71 @@ function Avizier() {
     }
   };
 
+  const startEdit = (anunt) => {
+    setEditId(anunt.id);
+    setEditText(anunt.text);
+    setEditImportanta(anunt.importanta);
+  };
+
+  const cancelEdit = () => {
+    setEditId(null);
+    setEditText("");
+    setEditImportanta("medie");
+  };
+
+  const saveEdit = async (id, fixat) => {
+    try {
+      const response = await axios.put(`http://localhost:4000/anunturi/${id}`, {
+        text: editText,
+        importanta: editImportanta,
+        fixat
+      });
+      setAnunturi(anunturi.map(a => a.id === id ? response.data : a));
+      cancelEdit();
+      showCustomToast("Anunțul a fost actualizat!");
+    } catch (err) {
+      console.error("Eroare la salvare:", err);
+      showCustomToast("Eroare la actualizarea anunțului!", "danger");
+    }
+  };
+
+  const toggleFixare = async (anunt) => {
+    try {
+      const updated = { ...anunt, fixat: !anunt.fixat };
+      const response = await axios.put(`http://localhost:4000/anunturi/${anunt.id}`, updated);
+      const sortate = anunturi.map(a => a.id === anunt.id ? response.data : a)
+        .sort((a, b) => b.fixat - a.fixat || new Date(b.data) - new Date(a.data));
+      setAnunturi(sortate);
+      showCustomToast(anunt.fixat ? "Anunțul nu mai este fixat" : "Anunțul a fost fixat");
+    } catch (err) {
+      console.error("Eroare la fixare:", err);
+      showCustomToast("Eroare la fixarea anunțului!", "danger");
+    }
+  };
+
   const getBadgeColor = (importanta) => {
     switch (importanta) {
       case "critică":
-        return "bg-danger text-white"; // 🔴 Roșu
+        return "bg-danger text-white";
       case "medie":
-        return "bg-warning text-white"; // 🟡 Galben
+        return "bg-warning text-white";
       case "scăzută":
-        return "bg-success text-white"; // 🟢 Verde
+        return "bg-success text-white";
       default:
-        return "bg-secondary text-white"; // ⚪ Gri
+        return "bg-secondary text-white";
     }
   };
 
   const getIcon = (importanta) => {
     switch (importanta) {
       case "critică":
-        return "❗"; // Exclamare pentru anunțuri critice
+        return "❗";
       case "medie":
-        return "⚠️"; // Atenție pentru anunțuri medii
+        return "⚠️";
       case "scăzută":
-        return "ℹ️"; // Info pentru anunțuri scăzute
+        return "ℹ️";
       default:
-        return "📌"; // Default pin
+        return "📌";
     }
   };
 
@@ -100,9 +149,7 @@ function Avizier() {
             <option value="medie">🟡 Medie</option>
             <option value="critică">🔴 Critică</option>
           </select>
-          <button className="btn btn-primary px-3" onClick={handleAddAnunt}>
-            ➕ Adaugă anunț
-          </button>
+          <button className="btn btn-primary px-3" onClick={handleAddAnunt}>➕ Adaugă anunț</button>
         </div>
       </div>
       <hr />
@@ -114,17 +161,47 @@ function Avizier() {
         ) : (
           anunturi.map((anunt) => (
             <div key={anunt.id} className={`card p-3 mb-2 ${getBadgeColor(anunt.importanta)}`}>
-              <div className="d-flex justify-content-between align-items-center">
-                <div>
-                  <h5 className="mb-0">{getIcon(anunt.importanta)} {anunt.text}</h5>
-                  <small className="text-muted">{new Date(anunt.data).toLocaleString("ro-RO")}</small>
+              {editId === anunt.id ? (
+                <>
+                  <textarea
+                    className="form-control mb-2"
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                  />
+                  <div className="d-flex justify-content-between align-items-center">
+                    <select className="form-select w-auto" value={editImportanta} onChange={(e) => setEditImportanta(e.target.value)}>
+                      <option value="scăzută">🟢 Scăzută</option>
+                      <option value="medie">🟡 Medie</option>
+                      <option value="critică">🔴 Critică</option>
+                    </select>
+                    <div className="d-flex gap-2">
+                      <button className="btn btn-success" onClick={() => saveEdit(anunt.id, anunt.fixat)}>💾 Salvează</button>
+                      <button className="btn btn-secondary" onClick={cancelEdit}>❌ Anulează</button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 className="mb-0">{getIcon(anunt.importanta)} {anunt.text}</h5>
+                    <small className="text-white">{new Date(anunt.data).toLocaleString("ro-RO")}</small>
+                    {anunt.fixat && <span className="badge bg-light text-dark ms-2">📌 Fixat</span>}
+                  </div>
+                  <div className="d-flex gap-2">
+                    <button className="btn btn-light btn-sm" onClick={() => toggleFixare(anunt)}>
+                      {anunt.fixat ? "📍 Anulează fixarea" : "📌 Fixează"}
+                    </button>
+                    <button className="btn btn-outline-light btn-sm" onClick={() => startEdit(anunt)}>✏️ Editează</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDeleteAnunt(anunt.id)}>🗑️</button>
+                  </div>
                 </div>
-                <button className="btn p-0" onClick={() => handleDeleteAnunt(anunt.id)}>🗑️ Șterge</button>
-              </div>
+              )}
             </div>
           ))
         )}
       </div>
+
+      {/* Toast notificare */}
       {showToast && (
         <div className="toast show position-fixed bottom-0 end-0 m-4" style={{ zIndex: 9999 }}>
           <div className={`toast-header text-white ${toastType === "success" ? "bg-success" : "bg-danger"}`}>
@@ -135,6 +212,7 @@ function Avizier() {
         </div>
       )}
 
+      {/* Modal confirmare ștergere */}
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmare ștergere</Modal.Title>

@@ -49,7 +49,6 @@ function GraficRecenzii() {
 
     return (
         <div className="grafice-container">
-            <h3 className="text-center">📊 Evoluția Recenziilor în Ultimele 6 Luni</h3>
             <Line data={chartData} />
         </div>
     );

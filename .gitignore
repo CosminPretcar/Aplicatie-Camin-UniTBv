@@ -1,4 +1,5 @@
 .env
+chatbot-env/
 
 # Logs
 logs

@@ -84,6 +84,19 @@ function ProgramareResurse() {
   };
 
   const incarcaProgramarileMele = async () => {
+    if (!idResursa) return;
+  
+    const start = dayjs().format("YYYY-MM-DD");
+    const end = dayjs().add(5, "day").format("YYYY-MM-DD");
+  
+    const me = await axios.get(
+      `http://localhost:4000/programari/me?start=${start}&end=${end}&id_resursa=${idResursa}`,
+      { withCredentials: true }
+    );
+    setProgramarileMele(me.data);
+  };
+
+  const incarcaToateProgramarileMele = async () => {
     const start = dayjs().format("YYYY-MM-DD");
     const end = dayjs().add(5, "day").format("YYYY-MM-DD");
   
@@ -93,6 +106,7 @@ function ProgramareResurse() {
     );
     setProgramarileMele(me.data);
   };
+  
 
   useEffect(() => {
     incarcareResurse();
@@ -105,7 +119,8 @@ function ProgramareResurse() {
   // încarcă programările proprii mereu
   useEffect(() => {
     incarcaProgramariResursaSelectata(); 
-    incarcaProgramarileMele();           
+    incarcaProgramarileMele();
+    incarcaToateProgramarileMele();           
   }, [idResursa]);
 
   const slotOcupat = (zi, ora) =>

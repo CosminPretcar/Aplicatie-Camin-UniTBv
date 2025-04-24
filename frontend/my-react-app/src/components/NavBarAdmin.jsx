@@ -48,8 +48,7 @@ function NavBarAdmin() {
         backgroundColor: "#212529",
       }}>
       <a onClick={() => navigate("/admin/dashboard")} className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none" style={{ cursor: "pointer" }}>
-        <i className="bi bi-shield-lock me-2"></i>
-        <span className="fs-4">Admin Panel</span>
+        <span className="fs-4"><i className="bi bi-cursor me-1"></i>Camin@UniTBv</span>
       </a>
       <hr />
       <ul className="nav nav-pills flex-column mb-auto">
@@ -69,6 +68,12 @@ function NavBarAdmin() {
           <a onClick={() => navigate("/admin/review-lunar")} className="nav-link text-white" style={{ cursor: "pointer" }}>
           <i className="bi bi-stars me-2"></i>
             Review Lunar
+          </a>
+        </li>
+        <li>
+          <a onClick={() => navigate("/admin/monitorizare-activitate")} className="nav-link text-white" style={{ cursor: "pointer" }}>
+          <i className="bi bi-clipboard2-data-fill me-2"></i>
+            Monitorizare Activitate
           </a>
         </li>
         <li>
