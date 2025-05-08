@@ -100,19 +100,19 @@ function HomeAdministrator() {
     setNotificareSelectata(notificare);
     setShowModalNotificare(true);
   
-    if (!notificare.citita) {
+    if (!notificare.citita && !notificare.global) {
       try {
         await axios.patch(`http://localhost:4000/notificari/${notificare.id}/citita`, {
           withCredentials: true,
         });
-        setNotificari(prev =>
-          prev.map(n => n.id === notificare.id ? { ...n, citita: true } : n)
+        setNotificari((prev) =>
+          prev.map((n) => (n.id === notificare.id ? { ...n, citita: true } : n))
         );
       } catch (err) {
         console.error("Eroare la marcarea notificării:", err);
       }
     }
-  }
+  };
   
 
 

@@ -21,7 +21,7 @@ import { trimiteNotificareGlobala } from "./utils/trimiteNotificareGlobala.js";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 4000;
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -108,7 +108,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, 
+    secret: process.env.SESSION_SECRET || TOPSECRETWORD, 
     resave: false,  
     saveUninitialized: true, 
     cookie: {
@@ -2069,13 +2069,12 @@ app.post("/forum-studenti", uploadForum.single("imagine"), async (req, res) => {
       [titlu, descriere, categorie, imagine, dataExpirare, afiseazaContact, userId]
     );
     
-    const rezultatAnunt = await db.query(
-      `INSERT INTO anunturi_studenti 
-       (titlu, descriere, categorie, imagine, data_expirare, afiseaza_contact, user_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING id`,
-      [titlu, descriere, categorie, imagine, dataExpirare, afiseazaContact, userId]
-    );
+    const rezultatAnunt = await db.query(`
+      SELECT f.*, u.nume, u.prenume
+      FROM anunturi_studenti f
+      JOIN users u ON f.user_id = u.id
+      WHERE f.id = (SELECT MAX(id) FROM anunturi_studenti WHERE user_id = $1)
+    `, [userId]);
 
     const anuntId = rezultatAnunt.rows[0].id;
 
@@ -2232,6 +2231,20 @@ app.get("/notificari-globale", async (req, res) => {
   }
 });
 
+app.delete("/notificari-globale/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await db.query("DELETE FROM notificari_globale WHERE id = $1", [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Notificare globală nu a fost găsită." });
+    }
+    res.status(200).json({ message: "Notificare globală ștearsă." });
+  } catch (err) {
+    console.error("Eroare la ștergerea notificării globale:", err);
+    res.status(500).json({ message: "Eroare de server." });
+  }
+});
+
 app.get("/contact-administratie", async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Neautentificat." });
@@ -2275,13 +2288,17 @@ app.get("/contact-administratie", async (req, res) => {
 app.delete("/notificari/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    await db.query("DELETE FROM notificari WHERE id = $1", [id]);
+    const result = await db.query("DELETE FROM notificari WHERE id = $1", [id]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Notificare nu a fost găsită." });
+    }
     res.status(200).json({ message: "Notificare ștearsă." });
   } catch (err) {
     console.error("Eroare la ștergerea notificării:", err);
     res.status(500).json({ message: "Eroare de server." });
   }
 });
+
 
 app.get("/statistici/sesizari-pe-status", async (req, res) => {
   try {

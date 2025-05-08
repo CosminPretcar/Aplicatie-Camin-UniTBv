@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: camin-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: parola123
+      POSTGRES_DB: camin
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    container_name: camin-backend
+    ports:
+      - "4000:4000"
+    environment:
+      DB_HOST: camin-db
+      DB_USER: admin
+      DB_PASSWORD: parola123
+      DB_NAME: camin
+      DB_PORT: 5432
+      SESSION_SECRET: TOPSECRETWORD
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend/my-react-app
+      dockerfile: Dockerfile.frontend  # ajustat dacă fișierul e în rădăcina proiectului
+    container_name: camin-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres-data:

@@ -5,7 +5,7 @@ import utc from "dayjs/plugin/utc";
 import "dayjs/locale/ro";
 import { Container, Row, Col, Form, Card, Button, Modal, Toast, Table, Alert } from "react-bootstrap";
 import NavBar from "../components/NavBar";
-import "../styles/ProgramariResurse.css"
+import "../styles/ProgramariResurse.css";
 
 dayjs.locale("ro");
 dayjs.extend(utc);
@@ -16,31 +16,28 @@ function ProgramareResurse() {
   const [idResursa, setIdResursa] = useState("");
   const [programari, setProgramari] = useState([]);
   const [programarileMele, setProgramarileMele] = useState([]);
+  const [toateProgramarileMele, setToateProgramarileMele] = useState([]);
   const [slotSelectat, setSlotSelectat] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [eroare, setEroare] = useState("");
-  
 
   const zile = [...Array(5)].map((_, i) => dayjs().add(i, "day"));
 
   const generareOre = () => {
     const oreGenerate = [];
-  
     if (tipResursa === "masina_spalat") {
       for (let h = 8; h <= 22; h += 2) {
         oreGenerate.push(`${h.toString().padStart(2, "0")}:00`);
       }
     } else {
-      // Sala de lectură – sloturi orare (cu excepția 08:00)
       for (let h = 9; h <= 23; h++) {
         oreGenerate.push(`${h.toString().padStart(2, "0")}:00`);
       }
     }
-  
     return oreGenerate;
   };
-  
+
   const ore = generareOre();
 
   const incarcareResurse = async () => {
@@ -51,33 +48,12 @@ function ProgramareResurse() {
     setIdResursa("");
   };
 
-  const incarcareProgramari = async () => {
-    if (!idResursa) return;
-
-    const start = dayjs().format("YYYY-MM-DD");
-    const end = dayjs().add(5, "day").format("YYYY-MM-DD");
-
-    const res = await axios.get(
-      `http://localhost:4000/programari?start=${start}&end=${end}&id_resursa=${parseInt(idResursa,10)}`,
-      { withCredentials: true }
-    );
-    setProgramari(res.data);
-
-    const me = await axios.get(
-      `http://localhost:4000/programari/me?start=${start}&end=${end}&id_resursa=${idResursa}`,
-      { withCredentials: true }
-    );
-    setProgramarileMele(me.data);
-  };
-
   const incarcaProgramariResursaSelectata = async () => {
     if (!idResursa) return;
-  
     const start = dayjs().format("YYYY-MM-DD");
     const end = dayjs().add(5, "day").format("YYYY-MM-DD");
-  
     const res = await axios.get(
-      `http://localhost:4000/programari?start=${start}&end=${end}&id_resursa=${parseInt(idResursa,10)}`,
+      `http://localhost:4000/programari?start=${start}&end=${end}&id_resursa=${parseInt(idResursa, 10)}`,
       { withCredentials: true }
     );
     setProgramari(res.data);
@@ -85,10 +61,8 @@ function ProgramareResurse() {
 
   const incarcaProgramarileMele = async () => {
     if (!idResursa) return;
-  
     const start = dayjs().format("YYYY-MM-DD");
     const end = dayjs().add(5, "day").format("YYYY-MM-DD");
-  
     const me = await axios.get(
       `http://localhost:4000/programari/me?start=${start}&end=${end}&id_resursa=${idResursa}`,
       { withCredentials: true }
@@ -99,65 +73,49 @@ function ProgramareResurse() {
   const incarcaToateProgramarileMele = async () => {
     const start = dayjs().format("YYYY-MM-DD");
     const end = dayjs().add(5, "day").format("YYYY-MM-DD");
-  
     const me = await axios.get(
       `http://localhost:4000/programari/me?start=${start}&end=${end}`,
       { withCredentials: true }
     );
-    setProgramarileMele(me.data);
+    setToateProgramarileMele(me.data);
   };
-  
 
   useEffect(() => {
     incarcareResurse();
   }, [tipResursa]);
-  
+
   useEffect(() => {
     incarcaProgramariResursaSelectata();
-  }, [idResursa]);
-  
-  // încarcă programările proprii mereu
-  useEffect(() => {
-    incarcaProgramariResursaSelectata(); 
     incarcaProgramarileMele();
-    incarcaToateProgramarileMele();           
   }, [idResursa]);
+
+  useEffect(() => {
+    incarcaToateProgramarileMele();
+  }, []);
 
   const slotOcupat = (zi, ora) =>
     programari.some((p) => {
       const ziDB = dayjs.utc(p.data).local().format("YYYY-MM-DD");
-  
-      const oraStart = typeof p.ora_start === "string"
-        ? p.ora_start.slice(0, 5)
-        : dayjs(`2000-01-01T${p.ora_start}`).format("HH:mm");
-  
+      const oraStart =
+        typeof p.ora_start === "string"
+          ? p.ora_start.slice(0, 5)
+          : dayjs(`2000-01-01T${p.ora_start}`).format("HH:mm");
       return ziDB === zi.format("YYYY-MM-DD") && oraStart === ora;
     });
 
-    useEffect(() => {
-      if (programari.length > 0) {
-        console.log("🧩 Programări din backend:", programari);
-      }
-    }, [programari]);
+  const slotExpirat = (zi, ora) => {
+    const acum = dayjs();
+    const slot = dayjs(`${zi.format("YYYY-MM-DD")}T${ora}`);
+    if (tipResursa === "sala_lectura" && ora === "08:00") return true;
+    return zi.isSame(acum, "day") && slot.isBefore(acum);
+  };
 
-    const slotExpirat = (zi, ora) => {
-      const acum = dayjs();
-      const slot = dayjs(`${zi.format("YYYY-MM-DD")}T${ora}`);
-    
-      // curățenie la 08:00 pentru sala de lectură
-      if (tipResursa === "sala_lectura" && ora === "08:00") return true;
-    
-      return zi.isSame(acum, "day") && slot.isBefore(acum);
-    };
-
-    const eSlotulMeu = (zi, ora) =>
-      programarileMele.some((p) => {
-        const ziMea = dayjs.utc(p.data).local().format("YYYY-MM-DD");
-        const oraMea = p.ora_start.slice(0, 5);
-        return ziMea === zi.format("YYYY-MM-DD") && oraMea === ora;
-      });
-    
-    
+  const eSlotulMeu = (zi, ora) =>
+    programarileMele.some((p) => {
+      const ziMea = dayjs.utc(p.data).local().format("YYYY-MM-DD");
+      const oraMea = p.ora_start.slice(0, 5);
+      return ziMea === zi.format("YYYY-MM-DD") && oraMea === ora;
+    });
 
   const handleClickSlot = (zi, ora) => {
     if (slotOcupat(zi, ora) || slotExpirat(zi, ora)) return;
@@ -183,7 +141,7 @@ function ProgramareResurse() {
       setSlotSelectat(null);
       await incarcaProgramariResursaSelectata();
       await incarcaProgramarileMele();
-
+      await incarcaToateProgramarileMele();
     } catch (err) {
       setEroare(err.response?.data?.message || "Eroare la programare.");
     }
@@ -196,12 +154,13 @@ function ProgramareResurse() {
     });
     await incarcaProgramariResursaSelectata();
     await incarcaProgramarileMele();
+    await incarcaToateProgramarileMele();
   };
 
   return (
     <div className="d-flex page-container">
       <NavBar />
-      <Container fluid className="mt-4" style={{marginLeft:"280px"}}>
+      <Container fluid className="mt-4" style={{ marginLeft: "280px" }}>
         <Row>
           <Col md={4}>
             <Card className="p-4 shadow border-2 border-dark rounded" style={{ height: "600px", overflowY: "auto" }}>
@@ -226,25 +185,19 @@ function ProgramareResurse() {
               </Form.Group>
               <hr />
               <h6 className="text-center">ℹ️ Informații despre programări</h6>
-
-              {/* Legendă explicată */}
               <div className="d-flex flex-wrap gap-2 justify-content-center mt-2 mb-2">
                 <span className="badge bg-success">🟢 Liber</span>
                 <span className="badge bg-info">🔷 Programarea ta</span>
                 <span className="badge bg-danger">🔴 Ocupat</span>
                 <span className="badge bg-secondary">⏱ Expirat</span>
               </div>
-
               <ul className="small mt-2 mb-0 ps-3">
                 <li><strong>🟢 Liber</strong> – slotul este disponibil și poate fi rezervat.</li>
                 <li><strong>🔷 Programarea ta</strong> – ai deja rezervat acest slot.</li>
                 <li><strong>🔴 Ocupat</strong> – slotul este deja rezervat de altcineva.</li>
                 <li><strong>⏱ Expirat</strong> – ora este în trecut și nu mai poate fi rezervată.</li>
               </ul>
-
               <hr className="my-3" />
-
-              {/* Alte reguli */}
               <ul className="small mb-0 ps-3">
                 <li>O programare pentru <strong>mașina de spălat</strong> durează <strong>90 de minute</strong> (urmată de <strong>30 minute pauză</strong>).</li>
                 <li>O programare pentru <strong>sala de lectură</strong> durează <strong>60 de minute</strong>.</li>
@@ -255,65 +208,59 @@ function ProgramareResurse() {
           </Col>
 
           <Col md={8}>
-          {idResursa ? (
-            <Card className="p-3 shadow border-2 border-dark rounded" style={{ maxHeight: "600px", overflowY: "auto" , minHeight: "600px"}}>
-              <h5 className="text-center mb-3">📆 Calendar (5 zile)</h5>
-              <div className="table-responsive">
-                <Table bordered className="text-center">
-                  <thead className="table-dark">
-                    <tr>
-                      <th>Ora</th>
-                      {zile.map((zi, idx) => (
-                        <th key={idx}>{zi.format("dddd, DD MMMM")}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ore.map((ora) => (
-                      <tr key={ora}>
-                        <td className="fw-bold">{ora}</td>
-                        {zile.map((zi, idx) => {
-                          const ocupat = slotOcupat(zi, ora);
-                          const expirat = slotExpirat(zi, ora);
-                          const alMeu = eSlotulMeu(zi, ora);
-                          return (
-                            <td
-                              key={idx}
-                              className={`text-white fw-bold cursor-pointer ${
-                                alMeu
-                                  ? "bg-info"
-                                  : ocupat
-                                  ? "bg-danger"
-                                  : expirat
-                                  ? "bg-secondary"
-                                  : "bg-success"
-                              }`}
-                              onClick={() => handleClickSlot(zi, ora)}
-                              style={{ cursor: ocupat || expirat ? "not-allowed" : "pointer" }}
-                            >
-                              {alMeu
-                                ? "Tu"
-                                : ocupat
-                                ? "Ocupat"
-                                : expirat
-                                ? "Expirat"
-                                : "Liber"}
-                            </td>
-                          );
-                        })}
+            {idResursa ? (
+              <Card className="p-3 shadow border-2 border-dark rounded" style={{ maxHeight: "600px", overflowY: "auto", minHeight: "600px" }}>
+                <h5 className="text-center mb-3">📆 Calendar (5 zile)</h5>
+                <div className="table-responsive">
+                  <Table bordered className="text-center">
+                    <thead className="table-dark">
+                      <tr>
+                        <th>Ora</th>
+                        {zile.map((zi, idx) => (
+                          <th key={idx}>{zi.format("dddd, DD MMMM")}</th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-              {eroare && <Alert variant="danger" className="text-center">{eroare}</Alert>}
-            </Card>
+                    </thead>
+                    <tbody>
+                      {ore.map((ora) => (
+                        <tr key={ora}>
+                          <td className="fw-bold">{ora}</td>
+                          {zile.map((zi, idx) => {
+                            const ocupat = slotOcupat(zi, ora);
+                            const expirat = slotExpirat(zi, ora);
+                            const alMeu = eSlotulMeu(zi, ora);
+                            return (
+                              <td
+                                key={idx}
+                                className={`text-white fw-bold cursor-pointer ${
+                                  alMeu
+                                    ? "bg-info"
+                                    : ocupat
+                                    ? "bg-danger"
+                                    : expirat
+                                    ? "bg-secondary"
+                                    : "bg-success"
+                                }`}
+                                onClick={() => handleClickSlot(zi, ora)}
+                                style={{ cursor: ocupat || expirat ? "not-allowed" : "pointer" }}
+                              >
+                                {alMeu ? "Tu" : ocupat ? "Ocupat" : expirat ? "Expirat" : "Liber"}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+                {eroare && <Alert variant="danger" className="text-center">{eroare}</Alert>}
+              </Card>
             ) : (
               <Card className="p-4 shadow border-2 border-dark rounded d-flex align-items-center justify-content-center" style={{ height: "100%" }}>
-              <Alert variant="info" className="text-center mb-0">
-                Selectează tipul de resursă și o resursă pentru a vizualiza calendarul.
-              </Alert>
-            </Card>
+                <Alert variant="info" className="text-center mb-0">
+                  Selectează tipul de resursă și o resursă pentru a vizualiza calendarul.
+                </Alert>
+              </Card>
             )}
           </Col>
         </Row>
@@ -322,7 +269,7 @@ function ProgramareResurse() {
           <Col>
             <Card className="p-4 shadow border-2 border-dark rounded">
               <h5 className="text-center mb-3">📋 Programările mele (următoarele 5 zile)</h5>
-              {programarileMele.length === 0 ? (
+              {toateProgramarileMele.length === 0 ? (
                 <p className="text-muted text-center">Nu ai programări viitoare.</p>
               ) : (
                 <Table striped bordered responsive>
@@ -335,7 +282,7 @@ function ProgramareResurse() {
                     </tr>
                   </thead>
                   <tbody>
-                    {programarileMele.map((p) => (
+                    {toateProgramarileMele.map((p) => (
                       <tr key={p.id}>
                         <td>{dayjs(p.data).format("dddd, DD MMM")}</td>
                         <td>{p.ora_start.slice(0, 5)}</td>

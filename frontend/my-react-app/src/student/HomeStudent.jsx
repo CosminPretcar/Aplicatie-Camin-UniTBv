@@ -29,21 +29,31 @@ function HomeStudent() {
   const [notificareSelectata, setNotificareSelectata] = useState(null);
   const [showModalNotificare, setShowModalNotificare] = useState(false);
 
+  const [imaginePreview, setImaginePreview] = useState(null);
+
+
 
   useEffect(() => {
     axios.get("http://localhost:4000/me", { withCredentials: true })
       .then(response => {
         if (response.data.isAuthenticated) {
-          setUser({ id:response.data.id, nume: response.data.nume, prenume: response.data.prenume });
+          setUser({ id: response.data.id, nume: response.data.nume, prenume: response.data.prenume });
+  
+          // Încărcare notificări locale
           axios.get(`http://localhost:4000/notificari/${response.data.id}`, { withCredentials: true })
+            .then(res => setNotificari(res.data))
+            .catch(err => console.error("Eroare la încărcarea notificărilor locale:", err));
+  
+          // Încărcare notificări globale
+          axios.get("http://localhost:4000/notificari-globale")
             .then(res => {
-              setNotificari(res.data);
-              console.log("🔔 Notificări încărcate:", res.data);
+              const globale = res.data.map(n => ({ ...n, global: true }));
+              setNotificari((prev) => [...prev, ...globale]);
             })
-            .catch(err => console.error("Eroare la încărcarea notificărilor:", err));
+            .catch(err => console.error("Eroare la încărcarea notificărilor globale:", err));
         }
       })
-      .catch(error => console.error("Error fetching user:", error));
+      .catch(error => console.error("Eroare la autentificare:", error));
   }, []);
 
   useEffect(() => {
@@ -114,25 +124,50 @@ function HomeStudent() {
     setNotificareSelectata(notificare);
     setShowModalNotificare(true);
   
-    if (!notificare.citita) {
+    if (!notificare.citita && !notificare.global) {
       try {
         await axios.patch(`http://localhost:4000/notificari/${notificare.id}/citita`, {
           withCredentials: true,
         });
-        setNotificari(prev =>
-          prev.map(n => n.id === notificare.id ? { ...n, citita: true } : n)
+        setNotificari((prev) =>
+          prev.map((n) => (n.id === notificare.id ? { ...n, citita: true } : n))
         );
       } catch (err) {
-        console.error("Eroare la marcarea notificării:", err);
+        console.error("Eroare la marcarea notificării ca citită:", err);
       }
     }
   };
 
-  const toateNotificarile = [...notificari, ...notificariGlobale.map(n => ({
-    ...n,
-    global: true,
-    citita: false // sau true dacă vrei să nu apară ca badge
-  }))].sort((a, b) => new Date(b.data) - new Date(a.data));
+  const stergeNotificare = async (notificare) => {
+    try {
+      console.log("Obiect notificare:", JSON.stringify(notificare, null, 2));
+      console.log("Ștergere notificare cu ID:", notificare.id);
+      if (notificare.global) {
+        await axios.delete(`http://localhost:4000/notificari-globale/${notificare.id}`, {
+          withCredentials: true,
+        });
+        setNotificariGlobale((prev) => prev.filter((n) => n.id !== notificare.id));
+      } else {
+        await axios.delete(`http://localhost:4000/notificari/${notificare.id}`, {
+          withCredentials: true,
+        });
+        setNotificari((prev) => prev.filter((n) => n.id !== notificare.id));
+      }
+    } catch (err) {
+      console.error("Eroare la ștergerea notificării:", err);
+    }
+  };
+  
+  const toateNotificarile = [
+    ...notificari,
+    ...notificariGlobale.map(n => ({
+      ...n,
+      global: true,
+      id: n.id || n.notificare_id, // Verificare dublă pentru a preveni eroarea
+    }))
+  ].sort((a, b) => new Date(b.data) - new Date(a.data));
+  
+  
   
   return (
     <div className="d-flex">
@@ -167,55 +202,39 @@ function HomeStudent() {
                     className="card shadow border-2 border-dark rounded mt-2 p-2 position-absolute end-0"
                     style={{ width: "300px", zIndex: 999 }}
                   >
-                    <h6 className="text-center">🔔 Notificări</h6>
-                    {toateNotificarile.length === 0 ? (
-                      <p className="text-muted text-center mb-0">Nu ai notificări</p>
-                    ) : (
-                      <ul className="list-group small">
-                        {toateNotificarile.slice(0, 5).map(n => (
-                          <li
-                            key={`notificare-${n.id}-${n.global ? "global" : "personal"}`}
-                            className={`list-group-item d-flex justify-content-between align-items-start ${n.citita ? 'text-muted' : 'fw-bold'}`}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <div className="me-2" onClick={() => deschideNotificare(n)}>
-                              <div>
+                      <h6 className="text-center">🔔 Notificări</h6>
+                      {toateNotificarile.length === 0 ? (
+                        <p className="text-muted text-center">Nu ai notificări</p>
+                      ) : (
+                        <ul className="list-group small">
+                          {toateNotificarile.map((n) => (
+                            <li
+                              key={`notificare-${n.id}`}
+                              className={`list-group-item d-flex justify-content-between align-items-start 
+                                ${n.global ? '' : n.citita ? 'text-muted' : 'fw-bold'}`}
+                              style={{ cursor: "pointer" }}
+                              onClick={() => deschideNotificare(n)}
+                            >
+                              <div className="me-2">
                                 {n.global && <span className="badge bg-warning me-1">Global</span>}
                                 {n.titlu}
+                                <br />
+                                <small className="text-muted">{new Date(n.data).toLocaleString("ro-RO")}</small>
                               </div>
-                              <small className="text-muted">{new Date(n.data).toLocaleString("ro-RO")}</small>
-                            </div>
-                                                  
-                            <div className="d-flex align-items-center gap-2">
-                              {!n.global && n.citita && (
-                                <span title="Citită" className="text-success">✔️</span>
-                              )}
-                              {!n.global && (
-                                <button
-                                  className="btn btn-sm btn-outline-danger py-0 px-1"
-                                  title="Șterge notificarea"
-                                  style={{ fontSize: "0.75rem" }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    axios.delete(`http://localhost:4000/notificari/${n.id}`, {
-                                      withCredentials: true,
-                                    })
-                                      .then(() => {
-                                        setNotificari((prev) => prev.filter((notif) => notif.id !== n.id));
-                                      })
-                                      .catch((err) => {
-                                        console.error("Eroare la ștergerea notificării:", err);
-                                      });
-                                  }}
-                                >
-                                  🗑️
-                                </button>
-                              )}
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                              <button
+                                className="btn btn-sm btn-outline-danger py-0 px-1"
+                                title="Șterge notificarea"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  stergeNotificare(n);
+                                }}
+                              >
+                                🗑️
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                   </div>
                 )}
               </div>
@@ -342,7 +361,8 @@ function HomeStudent() {
                                 src={`http://localhost:4000/uploads/forum/${anunt.imagine}`}
                                 alt="anunt"
                                 className="img-fluid rounded mb-2 position-absolute end-0 bottom-0 m-2"
-                                style={{ maxWidth: "190px", maxHeight: "190px", objectFit: "cover", border: "1px solid #ccc" }}
+                                onClick={() => setImaginePreview(`http://localhost:4000/uploads/forum/${anunt.imagine}`)}
+                                style={{ maxWidth: "190px", maxHeight: "190px", objectFit: "cover", border: "1px solid #ccc", cursor:"pointer" }}
                               />
                             )}
                           </div>
@@ -425,6 +445,12 @@ function HomeStudent() {
             Închide
           </Button>
         </Modal.Footer>
+      </Modal>
+      <Modal show={!!imaginePreview} onHide={() => setImaginePreview(null)} centered>
+        <Modal.Header closeButton><Modal.Title>Imagine anunț</Modal.Title></Modal.Header>
+        <Modal.Body className="text-center">
+          <img src={imaginePreview} alt="preview" className="img-fluid rounded" />
+        </Modal.Body>
       </Modal>
     </div>
   );

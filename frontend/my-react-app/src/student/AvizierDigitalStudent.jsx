@@ -4,11 +4,13 @@ import axios from "axios";
 function AvizierStudent() {
   const [anunturi, setAnunturi] = useState([]);
 
-  axios.get("http://localhost:4000/anunturi")
-  .then(response => {
-    const sortate = response.data.sort((a, b) => (b.fixat - a.fixat) || new Date(b.data) - new Date(a.data));
-    setAnunturi(sortate);
-  })
+  useEffect(() => {
+    axios.get("http://localhost:4000/anunturi")
+      .then(response => {
+        const sortate = response.data.sort((a, b) => (b.fixat - a.fixat) || new Date(b.data) - new Date(a.data));
+        setAnunturi(sortate);
+      });
+  }, []);
 
   const getBadgeColor = (importanta) => {
     switch (importanta) {

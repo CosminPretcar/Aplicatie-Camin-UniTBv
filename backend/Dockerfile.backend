@@ -1,0 +1,21 @@
+# backend/Dockerfile
+
+FROM node:20
+
+# Creează directorul de lucru în container
+WORKDIR /app
+
+# Copiază fișierele pentru npm install
+COPY package*.json ./
+
+# Instalează dependențele backend-ului
+RUN npm install
+
+# Copiază restul fișierelor în container
+COPY . .
+
+# Expune portul backend-ului (Express)
+EXPOSE 4000
+
+# Comanda de start
+CMD ["npm", "start"]
