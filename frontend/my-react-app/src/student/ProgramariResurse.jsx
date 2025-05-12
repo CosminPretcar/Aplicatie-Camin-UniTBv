@@ -164,17 +164,17 @@ function ProgramareResurse() {
         <Row>
           <Col md={4}>
             <Card className="p-4 shadow border-2 border-dark rounded" style={{ height: "600px", overflowY: "auto" }}>
-              <h5 className="text-center mb-3">🔧 Selectează resursa</h5>
+              <h5 className="text-center mb-3">🔧 Selecteaza resursa</h5>
               <Form.Group className="mb-3">
                 <Form.Label>Tip resursă</Form.Label>
-                <Form.Select value={tipResursa} onChange={(e) => setTipResursa(e.target.value)}>
+                <Form.Select value={tipResursa} name="tipResursa" onChange={(e) => setTipResursa(e.target.value)}>
                   <option value="masina_spalat">Mașină de spălat</option>
                   <option value="sala_lectura">Sală de lectură</option>
                 </Form.Select>
               </Form.Group>
               <Form.Group>
                 <Form.Label>{tipResursa === "masina_spalat" ? "Mașină" : "Sală"}</Form.Label>
-                <Form.Select value={idResursa} onChange={(e) => setIdResursa(e.target.value)}>
+                <Form.Select value={idResursa} name="idResursa" onChange={(e) => setIdResursa(e.target.value)}>
                   <option value="">-- Alege --</option>
                   {resurse.map((r) => (
                     <option key={r.id} value={r.id}>

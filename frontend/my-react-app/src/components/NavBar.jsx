@@ -43,7 +43,7 @@ function NavBar() {
   }
 
   return (
-    <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" 
+    <div className="d-flex flex-column flex-shrink-0 p-3 text-bg-dark nav" 
     style={{
       width: "280px",
       height: "100vh",

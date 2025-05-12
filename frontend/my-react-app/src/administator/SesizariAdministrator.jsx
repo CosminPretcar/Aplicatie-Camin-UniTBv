@@ -150,7 +150,7 @@ function SesizariAdministrare() {
             </Button>
           </div>
           <Form.Select
-            className="mb-3 w-auto"
+            className="mb-3 w-auto selector-status"
             value={filtruStatus}
             onChange={(e) => {
               setFiltruStatus(e.target.value);
@@ -241,7 +241,7 @@ function SesizariAdministrare() {
                       </Button>
                     </td>
                     <td>
-                      <div className="d-flex flex-column align-items-center">
+                      <div className="d-flex flex-column align-items-center selector-update">
                         <Form.Select
                           value={s.status}
                           onChange={(e) => updateStatus(s.id, e.target.value)}
