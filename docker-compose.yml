@@ -6,9 +6,9 @@ services:
     container_name: camin-db
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: parola123
-      POSTGRES_DB: camin
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
+      POSTGRES_DB: 
     ports:
       - "5433:5432"
     volumes:
@@ -22,12 +22,12 @@ services:
     ports:
       - "4000:4000"
     environment:
-      DB_HOST: camin-db
-      DB_USER: admin
-      DB_PASSWORD: parola123
-      DB_NAME: camin
+      DB_HOST: 
+      DB_USER: 
+      DB_PASSWORD: 
+      DB_NAME: 
       DB_PORT: 5432
-      SESSION_SECRET: TOPSECRETWORD
+      SESSION_SECRET: 
     depends_on:
       - postgres
 
