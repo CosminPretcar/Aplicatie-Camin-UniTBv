@@ -1,0 +1,14 @@
+{
+  "intents": [
+    {
+      "tag": "resetare_parola",
+      "patterns": ["am uitat parola", "cum îmi resetez parola?"],
+      "responses": ["Pe pagina de login, caută opțiunea 'Ai uitat parola?'..."]
+    }
+  ]
+}
+
+vectorizer = TfidfVectorizer(max_features=2000)
+X = vectorizer.fit_transform(questions).toarray()
+label_encoder = LabelEncoder()
+labels_encoded = label_encoder.fit_transform(labels)
