@@ -33,16 +33,27 @@ function Avizier() {
       .catch(error => console.error("Eroare la preluarea anunțurilor:", error));
   }, []);
 
-  const handleAddAnunt = () => {
-    if (nouAnunt.trim() === "") return;
+const handleAddAnunt = () => {
+  if (nouAnunt.trim() === "") return;
 
-    axios.post("http://localhost:4000/anunturi", { text: nouAnunt, importanta, fixat: false })
-      .then(response => setAnunturi([response.data, ...anunturi]))
-      .catch(error => console.error("Eroare la adăugarea anunțului:", error));
+  axios.post("http://localhost:4000/anunturi", { text: nouAnunt, importanta, fixat: false })
+    .then(response => {
+      const nou = response.data;
 
-    setNouAnunt("");
-    setImportanta("medie");
-  };
+      // Separă anunțurile fixate de cele normale
+      const fixate = anunturi.filter(a => a.fixat);
+      const nefixate = anunturi.filter(a => !a.fixat);
+
+      // Adaugă noul anunț la începutul celor nefixate
+      const actualizat = [...fixate, nou, ...nefixate];
+      setAnunturi(actualizat);
+    })
+    .catch(error => console.error("Eroare la adăugarea anunțului:", error));
+
+  setNouAnunt("");
+  setImportanta("medie");
+};
+
 
   const handleDeleteAnunt = (id) => {
     setAnuntDeSters(id);

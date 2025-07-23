@@ -407,6 +407,16 @@ app.post("/cereri", async (req, res) => {
       return res.status(400).json({ message: "Ai deja o cerere înregistrată! Nu poți depune mai multe." });
     }
 
+    const cazareExistenta = await db.query(
+      "SELECT 1 FROM studenti WHERE user_id = $1 AND camera_id IS NOT NULL",
+      [userId]
+    );
+    
+    if (cazareExistenta.rows.length > 0) {
+      return res.status(400).json({ message: "Ești deja cazat(ă). Nu poți trimite o nouă cerere." });
+    }
+
+
     // Verific dacă există cereri valide
     if (!cereri || cereri.length === 0) {
       return res.status(400).json({ message: "Trebuie să selectați cel puțin o cameră!" });
@@ -761,15 +771,15 @@ app.put("/cereri/validare", async (req, res) => {
       }
     }
 
-    const emailResult = await db.query("SELECT email, nume, prenume FROM users WHERE id = $1", [studentId]);
-    const user = emailResult.rows[0];
+    // const emailResult = await db.query("SELECT email, nume, prenume FROM users WHERE id = $1", [studentId]);
+    // const user = emailResult.rows[0];
 
-    await transporter.sendMail({
-      from: `"Admin Cămin" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: "Cazare confirmată",
-      text: `Salut, ${user.prenume} ${user.nume}!\n\nAi fost cazat(ă) cu succes în camera ${camera.numar_camera}.`
-    });
+    // await transporter.sendMail({
+    //   from: `"Admin Cămin" <${process.env.EMAIL_USER}>`,
+    //   to: user.email,
+    //   subject: "Cazare confirmată",
+    //   text: `Salut, ${user.prenume} ${user.nume}!\n\nAi fost cazat(ă) cu succes în camera ${camera.numar_camera}.`
+    // });
 
     // Ștergem cererea validată + ale colegilor
     await db.query(

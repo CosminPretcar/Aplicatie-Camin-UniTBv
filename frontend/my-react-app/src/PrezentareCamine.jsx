@@ -104,9 +104,9 @@ function PrezentareCamine() {
                   <p>
                     În <span>Complexul Colina</span>, camerele sunt dotate cu 
                     <span> 4 paturi</span>. Aceste camere sunt complet echipate cu 
-                    <span> 4 dulapuri (dimensiuni)</span>, <span> două paturi supraetajate (dimensiuni)</span>,
-                    <span> două birouri(dimensiuni)</span>, 
-                    <span> un blat de lucru (dimensiuni)</span>, <span>două etajere</span> și 
+                    <span> 4 dulapuri </span>, <span> două paturi supraetajate </span>,
+                    <span> două birouri</span>, 
+                    <span> un blat de lucru </span>, <span>două etajere</span> și 
                     <span> o casetieră cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu.
                   </p>
                   <p>
@@ -151,9 +151,9 @@ function PrezentareCamine() {
                 <p>
                   În <span>Complexul Memorandului</span>, camerele sunt dotate cu 
                   <span> 3 sau 4 paturi</span>, cele cu <span>3 paturi</span>  având dimensiuni ușor reduse. 
-                  Camerele cu <span>4 paturi</span> sunt complet echipate cu <span>4 dulapuri (dimensiuni)</span>, 
-                  <span> două paturi supraetajate (dimensiuni)</span>, <span>două birouri(dimensiuni)</span>, 
-                  <span> un blat de lucru (dimensiuni)</span>, <span>două etajere</span> și 
+                  Camerele cu <span>4 paturi</span> sunt complet echipate cu <span>4 dulapuri</span>, 
+                  <span> două paturi supraetajate </span>, <span>două birouri</span>, 
+                  <span> un blat de lucru </span>, <span>două etajere</span> și 
                   <span> o casetieră cu 4 sertare</span>, oferind fiecărui student spațiu adecvat pentru depozitare și studiu. 
                   În camerele cu <span>3 paturi</span>, din cauza numărului redus de locatari, 
                   <span> unele dintre aceste elemente pot lipsi</span> sau pot avea dimensiuni diferite pentru a optimiza spațiul disponibil. 
